@@ -1,0 +1,66 @@
+/* ─── Design Tokens ─────────────────────────────────────────────── */
+:root {
+  --color-bg:          #f0f0f0;
+  --color-surface:     #ffffff;
+  --color-surface-alt: #f8f8f8;
+  --color-border:      #e2e2e2;
+  --color-border-soft: #ebebeb;
+  --color-text:        #1a1a1a;
+  --color-text-muted:  #8a8a8a;
+  --color-text-dim:    #b8b8b8;
+  --color-primary:     #3b6ff0;
+  --color-primary-bg:  #eff3ff;
+  --color-hover:       #f2f4f8;
+  --color-active:      #e8edf8;
+  --color-canvas:      #dde1e7;
+  --color-shadow:      rgba(0, 0, 0, 0.07);
+  --color-shadow-md:   rgba(0, 0, 0, 0.13);
+
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-pill: 999px;
+
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+
+  --header-h:     48px;
+  --sidebar-w:    64px;
+  --panel-w:      320px;
+  --left-panel-w: 300px; /* set dynamically by EditorProvider */
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-text);
+  background: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Spinner (used by the DXF workspace loading indicator) */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.9s linear infinite; }

@@ -1,0 +1,40 @@
+
+> esp-editor@0.1.0 dev
+> vite --host 127.0.0.1
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m971[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m3000[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[36m[vite-plugin-static-copy][39m [32mCollected 3 items.[39m
+[2m10:58:16 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/TopBar.tsx[22m
+[2m10:58:28 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/TopBar.tsx[22m
+[2m11:08:29 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/store/editorStore.tsx[22m
+[2m11:08:29 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/store/editorStore.tsx[22m Could not Fast Refresh ("draftFromTextObject" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:08:29 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/EditorPage.tsx, /src/components/TopBar.tsx, /src/components/LeftSidebar.tsx, /src/components/BottomToolbar.tsx, /src/components/LayersPanel.tsx, /src/components/Canvas.tsx, /src/components/RightPropertiesPanel.tsx, /src/components/CommentsPanel.tsx, /src/components/StylesPanel.tsx, /src/components/SymbolsPanel.tsx, /src/components/CanvasViewport.tsx, /src/components/CanvasAxis.tsx, /src/components/CanvasGrid.tsx, /src/components/SymbolPropertiesPanel.tsx, /src/components/ShapePropertiesPanel.tsx, /src/components/TextPropertiesPanel.tsx[22m
+[2m11:08:33 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/store/editorStore.tsx[22m
+[2m11:08:33 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/store/editorStore.tsx[22m Could not Fast Refresh ("draftFromTextObject" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:08:33 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/EditorPage.tsx, /src/components/TopBar.tsx, /src/components/LeftSidebar.tsx, /src/components/BottomToolbar.tsx, /src/components/LayersPanel.tsx, /src/components/Canvas.tsx, /src/components/RightPropertiesPanel.tsx, /src/components/CommentsPanel.tsx, /src/components/StylesPanel.tsx, /src/components/SymbolsPanel.tsx, /src/components/CanvasViewport.tsx, /src/components/CanvasAxis.tsx, /src/components/CanvasGrid.tsx, /src/components/SymbolPropertiesPanel.tsx, /src/components/ShapePropertiesPanel.tsx, /src/components/TextPropertiesPanel.tsx[22m
+[2m11:08:37 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/store/editorStore.tsx[22m
+[2m11:08:37 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/store/editorStore.tsx[22m Could not Fast Refresh ("draftFromTextObject" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:08:37 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/EditorPage.tsx, /src/components/TopBar.tsx, /src/components/LeftSidebar.tsx, /src/components/BottomToolbar.tsx, /src/components/LayersPanel.tsx, /src/components/Canvas.tsx, /src/components/RightPropertiesPanel.tsx, /src/components/CommentsPanel.tsx, /src/components/StylesPanel.tsx, /src/components/SymbolsPanel.tsx, /src/components/CanvasViewport.tsx, /src/components/CanvasAxis.tsx, /src/components/CanvasGrid.tsx, /src/components/SymbolPropertiesPanel.tsx, /src/components/ShapePropertiesPanel.tsx, /src/components/TextPropertiesPanel.tsx[22m
+[2m11:08:48 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/LeftSidebar.tsx[22m
+[2m11:09:33 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/EditorPage.tsx[22m
+[2m11:09:36 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/EditorPage.tsx[22m
+[2m11:22:23 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/TablesPanel.tsx[22m
+[2m11:22:31 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/TablesPanel.tsx[22m
+[2m11:32:46 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/BottomToolbar.tsx[22m
+[2m11:32:50 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/LeftSidebar.tsx[22m
+[2m11:32:54 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SymbolsPanel.tsx[22m
+[2m11:32:58 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SymbolsPanel.tsx[22m
+[2m11:33:01 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SymbolsPanel.tsx[22m
+[2m11:38:09 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SymbolsPanel.tsx[22m
+[2m11:38:36 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SymbolsPanel.tsx[22m
+[2m11:38:41 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SymbolsPanel.tsx[22m
+[2m11:48:25 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/store/editorStore.tsx[22m
+[2m11:48:25 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/store/editorStore.tsx[22m Could not Fast Refresh ("draftFromTextObject" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:48:25 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/EditorPage.tsx, /src/components/TopBar.tsx, /src/components/LeftSidebar.tsx, /src/components/BottomToolbar.tsx, /src/components/LayersPanel.tsx, /src/components/Canvas.tsx, /src/components/RightPropertiesPanel.tsx, /src/components/CommentsPanel.tsx, /src/components/StylesPanel.tsx, /src/components/SymbolsPanel.tsx, /src/components/CanvasViewport.tsx, /src/components/CanvasAxis.tsx, /src/components/CanvasGrid.tsx, /src/components/SymbolPropertiesPanel.tsx, /src/components/ShapePropertiesPanel.tsx, /src/components/TextPropertiesPanel.tsx[22m
+[2m11:49:09 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SymbolsPanel.tsx[22m
+[2m12:10:00 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/TopBar.tsx[22m
+[2m12:14:18 AM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/TopBar.tsx[22m
