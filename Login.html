@@ -266,8 +266,29 @@
       transition: background 0.15s;
     }
 
+    .btn-login {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
     .btn-login:hover { background: #2b2bad; }
     .btn-login:active { background: #232391; }
+    .btn-login:disabled { opacity: 0.85; cursor: not-allowed; }
+    .btn-login:disabled:hover { background: #3737c8; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      flex-shrink: 0;
+    }
 
     .or-divider {
       font-size: 14px;
@@ -435,8 +456,10 @@
         alert('Please enter your username and password.');
         return;
       }
-      // Navigate to dashboard on successful login
-      window.location.href = 'Dashboard.html';
+      const btn = document.querySelector('.btn-login');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="btn-spinner"></span>Signing in…';
+      setTimeout(() => { window.location.href = 'Dashboard.html'; }, 1200);
     }
 
     function handleSSO() {

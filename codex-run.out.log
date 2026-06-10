@@ -1,0 +1,47 @@
+
+> esp-editor@0.1.0 dev
+> vite --host 127.0.0.1 --port 3000 --strictPort --force
+
+Forced re-optimization of dependencies
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m609[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m3000[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[36m[vite-plugin-static-copy][39m [32mCollected 3 items.[39m
+[2m5:50:24 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mLogin.html[22m
+[2m5:50:30 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mLogin.html[22m
+[2m6:02:36 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:02:42 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:02:55 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:07:51 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:10:46 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:16:33 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:16:38 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:16:44 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:16:51 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:16:57 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m6:17:04 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mDigital Library.html[22m
+[2m7:00:59 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:02:32 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:02:39 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:02:47 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:02:53 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:03:05 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:03:11 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:05:52 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:06:01 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:06:10 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:18:58 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:19:04 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:19:13 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:19:22 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:19:29 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:19:37 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mlogin-mockup.html[22m
+[2m7:29:01 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/LeftSidebar.tsx[22m
+[2m7:38:10 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Canvas.tsx[22m
+[2m7:38:16 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Canvas.tsx[22m
+[2m7:38:24 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Canvas.tsx[22m
+[2m7:38:34 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Canvas.tsx[22m
+[2m7:38:39 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Canvas.tsx[22m
+[2m7:39:07 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Canvas.tsx[22m

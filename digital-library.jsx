@@ -815,6 +815,23 @@ const libCSS = `
   background: var(--paper);
   box-shadow: var(--shadow-focus);
 }
+.dl-field-error {
+  font-size: 11px;
+  color: var(--danger-text);
+  line-height: 1.35;
+  margin-top: -1px;
+}
+.dl-req { color: var(--danger-text); font-weight: 400; }
+.dl-add-field input[data-error="true"],
+.dl-add-field select[data-error="true"] {
+  border-color: color-mix(in srgb, var(--danger-text) 50%, transparent);
+  background: color-mix(in srgb, var(--danger-text) 5%, var(--ink-50));
+}
+.dl-add-field input[data-error="true"]:focus,
+.dl-add-field select[data-error="true"]:focus {
+  border-color: var(--danger-text);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger-text) 12%, transparent);
+}
 .dl-bulk-preview {
   grid-column: 1 / -1;
   display: flex;
@@ -2161,6 +2178,326 @@ const ALL_STATIONS = [
     versions: "ESP v2",
     lastTime: "3 days ago",
     lastBy: "T. Babu"
+  },
+  {
+    id: 12,
+    name: "Secunderabad Junction",
+    code: "SC",
+    section: "Secunderabad\u2013Kazipet",
+    zone: "SCR",
+    division: "Secunderabad",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v5 \xB7 SIP v3 \xB7 LOP v2",
+    lastTime: "2 hours ago",
+    lastBy: "K. Reddy"
+  },
+  {
+    id: 13,
+    name: "Hyderabad Deccan",
+    code: "HYB",
+    section: "Hyderabad\u2013Falaknuma",
+    zone: "SCR",
+    division: "Hyderabad",
+    esp: "approved",
+    sip: "under_review",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: true, ts: false },
+    versions: "ESP v3 \xB7 SIP v1",
+    lastTime: "1 day ago",
+    lastBy: "M. Rao"
+  },
+  {
+    id: 14,
+    name: "Kachiguda",
+    code: "KCG",
+    section: "Hyderabad\u2013Kachiguda",
+    zone: "SCR",
+    division: "Hyderabad",
+    esp: "digitised",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: true },
+    versions: "ESP v2",
+    lastTime: "4 hours ago",
+    lastBy: "P. Verma"
+  },
+  {
+    id: 15,
+    name: "Nanded",
+    code: "NED",
+    section: "Nanded\u2013Latur",
+    zone: "SCR",
+    division: "Nanded",
+    esp: "pending_review",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: false, ts: true },
+    versions: null,
+    lastTime: "2 days ago",
+    lastBy: "S. Patil"
+  },
+  {
+    id: 16,
+    name: "Chennai Central",
+    code: "MAS",
+    section: "Chennai\u2013Tambaram",
+    zone: "SR",
+    division: "Chennai",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v6 \xB7 SIP v4 \xB7 LOP v3",
+    lastTime: "30 min ago",
+    lastBy: "R. Iyer"
+  },
+  {
+    id: 17,
+    name: "Tambaram",
+    code: "TBM",
+    section: "Chennai\u2013Tambaram",
+    zone: "SR",
+    division: "Chennai",
+    esp: "approved",
+    sip: "digitised",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: false, ts: true },
+    versions: "ESP v3 \xB7 SIP v1",
+    lastTime: "6 hours ago",
+    lastBy: "A. Kumar"
+  },
+  {
+    id: 18,
+    name: "Madurai Junction",
+    code: "MDU",
+    section: "Madurai\u2013Virudhunagar",
+    zone: "SR",
+    division: "Madurai",
+    esp: "validated",
+    sip: "pending_review",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: true, ts: false },
+    versions: "ESP v4 \xB7 SIP v1",
+    lastTime: "3 hours ago",
+    lastBy: "V. Sundaram"
+  },
+  {
+    id: 19,
+    name: "Salem Junction",
+    code: "SA",
+    section: "Salem\u2013Erode",
+    zone: "SR",
+    division: "Salem",
+    esp: "under_review",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: false },
+    versions: null,
+    lastTime: "1 day ago",
+    lastBy: "D. Krishnan"
+  },
+  {
+    id: 20,
+    name: "Chhatrapati Shivaji Maharaj Terminus",
+    code: "CSMT",
+    section: "CST\u2013Thane",
+    zone: "CR",
+    division: "Mumbai CST",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v7 \xB7 SIP v5 \xB7 LOP v3",
+    lastTime: "1 hour ago",
+    lastBy: "N. Joshi"
+  },
+  {
+    id: 21,
+    name: "Thane",
+    code: "TNA",
+    section: "CST\u2013Thane",
+    zone: "CR",
+    division: "Mumbai CST",
+    esp: "approved",
+    sip: "under_review",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: true, ts: false },
+    versions: "ESP v4 \xB7 SIP v2",
+    lastTime: "5 hours ago",
+    lastBy: "P. Desai"
+  },
+  {
+    id: 22,
+    name: "Kalyan Junction",
+    code: "KYN",
+    section: "Thane\u2013Kalyan",
+    zone: "CR",
+    division: "Mumbai CST",
+    esp: "digitised",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: true },
+    versions: "ESP v2",
+    lastTime: "2 days ago",
+    lastBy: "S. More"
+  },
+  {
+    id: 23,
+    name: "Pune Junction",
+    code: "PUNE",
+    section: "Pune\u2013Lonavala",
+    zone: "CR",
+    division: "Pune",
+    esp: "approved",
+    sip: "approved",
+    lop: "digitised",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v5 \xB7 SIP v3 \xB7 LOP v1",
+    lastTime: "4 hours ago",
+    lastBy: "A. Kulkarni"
+  },
+  {
+    id: 24,
+    name: "Nagpur Junction",
+    code: "NGP",
+    section: "Nagpur\u2013Wardha",
+    zone: "CR",
+    division: "Nagpur",
+    esp: "pending_review",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: false, ts: true },
+    versions: null,
+    lastTime: "3 days ago",
+    lastBy: "R. Tiwari"
+  },
+  {
+    id: 25,
+    name: "New Delhi",
+    code: "NDLS",
+    section: "Delhi\u2013Ghaziabad",
+    zone: "NR",
+    division: "Delhi",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v8 \xB7 SIP v6 \xB7 LOP v4",
+    lastTime: "15 min ago",
+    lastBy: "V. Singh"
+  },
+  {
+    id: 26,
+    name: "Hazrat Nizamuddin",
+    code: "NZM",
+    section: "Delhi\u2013Faridabad",
+    zone: "NR",
+    division: "Delhi",
+    esp: "approved",
+    sip: "digitised",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: false, ts: true },
+    versions: "ESP v4 \xB7 SIP v1",
+    lastTime: "8 hours ago",
+    lastBy: "M. Sharma"
+  },
+  {
+    id: 27,
+    name: "Ambala Cantonment",
+    code: "UMB",
+    section: "Ambala\u2013Ludhiana",
+    zone: "NR",
+    division: "Ambala",
+    esp: "under_review",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: false },
+    versions: null,
+    lastTime: "2 days ago",
+    lastBy: "H. Gupta"
+  },
+  {
+    id: 28,
+    name: "Mumbai Central",
+    code: "MMCT",
+    section: "Mumbai Central\u2013Bandra",
+    zone: "WR",
+    division: "Mumbai Central",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v6 \xB7 SIP v4 \xB7 LOP v2",
+    lastTime: "2 hours ago",
+    lastBy: "F. Patel"
+  },
+  {
+    id: 29,
+    name: "Vadodara Junction",
+    code: "BRC",
+    section: "Vadodara\u2013Anand",
+    zone: "WR",
+    division: "Vadodara",
+    esp: "approved",
+    sip: "pending_review",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: true, ts: false },
+    versions: "ESP v3 \xB7 SIP v1",
+    lastTime: "6 hours ago",
+    lastBy: "D. Shah"
+  },
+  {
+    id: 30,
+    name: "Ahmedabad Junction",
+    code: "ADI",
+    section: "Ahmedabad\u2013Sabarmati",
+    zone: "WR",
+    division: "Ahmedabad",
+    esp: "validated",
+    sip: "uploaded",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: false, ts: true },
+    versions: "ESP v4 \xB7 SIP v1",
+    lastTime: "1 day ago",
+    lastBy: "K. Mehta"
+  },
+  {
+    id: 31,
+    name: "Surat",
+    code: "ST",
+    section: "Mumbai Central\u2013Borivali",
+    zone: "WR",
+    division: "Mumbai Central",
+    esp: "digitised",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: false },
+    versions: "ESP v2",
+    lastTime: "4 days ago",
+    lastBy: "R. Trivedi"
   }
 ];
 const DOCUMENT_FILTERS = [
@@ -2215,25 +2552,49 @@ const SECTION_SCOPE_LABELS = {
   "EE-SLO": "Eluru\u2013Samalkot"
 };
 const ZONE_OPTIONS = [
-  { value: "SCoR", label: "SCoR \u2014 South Coast Railway" }
+  { value: "SCoR", label: "SCoR \u2014 South Coast Railway" },
+  { value: "SCR",  label: "SCR \u2014 South Central Railway" },
+  { value: "SR",   label: "SR \u2014 Southern Railway" },
+  { value: "CR",   label: "CR \u2014 Central Railway" },
+  { value: "NR",   label: "NR \u2014 Northern Railway" },
+  { value: "WR",   label: "WR \u2014 Western Railway" }
 ];
 const DIVISION_OPTIONS = {
   SCoR: ["Visakhapatnam", "Vijayawada", "Guntur", "Guntakal"],
-  CR: ["Mumbai", "Pune", "Nagpur", "Solapur"],
-  NR: ["Delhi", "Ambala", "Lucknow", "Firozpur"],
-  ER: ["Howrah", "Sealdah", "Asansol", "Malda"]
+  SCR:  ["Secunderabad", "Hyderabad", "Guntakal", "Nanded"],
+  SR:   ["Chennai", "Tiruchirappalli", "Madurai", "Salem"],
+  CR:   ["Mumbai CST", "Pune", "Nagpur", "Solapur"],
+  NR:   ["Delhi", "Ambala", "Lucknow", "Firozpur"],
+  WR:   ["Mumbai Central", "Vadodara", "Ahmedabad", "Ratlam"]
 };
 const SECTION_OPTIONS = {
   Visakhapatnam: ["Visakhapatnam\u2013Vizianagaram", "Visakhapatnam\u2013Bimlipatnam", "Visakhapatnam\u2013Duvvada"],
   Vijayawada: ["Vijayawada\u2013Gudivada", "Vijayawada\u2013Eluru", "Eluru\u2013Samalkot", "Samalkot\u2013Kakinada"],
   Guntur: ["Guntur\u2013Tenali", "Guntur\u2013Nandyal", "Guntur\u2013Macherla"],
-  Guntakal: ["Guntakal\u2013Renigunta", "Guntakal\u2013Wadi", "Guntakal\u2013Dhone"]
+  Guntakal: ["Guntakal\u2013Renigunta", "Guntakal\u2013Wadi", "Guntakal\u2013Dhone"],
+  Secunderabad: ["Secunderabad\u2013Kazipet", "Secunderabad\u2013Lingampalli", "Secunderabad\u2013Malkajgiri"],
+  Hyderabad: ["Hyderabad\u2013Kachiguda", "Hyderabad\u2013Falaknuma", "Hyderabad\u2013Lingampalli"],
+  Nanded: ["Nanded\u2013Latur", "Nanded\u2013Aurangabad"],
+  Chennai: ["Chennai\u2013Tambaram", "Chennai\u2013Arakkonam", "Chennai\u2013Avadi"],
+  Tiruchirappalli: ["Tiruchirappalli\u2013Villupuram", "Tiruchirappalli\u2013Thanjavur"],
+  Madurai: ["Madurai\u2013Virudhunagar", "Madurai\u2013Dindigul"],
+  Salem: ["Salem\u2013Erode", "Salem\u2013Dharmapuri"],
+  "Mumbai CST": ["CST\u2013Thane", "CST\u2013Dadar", "Thane\u2013Kalyan"],
+  Pune: ["Pune\u2013Lonavala", "Pune\u2013Daund"],
+  Nagpur: ["Nagpur\u2013Wardha", "Nagpur\u2013Gondia"],
+  Solapur: ["Solapur\u2013Bijapur", "Solapur\u2013Kurduwadi"],
+  Delhi: ["Delhi\u2013Ghaziabad", "Delhi\u2013Faridabad", "Delhi\u2013Rohtak"],
+  Ambala: ["Ambala\u2013Ludhiana", "Ambala\u2013Saharanpur"],
+  Lucknow: ["Lucknow\u2013Kanpur", "Lucknow\u2013Sitapur"],
+  Firozpur: ["Firozpur\u2013Amritsar", "Firozpur\u2013Bathinda"],
+  "Mumbai Central": ["Mumbai Central\u2013Bandra", "Mumbai Central\u2013Borivali"],
+  Vadodara: ["Vadodara\u2013Anand", "Vadodara\u2013Godhra"],
+  Ahmedabad: ["Ahmedabad\u2013Gandhinagar", "Ahmedabad\u2013Sabarmati"],
+  Ratlam: ["Ratlam\u2013Ujjain", "Ratlam\u2013Nagda"]
 };
 const TRAIN_DIRECTIONS = [
-  "Up",
-  "Down",
-  "Up \u2194 Down",
-  "Bidirectional"
+  "Nominal \u2194 Reverse",
+  "Reverse \u2194 Nominal"
 ];
 const AURANGABAD_STATION_DRAFT = {
   zone: "SCoR",
@@ -2244,7 +2605,7 @@ const AURANGABAD_STATION_DRAFT = {
   stationTitle: "Machilipatnam",
   stationId: "MTM-120050",
   cll: "431.240",
-  trainDirection: "Up \u2194 Down"
+  trainDirection: "Nominal \u2194 Reverse"
 };
 const getCompleteness = (s) => {
   const segs = [
@@ -2454,6 +2815,29 @@ const StatusGuide = () => {
   }, [open]);
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { className: "dl-status-guide-btn", onClick: toggle }, /* @__PURE__ */ React.createElement(Icon, { name: "info", size: 11 }), " Status guide"), open && ReactDOM.createPortal(/* @__PURE__ */ React.createElement("div", { className: "dl-sg-overlay", onClick: () => setOpen(false) }, /* @__PURE__ */ React.createElement("div", { className: "dl-sg-modal", role: "dialog", "aria-modal": "true", "aria-labelledby": "status-guide-title", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "dl-sg-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { id: "status-guide-title", className: "dl-sg-title" }, "Document Status Guide"), /* @__PURE__ */ React.createElement("div", { className: "dl-sg-subtitle" }, "Statuses apply independently to ESP, SIP and LOP.")), /* @__PURE__ */ React.createElement("button", { className: "dl-sg-close", onClick: () => setOpen(false) }, /* @__PURE__ */ React.createElement(Icon, { name: "x", size: 13 }))), /* @__PURE__ */ React.createElement("div", { className: "dl-sg-rows" }, STATUS_GUIDE_ROWS.map((s, i) => /* @__PURE__ */ React.createElement(React.Fragment, { key: s.key }, s.key === "returned_correction" && /* @__PURE__ */ React.createElement("div", { className: "dl-sg-divider" }), /* @__PURE__ */ React.createElement("div", { className: "dl-sg-row" }, /* @__PURE__ */ React.createElement("span", { className: "dl-sg-num" }, s.n), /* @__PURE__ */ React.createElement("span", { className: "dl-sg-status-line" }, /* @__PURE__ */ React.createElement("span", { className: "dl-sg-status", "data-tone": s.tone }, s.pulse && /* @__PURE__ */ React.createElement("span", { className: "dl-sg-pulse" }), s.check && /* @__PURE__ */ React.createElement(Icon, { name: "check", size: 10 }), s.label), s.espOnly && /* @__PURE__ */ React.createElement("span", { className: "dl-sg-esp" }, "ESP")), /* @__PURE__ */ React.createElement("span", { className: "dl-sg-desc" }, s.desc))))), /* @__PURE__ */ React.createElement("div", { className: "dl-sg-footer" }, /* @__PURE__ */ React.createElement("strong", null, "Validated"), " is ESP-only. ", /* @__PURE__ */ React.createElement("strong", null, "Returned for Correction"), " loops back to Under Review after amendments."))), document.body));
 };
+const getAddStationErrors = (form, existingCodes) => {
+  const errors = {};
+  const name = form.stationName.trim();
+  if (!name) errors.stationName = "Station name is required.";
+  else if (name.length < 2) errors.stationName = "Must be at least 2 characters.";
+  else if (name.length > 60) errors.stationName = "Must be 60 characters or fewer.";
+  const code = form.stationCode.trim().toUpperCase();
+  if (!code) errors.stationCode = "Station code is required.";
+  else if (code.length < 2) errors.stationCode = "Code must be at least 2 characters.";
+  else if (existingCodes.has(code)) errors.stationCode = "Code " + code + " already exists in the system.";
+  if (form.stationTitle.trim().length > 80) errors.stationTitle = "Must be 80 characters or fewer.";
+  const stationId = form.stationId.trim();
+  if (stationId && !/^[A-Za-z0-9\-]+$/.test(stationId)) errors.stationId = "Only letters, numbers and hyphens allowed.";
+  else if (stationId && stationId.length > 20) errors.stationId = "Must be 20 characters or fewer.";
+  const cll = form.cll.trim();
+  if (cll && isNaN(Number(cll))) errors.cll = "Must be a valid decimal number (e.g. 433.560).";
+  else if (cll && Number(cll) < 0) errors.cll = "Must be a positive value.";
+  if (!form.trainDirection) errors.trainDirection = "Please select a train direction.";
+  if (!form.zone) errors.zone = "Zone is required.";
+  if (!form.division) errors.division = "Division is required.";
+  if (!form.section) errors.section = "Section is required.";
+  return errors;
+};
 const AddStationModal = ({ initialZone, initialDivision, initialSectionScope, existingCodes, onAdd, onClose }) => {
   const resolveDivision = (zone, division) => (DIVISION_OPTIONS[zone] || []).includes(division) ? division : (DIVISION_OPTIONS[zone] || [])[0] || "";
   const resolveSection = (division, sectionScope) => {
@@ -2462,17 +2846,16 @@ const AddStationModal = ({ initialZone, initialDivision, initialSectionScope, ex
     return sections.includes(scoped) ? scoped : sections[0] || "";
   };
   const startDivision = resolveDivision(initialZone, initialDivision);
-  const [form, setForm] = useStateLib({
-    ...AURANGABAD_STATION_DRAFT
-  });
-  const code = form.stationCode.trim().toUpperCase();
-  const name = form.stationName.trim();
-  const duplicateCode = code && existingCodes.has(code);
-  const canSubmit = name && code && form.section && !duplicateCode;
+  const [form, setForm] = useStateLib({ ...AURANGABAD_STATION_DRAFT });
+  const [touched, setTouched] = useStateLib({});
+  const [submitted, setSubmitted] = useStateLib(false);
+  const errors = getAddStationErrors(form, existingCodes);
+  const hasErrors = Object.keys(errors).length > 0;
+  const canSubmit = !hasErrors;
+  const showErr = (key) => (touched[key] || submitted) && errors[key];
+  const touch = (key) => () => setTouched((prev) => ({ ...prev, [key]: true }));
   React.useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
@@ -2483,24 +2866,19 @@ const AddStationModal = ({ initialZone, initialDivision, initialSectionScope, ex
   }));
   const updateZone = (value) => {
     const division = resolveDivision(value, "");
-    setForm((prev) => ({
-      ...prev,
-      zone: value,
-      division,
-      section: resolveSection(division, "all")
-    }));
+    setForm((prev) => ({ ...prev, zone: value, division, section: resolveSection(division, "all") }));
   };
   const updateDivision = (value) => setForm((prev) => ({
-    ...prev,
-    division: value,
-    section: resolveSection(value, "all")
+    ...prev, division: value, section: resolveSection(value, "all")
   }));
   const submit = (e) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    setSubmitted(true);
+    if (hasErrors) return;
+    const name = form.stationName.trim();
+    const code = form.stationCode.trim().toUpperCase();
     onAdd({
-      name,
-      code,
+      name, code,
       section: form.section,
       zone: form.zone,
       division: form.division,
@@ -2510,78 +2888,140 @@ const AddStationModal = ({ initialZone, initialDivision, initialSectionScope, ex
       trainDirection: form.trainDirection
     });
   };
-  return ReactDOM.createPortal(/* @__PURE__ */ React.createElement("div", { className: "dl-add-overlay", onClick: onClose }, /* @__PURE__ */ React.createElement(
-    "form",
-    {
-      className: "dl-add-modal",
-      role: "dialog",
-      "aria-modal": "true",
-      "aria-labelledby": "add-station-title",
-      onClick: (e) => e.stopPropagation(),
-      onSubmit: submit
-    },
-    /* @__PURE__ */ React.createElement("div", { className: "dl-add-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "dl-add-title", id: "add-station-title" }, "Add New Station"), /* @__PURE__ */ React.createElement("div", { className: "dl-add-subtitle" }, "Create a station record and add basic railway details.")), /* @__PURE__ */ React.createElement("button", { type: "button", className: "dl-add-close", onClick: onClose }, /* @__PURE__ */ React.createElement(Icon, { name: "x", size: 15 }))),
-    /* @__PURE__ */ React.createElement("div", { className: "dl-add-body" }, /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Station"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.stationName,
-        placeholder: "e.g. Tirupati",
-        onChange: (e) => updateName(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Code"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.stationCode,
-        placeholder: "e.g. BIWK",
-        maxLength: 8,
-        onChange: (e) => setForm((prev) => ({ ...prev, stationCode: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") }))
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Station Title"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.stationTitle,
-        placeholder: "Display title",
-        onChange: (e) => setForm((prev) => ({ ...prev, stationTitle: e.target.value }))
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Station ID"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.stationId,
-        placeholder: "e.g. 24055",
-        onChange: (e) => setForm((prev) => ({ ...prev, stationId: e.target.value }))
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Central Line Location"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.cll,
-        placeholder: "e.g. 433.560",
-        onChange: (e) => setForm((prev) => ({ ...prev, cll: e.target.value }))
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Train Direction"), /* @__PURE__ */ React.createElement(
-      "select",
-      {
-        value: form.trainDirection,
-        onChange: (e) => setForm((prev) => ({ ...prev, trainDirection: e.target.value }))
+  const FErr = (key) => showErr(key) ? React.createElement("div", { className: "dl-field-error" }, errors[key]) : null;
+  const Req = () => React.createElement("span", { className: "dl-req" }, " *");
+  return ReactDOM.createPortal(
+    React.createElement("div", { className: "dl-add-overlay", onClick: onClose },
+      React.createElement("form", {
+        className: "dl-add-modal",
+        role: "dialog",
+        "aria-modal": "true",
+        "aria-labelledby": "add-station-title",
+        onClick: (e) => e.stopPropagation(),
+        onSubmit: submit
       },
-      TRAIN_DIRECTIONS.map(
-        (direction) => /* @__PURE__ */ React.createElement("option", { key: direction, value: direction }, direction)
+        React.createElement("div", { className: "dl-add-head" },
+          React.createElement("div", null,
+            React.createElement("div", { className: "dl-add-title", id: "add-station-title" }, "Add New Station"),
+            React.createElement("div", { className: "dl-add-subtitle" }, "Create a station record and add basic railway details.")
+          ),
+          React.createElement("button", { type: "button", className: "dl-add-close", onClick: onClose }, React.createElement(Icon, { name: "x", size: 15 }))
+        ),
+        React.createElement("div", { className: "dl-add-body" },
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Station", React.createElement(Req)),
+            React.createElement("input", {
+              value: form.stationName,
+              placeholder: "e.g. Tirupati",
+              onBlur: touch("stationName"),
+              "data-error": showErr("stationName") ? "true" : undefined,
+              onChange: (e) => updateName(e.target.value)
+            }),
+            FErr("stationName")
+          ),
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Code", React.createElement(Req)),
+            React.createElement("input", {
+              value: form.stationCode,
+              placeholder: "e.g. BIWK",
+              maxLength: 8,
+              onBlur: touch("stationCode"),
+              "data-error": showErr("stationCode") ? "true" : undefined,
+              onChange: (e) => setForm((prev) => ({ ...prev, stationCode: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") }))
+            }),
+            FErr("stationCode")
+          ),
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Station Title"),
+            React.createElement("input", {
+              value: form.stationTitle,
+              placeholder: "Display title",
+              onBlur: touch("stationTitle"),
+              "data-error": showErr("stationTitle") ? "true" : undefined,
+              onChange: (e) => setForm((prev) => ({ ...prev, stationTitle: e.target.value }))
+            }),
+            FErr("stationTitle")
+          ),
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Station ID"),
+            React.createElement("input", {
+              value: form.stationId,
+              placeholder: "e.g. 24055",
+              onBlur: touch("stationId"),
+              "data-error": showErr("stationId") ? "true" : undefined,
+              onChange: (e) => setForm((prev) => ({ ...prev, stationId: e.target.value }))
+            }),
+            FErr("stationId")
+          ),
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Central Line Location"),
+            React.createElement("input", {
+              value: form.cll,
+              placeholder: "e.g. 433.560",
+              onBlur: touch("cll"),
+              "data-error": showErr("cll") ? "true" : undefined,
+              onChange: (e) => setForm((prev) => ({ ...prev, cll: e.target.value }))
+            }),
+            FErr("cll")
+          ),
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Train Direction", React.createElement(Req)),
+            React.createElement("select", {
+              value: form.trainDirection,
+              onBlur: touch("trainDirection"),
+              "data-error": showErr("trainDirection") ? "true" : undefined,
+              onChange: (e) => setForm((prev) => ({ ...prev, trainDirection: e.target.value }))
+            },
+              TRAIN_DIRECTIONS.map((direction) => React.createElement("option", { key: direction, value: direction }, direction))
+            ),
+            FErr("trainDirection")
+          ),
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Zone", React.createElement(Req)),
+            React.createElement("select", {
+              value: form.zone,
+              onBlur: touch("zone"),
+              "data-error": showErr("zone") ? "true" : undefined,
+              onChange: (e) => updateZone(e.target.value)
+            },
+              ZONE_OPTIONS.map((option) => React.createElement("option", { key: option.value, value: option.value }, option.label))
+            ),
+            FErr("zone")
+          ),
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Division", React.createElement(Req)),
+            React.createElement("select", {
+              value: form.division,
+              onBlur: touch("division"),
+              "data-error": showErr("division") ? "true" : undefined,
+              onChange: (e) => updateDivision(e.target.value)
+            },
+              (DIVISION_OPTIONS[form.zone] || []).map((division) => React.createElement("option", { key: division, value: division }, division))
+            ),
+            FErr("division")
+          ),
+          React.createElement("div", { className: "dl-add-field" },
+            React.createElement("label", null, "Section", React.createElement(Req)),
+            React.createElement("select", {
+              value: form.section,
+              onBlur: touch("section"),
+              "data-error": showErr("section") ? "true" : undefined,
+              onChange: (e) => setForm((prev) => ({ ...prev, section: e.target.value }))
+            },
+              (SECTION_OPTIONS[form.division] || []).map((section) => React.createElement("option", { key: section, value: section }, section))
+            ),
+            FErr("section")
+          ),
+          React.createElement("div", { className: "dl-add-note" }, "This creates the station registry shell. ESP, SIP, LOP and survey data start empty so the next step can be document upload or survey linking.")
+        ),
+        React.createElement("div", { className: "dl-add-actions" },
+          React.createElement(Btn, { type: "button", variant: "secondary", onClick: onClose }, "Cancel"),
+          React.createElement(Btn, { type: "submit", variant: "accent", leadingIcon: "plus", disabled: !canSubmit }, "Add Station")
+        )
       )
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Zone"), /* @__PURE__ */ React.createElement("select", { value: form.zone, onChange: (e) => updateZone(e.target.value) }, ZONE_OPTIONS.map(
-      (option) => /* @__PURE__ */ React.createElement("option", { key: option.value, value: option.value }, option.label)
-    ))), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Division"), /* @__PURE__ */ React.createElement("select", { value: form.division, onChange: (e) => updateDivision(e.target.value) }, (DIVISION_OPTIONS[form.zone] || []).map(
-      (division) => /* @__PURE__ */ React.createElement("option", { key: division, value: division }, division)
-    ))), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Section"), /* @__PURE__ */ React.createElement(
-      "select",
-      {
-        value: form.section,
-        onChange: (e) => setForm((prev) => ({ ...prev, section: e.target.value }))
-      },
-      (SECTION_OPTIONS[form.division] || []).map(
-        (section) => /* @__PURE__ */ React.createElement("option", { key: section, value: section }, section)
-      )
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-note" }, "This creates the station registry shell. ESP, SIP, LOP and survey data start empty so the next step can be document upload or survey linking."), duplicateCode && /* @__PURE__ */ React.createElement("div", { className: "dl-add-error" }, "Station code ", code, " already exists in the Digital Library.")),
-    /* @__PURE__ */ React.createElement("div", { className: "dl-add-actions" }, /* @__PURE__ */ React.createElement(Btn, { type: "button", variant: "secondary", onClick: onClose }, "Cancel"), /* @__PURE__ */ React.createElement(Btn, { type: "submit", variant: "accent", leadingIcon: "plus", disabled: !canSubmit }, "Add Station"))
-  )), document.body);
+    ),
+    document.body
+  );
 };
 const BULK_REQUIRED_COLUMNS = [
   "Zone",
@@ -3319,6 +3759,8 @@ const DigitalLibraryPage = () => {
   const [currentPage, setCurrentPage] = useStateLib(1);
   const rows = useMemoLib(() => {
     let list = stations;
+    if (zone) list = list.filter((s) => s.zone === zone);
+    if (division) list = list.filter((s) => s.division === division);
     const sectionMap = {
       "VJA-GDV": "Vijayawada\u2013Gudivada",
       "GNT-TEL": "Guntur\u2013Tenali",
@@ -3368,7 +3810,7 @@ const DigitalLibraryPage = () => {
       const cmp = String(av).localeCompare(String(bv));
       return sort.dir === "asc" ? cmp : -cmp;
     });
-  }, [stations, search, sort, sectionScope, filters]);
+  }, [stations, search, sort, zone, division, sectionScope, filters]);
   const existingCodes = useMemoLib(
     () => new Set(stations.map((s) => s.code.toUpperCase())),
     [stations]

@@ -372,6 +372,31 @@ const Canvas: React.FC = () => {
   const [rubberBand, setRubberBandState] = useState<RubberBand | null>(null);
   const [draftCommentPos, setDraftCommentPos] = useState<{ x: number; y: number } | null>(null);
 
+  /* ── Context menu ──────────────────────────────────────────────── */
+  const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
+  const ctxMenuRef = useRef<HTMLDivElement>(null);
+  const ctxMenuOpenRef = useRef(false);
+  ctxMenuOpenRef.current = !!ctxMenu;
+  const clipboardRef = useRef<typeof objects[number] | null>(null);
+
+  useEffect(() => {
+    if (!ctxMenu) return;
+    const handler = (e: MouseEvent) => {
+      if (ctxMenuRef.current && !ctxMenuRef.current.contains(e.target as Node)) {
+        setCtxMenu(null);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [ctxMenu]);
+
+  const handleContextMenu = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setCtxMenu({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  }, []);
+
   // Ref for selectedObjectIds so the stable keyboard handler can read the latest value
   const selectedObjectIdsRef = useRef(selectedObjectIds);
   selectedObjectIdsRef.current = selectedObjectIds;
@@ -531,8 +556,9 @@ const Canvas: React.FC = () => {
         }
       }
 
-      // Escape — cancel draft text OR cancel current tool and return to select.
+      // Escape — close context menu first, then other cancel logic
       if (e.key === 'Escape') {
+        if (ctxMenuOpenRef.current) { setCtxMenu(null); return; }
         if (draftRef.current) {
           cancelDraftText();
           return;
@@ -727,6 +753,7 @@ const Canvas: React.FC = () => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onDoubleClick={handleDoubleClick}
+      onContextMenu={handleContextMenu}
       style={{
         position: 'fixed',
         top: 'var(--header-h)',
@@ -1059,6 +1086,99 @@ const Canvas: React.FC = () => {
 
       {/* HUD: zoom % + world coordinates */}
       <CanvasOverlay zoom={viewport.zoom} worldX={mouseWorld.x} worldY={mouseWorld.y} />
+
+      {/* ── Right-click context menu ── */}
+      {ctxMenu && (() => {
+        const rect = canvasRef.current?.getBoundingClientRect();
+        const cw = rect?.width  ?? window.innerWidth;
+        const ch = rect?.height ?? window.innerHeight;
+        const menuW = 228, menuH = 320;
+        const left = ctxMenu.x + menuW > cw ? ctxMenu.x - menuW : ctxMenu.x;
+        const top  = ctxMenu.y + menuH > ch ? ctxMenu.y - menuH : ctxMenu.y;
+
+        const hasSelection = !!(selectedObjectId || selectedObjectIds.length);
+        const selId = selectedObjectId ?? selectedObjectIds[0] ?? null;
+
+        type Row =
+          | { k: 'sep' }
+          | { k: 'item'; label: string; shortcut?: string; sub?: boolean; disabled?: boolean; action: () => void };
+        const rows: Row[] = [
+          { k: 'item', label: 'Copy',           shortcut: 'Ctrl C',       disabled: !hasSelection, action: () => { const o = selId ? objects.find(x => x.id === selId) : null; if (o) clipboardRef.current = o; setCtxMenu(null); } },
+          { k: 'item', label: 'Cut',             shortcut: 'Ctrl X',       disabled: !hasSelection, action: () => { const o = selId ? objects.find(x => x.id === selId) : null; if (o) { clipboardRef.current = o; deleteSelectedObjects(); } setCtxMenu(null); } },
+          { k: 'item', label: 'Paste',           shortcut: 'Ctrl V',       disabled: !clipboardRef.current, action: () => { const cb = clipboardRef.current; if (cb) addObject({ ...cb, id: `paste-${Date.now()}`, x: cb.x + 20, y: cb.y + 20 }); setCtxMenu(null); } },
+          { k: 'item', label: 'Paste in place',  shortcut: 'Ctrl Shift V', disabled: !clipboardRef.current, action: () => { const cb = clipboardRef.current; if (cb) addObject({ ...cb, id: `paste-${Date.now()}` }); setCtxMenu(null); } },
+          { k: 'item', label: 'Delete',          shortcut: 'Del',          disabled: !hasSelection, action: () => { deleteSelectedObjects(); setCtxMenu(null); } },
+          { k: 'sep' },
+          { k: 'item', label: 'Select similar',  sub: true,  action: () => setCtxMenu(null) },
+          { k: 'item', label: 'Edit',            shortcut: 'Ctrl E', disabled: !hasSelection, action: () => { if (selId) enterTextEditMode(selId); setCtxMenu(null); } },
+          { k: 'item', label: 'Convert',         sub: true,  action: () => setCtxMenu(null) },
+          { k: 'item', label: 'Transform',       sub: true,  action: () => setCtxMenu(null) },
+          { k: 'item', label: 'Group',           shortcut: 'G', disabled: !hasSelection, action: () => setCtxMenu(null) },
+          { k: 'item', label: 'Block',           shortcut: 'B', disabled: !hasSelection, action: () => setCtxMenu(null) },
+          { k: 'sep' },
+          { k: 'item', label: 'Arrange',         sub: true,  action: () => setCtxMenu(null) },
+          { k: 'item', label: 'Hide',            shortcut: 'Ctrl H', disabled: !hasSelection, action: () => { if (selId) updateObject(selId, { visible: false } as any); setCtxMenu(null); } },
+          { k: 'item', label: 'Lock',            shortcut: 'Ctrl L', disabled: !hasSelection, action: () => { if (selId) updateObject(selId, { locked: true } as any); setCtxMenu(null); } },
+          { k: 'sep' },
+          { k: 'item', label: 'Open documentation', action: () => { window.open('https://docs.pragathirail.in', '_blank'); setCtxMenu(null); } },
+        ];
+
+        return (
+          <div
+            ref={ctxMenuRef}
+            onMouseDown={e => e.stopPropagation()}
+            style={{
+              position: 'absolute', left, top, width: menuW,
+              background: '#ffffff',
+              border: '1px solid #e5e7eb',
+              borderRadius: 10,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.07)',
+              padding: '4px 0',
+              zIndex: 400,
+              overflow: 'hidden',
+              fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+              fontSize: 13,
+            }}
+          >
+            {rows.map((row, i) => {
+              if (row.k === 'sep') {
+                return <div key={i} style={{ height: 1, background: '#f3f4f6', margin: '3px 0' }} />;
+              }
+              const { label, shortcut, sub, disabled, action } = row;
+              return (
+                <button
+                  key={i}
+                  disabled={disabled}
+                  onMouseDown={e => { e.stopPropagation(); if (!disabled) action(); }}
+                  style={{
+                    display: 'flex', alignItems: 'center',
+                    width: '100%', padding: '6px 14px',
+                    background: 'transparent', border: 'none',
+                    cursor: disabled ? 'default' : 'pointer',
+                    textAlign: 'left', color: disabled ? '#c0c7d0' : '#111827',
+                    fontFamily: 'inherit', fontSize: 13,
+                    transition: 'background 0.08s',
+                  }}
+                  onMouseEnter={e => { if (!disabled) e.currentTarget.style.background = '#f3f4f6'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                >
+                  <span style={{ flex: 1 }}>{label}</span>
+                  {shortcut && (
+                    <span style={{ fontSize: 11.5, color: '#9ca3af', marginLeft: 12, whiteSpace: 'nowrap' }}>
+                      {shortcut}
+                    </span>
+                  )}
+                  {sub && (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, flexShrink: 0 }}>
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        );
+      })()}
     </main>
   );
 };

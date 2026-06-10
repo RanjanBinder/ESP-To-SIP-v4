@@ -1,3 +1,23 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 const { useState: useStateLib, useMemo: useMemoLib } = React;
 const DL_TWEAK_DEFAULTS = (
   /*EDITMODE-BEGIN*/
@@ -814,6 +834,23 @@ const libCSS = `
   border-color: var(--accent);
   background: var(--paper);
   box-shadow: var(--shadow-focus);
+}
+.dl-field-error {
+  font-size: 11px;
+  color: var(--danger-text);
+  line-height: 1.35;
+  margin-top: -1px;
+}
+.dl-req { color: var(--danger-text); font-weight: 400; }
+.dl-add-field input[data-error="true"],
+.dl-add-field select[data-error="true"] {
+  border-color: color-mix(in srgb, var(--danger-text) 50%, transparent);
+  background: color-mix(in srgb, var(--danger-text) 5%, var(--ink-50));
+}
+.dl-add-field input[data-error="true"]:focus,
+.dl-add-field select[data-error="true"]:focus {
+  border-color: var(--danger-text);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger-text) 12%, transparent);
 }
 .dl-bulk-preview {
   grid-column: 1 / -1;
@@ -2161,6 +2198,326 @@ const ALL_STATIONS = [
     versions: "ESP v2",
     lastTime: "3 days ago",
     lastBy: "T. Babu"
+  },
+  {
+    id: 12,
+    name: "Secunderabad Junction",
+    code: "SC",
+    section: "Secunderabad\u2013Kazipet",
+    zone: "SCR",
+    division: "Secunderabad",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v5 \xB7 SIP v3 \xB7 LOP v2",
+    lastTime: "2 hours ago",
+    lastBy: "K. Reddy"
+  },
+  {
+    id: 13,
+    name: "Hyderabad Deccan",
+    code: "HYB",
+    section: "Hyderabad\u2013Falaknuma",
+    zone: "SCR",
+    division: "Hyderabad",
+    esp: "approved",
+    sip: "under_review",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: true, ts: false },
+    versions: "ESP v3 \xB7 SIP v1",
+    lastTime: "1 day ago",
+    lastBy: "M. Rao"
+  },
+  {
+    id: 14,
+    name: "Kachiguda",
+    code: "KCG",
+    section: "Hyderabad\u2013Kachiguda",
+    zone: "SCR",
+    division: "Hyderabad",
+    esp: "digitised",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: true },
+    versions: "ESP v2",
+    lastTime: "4 hours ago",
+    lastBy: "P. Verma"
+  },
+  {
+    id: 15,
+    name: "Nanded",
+    code: "NED",
+    section: "Nanded\u2013Latur",
+    zone: "SCR",
+    division: "Nanded",
+    esp: "pending_review",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: false, ts: true },
+    versions: null,
+    lastTime: "2 days ago",
+    lastBy: "S. Patil"
+  },
+  {
+    id: 16,
+    name: "Chennai Central",
+    code: "MAS",
+    section: "Chennai\u2013Tambaram",
+    zone: "SR",
+    division: "Chennai",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v6 \xB7 SIP v4 \xB7 LOP v3",
+    lastTime: "30 min ago",
+    lastBy: "R. Iyer"
+  },
+  {
+    id: 17,
+    name: "Tambaram",
+    code: "TBM",
+    section: "Chennai\u2013Tambaram",
+    zone: "SR",
+    division: "Chennai",
+    esp: "approved",
+    sip: "digitised",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: false, ts: true },
+    versions: "ESP v3 \xB7 SIP v1",
+    lastTime: "6 hours ago",
+    lastBy: "A. Kumar"
+  },
+  {
+    id: 18,
+    name: "Madurai Junction",
+    code: "MDU",
+    section: "Madurai\u2013Virudhunagar",
+    zone: "SR",
+    division: "Madurai",
+    esp: "validated",
+    sip: "pending_review",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: true, ts: false },
+    versions: "ESP v4 \xB7 SIP v1",
+    lastTime: "3 hours ago",
+    lastBy: "V. Sundaram"
+  },
+  {
+    id: 19,
+    name: "Salem Junction",
+    code: "SA",
+    section: "Salem\u2013Erode",
+    zone: "SR",
+    division: "Salem",
+    esp: "under_review",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: false },
+    versions: null,
+    lastTime: "1 day ago",
+    lastBy: "D. Krishnan"
+  },
+  {
+    id: 20,
+    name: "Chhatrapati Shivaji Maharaj Terminus",
+    code: "CSMT",
+    section: "CST\u2013Thane",
+    zone: "CR",
+    division: "Mumbai CST",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v7 \xB7 SIP v5 \xB7 LOP v3",
+    lastTime: "1 hour ago",
+    lastBy: "N. Joshi"
+  },
+  {
+    id: 21,
+    name: "Thane",
+    code: "TNA",
+    section: "CST\u2013Thane",
+    zone: "CR",
+    division: "Mumbai CST",
+    esp: "approved",
+    sip: "under_review",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: true, ts: false },
+    versions: "ESP v4 \xB7 SIP v2",
+    lastTime: "5 hours ago",
+    lastBy: "P. Desai"
+  },
+  {
+    id: 22,
+    name: "Kalyan Junction",
+    code: "KYN",
+    section: "Thane\u2013Kalyan",
+    zone: "CR",
+    division: "Mumbai CST",
+    esp: "digitised",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: true },
+    versions: "ESP v2",
+    lastTime: "2 days ago",
+    lastBy: "S. More"
+  },
+  {
+    id: 23,
+    name: "Pune Junction",
+    code: "PUNE",
+    section: "Pune\u2013Lonavala",
+    zone: "CR",
+    division: "Pune",
+    esp: "approved",
+    sip: "approved",
+    lop: "digitised",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v5 \xB7 SIP v3 \xB7 LOP v1",
+    lastTime: "4 hours ago",
+    lastBy: "A. Kulkarni"
+  },
+  {
+    id: 24,
+    name: "Nagpur Junction",
+    code: "NGP",
+    section: "Nagpur\u2013Wardha",
+    zone: "CR",
+    division: "Nagpur",
+    esp: "pending_review",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: false, ts: true },
+    versions: null,
+    lastTime: "3 days ago",
+    lastBy: "R. Tiwari"
+  },
+  {
+    id: 25,
+    name: "New Delhi",
+    code: "NDLS",
+    section: "Delhi\u2013Ghaziabad",
+    zone: "NR",
+    division: "Delhi",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v8 \xB7 SIP v6 \xB7 LOP v4",
+    lastTime: "15 min ago",
+    lastBy: "V. Singh"
+  },
+  {
+    id: 26,
+    name: "Hazrat Nizamuddin",
+    code: "NZM",
+    section: "Delhi\u2013Faridabad",
+    zone: "NR",
+    division: "Delhi",
+    esp: "approved",
+    sip: "digitised",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: false, ts: true },
+    versions: "ESP v4 \xB7 SIP v1",
+    lastTime: "8 hours ago",
+    lastBy: "M. Sharma"
+  },
+  {
+    id: 27,
+    name: "Ambala Cantonment",
+    code: "UMB",
+    section: "Ambala\u2013Ludhiana",
+    zone: "NR",
+    division: "Ambala",
+    esp: "under_review",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: false },
+    versions: null,
+    lastTime: "2 days ago",
+    lastBy: "H. Gupta"
+  },
+  {
+    id: 28,
+    name: "Mumbai Central",
+    code: "MMCT",
+    section: "Mumbai Central\u2013Bandra",
+    zone: "WR",
+    division: "Mumbai Central",
+    esp: "approved",
+    sip: "approved",
+    lop: "approved",
+    toc: true,
+    survey: { lidar: true, ortho: true, ts: true },
+    versions: "ESP v6 \xB7 SIP v4 \xB7 LOP v2",
+    lastTime: "2 hours ago",
+    lastBy: "F. Patel"
+  },
+  {
+    id: 29,
+    name: "Vadodara Junction",
+    code: "BRC",
+    section: "Vadodara\u2013Anand",
+    zone: "WR",
+    division: "Vadodara",
+    esp: "approved",
+    sip: "pending_review",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: true, ts: false },
+    versions: "ESP v3 \xB7 SIP v1",
+    lastTime: "6 hours ago",
+    lastBy: "D. Shah"
+  },
+  {
+    id: 30,
+    name: "Ahmedabad Junction",
+    code: "ADI",
+    section: "Ahmedabad\u2013Sabarmati",
+    zone: "WR",
+    division: "Ahmedabad",
+    esp: "validated",
+    sip: "uploaded",
+    lop: null,
+    toc: false,
+    survey: { lidar: true, ortho: false, ts: true },
+    versions: "ESP v4 \xB7 SIP v1",
+    lastTime: "1 day ago",
+    lastBy: "K. Mehta"
+  },
+  {
+    id: 31,
+    name: "Surat",
+    code: "ST",
+    section: "Mumbai Central\u2013Borivali",
+    zone: "WR",
+    division: "Mumbai Central",
+    esp: "digitised",
+    sip: null,
+    lop: null,
+    toc: false,
+    survey: { lidar: false, ortho: true, ts: false },
+    versions: "ESP v2",
+    lastTime: "4 days ago",
+    lastBy: "R. Trivedi"
   }
 ];
 const DOCUMENT_FILTERS = [
@@ -2215,25 +2572,49 @@ const SECTION_SCOPE_LABELS = {
   "EE-SLO": "Eluru\u2013Samalkot"
 };
 const ZONE_OPTIONS = [
-  { value: "SCoR", label: "SCoR \u2014 South Coast Railway" }
+  { value: "SCoR", label: "SCoR \u2014 South Coast Railway" },
+  { value: "SCR", label: "SCR \u2014 South Central Railway" },
+  { value: "SR", label: "SR \u2014 Southern Railway" },
+  { value: "CR", label: "CR \u2014 Central Railway" },
+  { value: "NR", label: "NR \u2014 Northern Railway" },
+  { value: "WR", label: "WR \u2014 Western Railway" }
 ];
 const DIVISION_OPTIONS = {
   SCoR: ["Visakhapatnam", "Vijayawada", "Guntur", "Guntakal"],
-  CR: ["Mumbai", "Pune", "Nagpur", "Solapur"],
+  SCR: ["Secunderabad", "Hyderabad", "Guntakal", "Nanded"],
+  SR: ["Chennai", "Tiruchirappalli", "Madurai", "Salem"],
+  CR: ["Mumbai CST", "Pune", "Nagpur", "Solapur"],
   NR: ["Delhi", "Ambala", "Lucknow", "Firozpur"],
-  ER: ["Howrah", "Sealdah", "Asansol", "Malda"]
+  WR: ["Mumbai Central", "Vadodara", "Ahmedabad", "Ratlam"]
 };
 const SECTION_OPTIONS = {
   Visakhapatnam: ["Visakhapatnam\u2013Vizianagaram", "Visakhapatnam\u2013Bimlipatnam", "Visakhapatnam\u2013Duvvada"],
   Vijayawada: ["Vijayawada\u2013Gudivada", "Vijayawada\u2013Eluru", "Eluru\u2013Samalkot", "Samalkot\u2013Kakinada"],
   Guntur: ["Guntur\u2013Tenali", "Guntur\u2013Nandyal", "Guntur\u2013Macherla"],
-  Guntakal: ["Guntakal\u2013Renigunta", "Guntakal\u2013Wadi", "Guntakal\u2013Dhone"]
+  Guntakal: ["Guntakal\u2013Renigunta", "Guntakal\u2013Wadi", "Guntakal\u2013Dhone"],
+  Secunderabad: ["Secunderabad\u2013Kazipet", "Secunderabad\u2013Lingampalli", "Secunderabad\u2013Malkajgiri"],
+  Hyderabad: ["Hyderabad\u2013Kachiguda", "Hyderabad\u2013Falaknuma", "Hyderabad\u2013Lingampalli"],
+  Nanded: ["Nanded\u2013Latur", "Nanded\u2013Aurangabad"],
+  Chennai: ["Chennai\u2013Tambaram", "Chennai\u2013Arakkonam", "Chennai\u2013Avadi"],
+  Tiruchirappalli: ["Tiruchirappalli\u2013Villupuram", "Tiruchirappalli\u2013Thanjavur"],
+  Madurai: ["Madurai\u2013Virudhunagar", "Madurai\u2013Dindigul"],
+  Salem: ["Salem\u2013Erode", "Salem\u2013Dharmapuri"],
+  "Mumbai CST": ["CST\u2013Thane", "CST\u2013Dadar", "Thane\u2013Kalyan"],
+  Pune: ["Pune\u2013Lonavala", "Pune\u2013Daund"],
+  Nagpur: ["Nagpur\u2013Wardha", "Nagpur\u2013Gondia"],
+  Solapur: ["Solapur\u2013Bijapur", "Solapur\u2013Kurduwadi"],
+  Delhi: ["Delhi\u2013Ghaziabad", "Delhi\u2013Faridabad", "Delhi\u2013Rohtak"],
+  Ambala: ["Ambala\u2013Ludhiana", "Ambala\u2013Saharanpur"],
+  Lucknow: ["Lucknow\u2013Kanpur", "Lucknow\u2013Sitapur"],
+  Firozpur: ["Firozpur\u2013Amritsar", "Firozpur\u2013Bathinda"],
+  "Mumbai Central": ["Mumbai Central\u2013Bandra", "Mumbai Central\u2013Borivali"],
+  Vadodara: ["Vadodara\u2013Anand", "Vadodara\u2013Godhra"],
+  Ahmedabad: ["Ahmedabad\u2013Gandhinagar", "Ahmedabad\u2013Sabarmati"],
+  Ratlam: ["Ratlam\u2013Ujjain", "Ratlam\u2013Nagda"]
 };
 const TRAIN_DIRECTIONS = [
-  "Up",
-  "Down",
-  "Up \u2194 Down",
-  "Bidirectional"
+  "Nominal \u2194 Reverse",
+  "Reverse \u2194 Nominal"
 ];
 const AURANGABAD_STATION_DRAFT = {
   zone: "SCoR",
@@ -2244,7 +2625,7 @@ const AURANGABAD_STATION_DRAFT = {
   stationTitle: "Machilipatnam",
   stationId: "MTM-120050",
   cll: "431.240",
-  trainDirection: "Up \u2194 Down"
+  trainDirection: "Nominal \u2194 Reverse"
 };
 const getCompleteness = (s) => {
   const segs = [
@@ -2332,22 +2713,22 @@ const getSurveySummary = (survey = {}) => {
   return labels.length ? labels.join(" \xB7 ") : "Empty";
 };
 const getStationDocuments = (station) => {
+  var _a, _b, _c;
   const documentRows = VISIBLE_DOCUMENT_TYPES.map((doc) => {
     const state = getDocumentState(station, doc.key);
     const status = normalizeDocumentStatus(state);
     const latestVersion = getLatestApprovedVersion(station, doc.key, status);
     const available = latestVersion !== "Empty";
-    return {
-      ...doc,
+    return __spreadProps(__spreadValues({}, doc), {
       available,
       latestVersion,
       status,
       tone: getDocumentTone(status),
       lastUpdated: available ? station.lastTime : "\u2014",
       action: "View"
-    };
+    });
   });
-  const hasSurvey = station.survey?.lidar || station.survey?.ortho || station.survey?.ts;
+  const hasSurvey = ((_a = station.survey) == null ? void 0 : _a.lidar) || ((_b = station.survey) == null ? void 0 : _b.ortho) || ((_c = station.survey) == null ? void 0 : _c.ts);
   return [
     ...documentRows,
     {
@@ -2398,9 +2779,9 @@ const DocumentDetailsPopover = ({ station, documents, onView }) => {
     if (!doc.available) return;
     setHoverOpen(false);
     setModalOpen(false);
-    onView?.(doc, station);
+    onView == null ? void 0 : onView(doc, station);
   };
-  return /* @__PURE__ */ React.createElement("div", { className: "dl-doc-summary", onClick: (event) => event.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "dl-dot-row", role: "button", "aria-label": `${availableCount} documents — click for details`, onClick: openModal }, documents.filter((d) => d.key !== "survey").map((doc) => /* @__PURE__ */ React.createElement("div", { className: "dl-dot-wrap", key: doc.key }, /* @__PURE__ */ React.createElement("div", { className: "dl-dot", "data-tone": doc.tone }), /* @__PURE__ */ React.createElement("span", { className: "dl-dot-tip" }, doc.label, " \xB7 ", doc.status)))), modalOpen && /* @__PURE__ */ React.createElement("div", { className: "dl-doc-modal-layer", role: "presentation", onClick: () => setModalOpen(false) }, /* @__PURE__ */ React.createElement("div", { className: "dl-doc-popover", role: "dialog", "aria-modal": "true", "aria-label": `Document details for ${station.name}`, onClick: (event) => event.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "dl-doc-popover-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "dl-doc-popover-title" }, "Document Details"), /* @__PURE__ */ React.createElement("div", { className: "dl-doc-popover-sub" }, station.name, " \xB7 ", station.code)), /* @__PURE__ */ React.createElement("button", { className: "dl-doc-popover-close", type: "button", "aria-label": "Close document details", onClick: () => setModalOpen(false) }, /* @__PURE__ */ React.createElement(Icon, { name: "x", size: 13 }))), /* @__PURE__ */ React.createElement(DocumentDetailsTable, { documents, onView: viewDocument }))));
+  return /* @__PURE__ */ React.createElement("div", { className: "dl-doc-summary", onClick: (event) => event.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "dl-dot-row", role: "button", "aria-label": `${availableCount} documents \u2014 click for details`, onClick: openModal }, documents.filter((d) => d.key !== "survey").map((doc) => /* @__PURE__ */ React.createElement("div", { className: "dl-dot-wrap", key: doc.key }, /* @__PURE__ */ React.createElement("div", { className: "dl-dot", "data-tone": doc.tone }), /* @__PURE__ */ React.createElement("span", { className: "dl-dot-tip" }, doc.label, " \xB7 ", doc.status)))), modalOpen && /* @__PURE__ */ React.createElement("div", { className: "dl-doc-modal-layer", role: "presentation", onClick: () => setModalOpen(false) }, /* @__PURE__ */ React.createElement("div", { className: "dl-doc-popover", role: "dialog", "aria-modal": "true", "aria-label": `Document details for ${station.name}`, onClick: (event) => event.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "dl-doc-popover-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "dl-doc-popover-title" }, "Document Details"), /* @__PURE__ */ React.createElement("div", { className: "dl-doc-popover-sub" }, station.name, " \xB7 ", station.code)), /* @__PURE__ */ React.createElement("button", { className: "dl-doc-popover-close", type: "button", "aria-label": "Close document details", onClick: () => setModalOpen(false) }, /* @__PURE__ */ React.createElement(Icon, { name: "x", size: 13 }))), /* @__PURE__ */ React.createElement(DocumentDetailsTable, { documents, onView: viewDocument }))));
 };
 const StationRowActions = ({ station, onView, onAction }) => {
   const [open, setOpen] = useStateLib(false);
@@ -2420,7 +2801,7 @@ const StationRowActions = ({ station, onView, onAction }) => {
   const menuAction = (label, event) => {
     event.stopPropagation();
     setOpen(false);
-    onAction?.(`${label} for ${station.code}`);
+    onAction == null ? void 0 : onAction(`${label} for ${station.code}`);
   };
   return /* @__PURE__ */ React.createElement("div", { className: "dl-row-actions" }, /* @__PURE__ */ React.createElement("button", { className: "dl-row-view-btn", type: "button", onClick: onView }, /* @__PURE__ */ React.createElement(Icon, { name: "eye", size: 14 }), " View"), /* @__PURE__ */ React.createElement("div", { className: "dl-row-more-wrap" }, /* @__PURE__ */ React.createElement("button", { className: "dl-action-icon", type: "button", title: "More actions", "aria-label": `More actions for ${station.name}`, "aria-expanded": open ? "true" : "false", onClick: (event) => {
     event.stopPropagation();
@@ -2454,6 +2835,29 @@ const StatusGuide = () => {
   }, [open]);
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("button", { className: "dl-status-guide-btn", onClick: toggle }, /* @__PURE__ */ React.createElement(Icon, { name: "info", size: 11 }), " Status guide"), open && ReactDOM.createPortal(/* @__PURE__ */ React.createElement("div", { className: "dl-sg-overlay", onClick: () => setOpen(false) }, /* @__PURE__ */ React.createElement("div", { className: "dl-sg-modal", role: "dialog", "aria-modal": "true", "aria-labelledby": "status-guide-title", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "dl-sg-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { id: "status-guide-title", className: "dl-sg-title" }, "Document Status Guide"), /* @__PURE__ */ React.createElement("div", { className: "dl-sg-subtitle" }, "Statuses apply independently to ESP, SIP and LOP.")), /* @__PURE__ */ React.createElement("button", { className: "dl-sg-close", onClick: () => setOpen(false) }, /* @__PURE__ */ React.createElement(Icon, { name: "x", size: 13 }))), /* @__PURE__ */ React.createElement("div", { className: "dl-sg-rows" }, STATUS_GUIDE_ROWS.map((s, i) => /* @__PURE__ */ React.createElement(React.Fragment, { key: s.key }, s.key === "returned_correction" && /* @__PURE__ */ React.createElement("div", { className: "dl-sg-divider" }), /* @__PURE__ */ React.createElement("div", { className: "dl-sg-row" }, /* @__PURE__ */ React.createElement("span", { className: "dl-sg-num" }, s.n), /* @__PURE__ */ React.createElement("span", { className: "dl-sg-status-line" }, /* @__PURE__ */ React.createElement("span", { className: "dl-sg-status", "data-tone": s.tone }, s.pulse && /* @__PURE__ */ React.createElement("span", { className: "dl-sg-pulse" }), s.check && /* @__PURE__ */ React.createElement(Icon, { name: "check", size: 10 }), s.label), s.espOnly && /* @__PURE__ */ React.createElement("span", { className: "dl-sg-esp" }, "ESP")), /* @__PURE__ */ React.createElement("span", { className: "dl-sg-desc" }, s.desc))))), /* @__PURE__ */ React.createElement("div", { className: "dl-sg-footer" }, /* @__PURE__ */ React.createElement("strong", null, "Validated"), " is ESP-only. ", /* @__PURE__ */ React.createElement("strong", null, "Returned for Correction"), " loops back to Under Review after amendments."))), document.body));
 };
+const getAddStationErrors = (form, existingCodes) => {
+  const errors = {};
+  const name = form.stationName.trim();
+  if (!name) errors.stationName = "Station name is required.";
+  else if (name.length < 2) errors.stationName = "Must be at least 2 characters.";
+  else if (name.length > 60) errors.stationName = "Must be 60 characters or fewer.";
+  const code = form.stationCode.trim().toUpperCase();
+  if (!code) errors.stationCode = "Station code is required.";
+  else if (code.length < 2) errors.stationCode = "Code must be at least 2 characters.";
+  else if (existingCodes.has(code)) errors.stationCode = "Code " + code + " already exists in the system.";
+  if (form.stationTitle.trim().length > 80) errors.stationTitle = "Must be 80 characters or fewer.";
+  const stationId = form.stationId.trim();
+  if (stationId && !/^[A-Za-z0-9\-]+$/.test(stationId)) errors.stationId = "Only letters, numbers and hyphens allowed.";
+  else if (stationId && stationId.length > 20) errors.stationId = "Must be 20 characters or fewer.";
+  const cll = form.cll.trim();
+  if (cll && isNaN(Number(cll))) errors.cll = "Must be a valid decimal number (e.g. 433.560).";
+  else if (cll && Number(cll) < 0) errors.cll = "Must be a positive value.";
+  if (!form.trainDirection) errors.trainDirection = "Please select a train direction.";
+  if (!form.zone) errors.zone = "Zone is required.";
+  if (!form.division) errors.division = "Division is required.";
+  if (!form.section) errors.section = "Section is required.";
+  return errors;
+};
 const AddStationModal = ({ initialZone, initialDivision, initialSectionScope, existingCodes, onAdd, onClose }) => {
   const resolveDivision = (zone, division) => (DIVISION_OPTIONS[zone] || []).includes(division) ? division : (DIVISION_OPTIONS[zone] || [])[0] || "";
   const resolveSection = (division, sectionScope) => {
@@ -2462,13 +2866,14 @@ const AddStationModal = ({ initialZone, initialDivision, initialSectionScope, ex
     return sections.includes(scoped) ? scoped : sections[0] || "";
   };
   const startDivision = resolveDivision(initialZone, initialDivision);
-  const [form, setForm] = useStateLib({
-    ...AURANGABAD_STATION_DRAFT
-  });
-  const code = form.stationCode.trim().toUpperCase();
-  const name = form.stationName.trim();
-  const duplicateCode = code && existingCodes.has(code);
-  const canSubmit = name && code && form.section && !duplicateCode;
+  const [form, setForm] = useStateLib(__spreadValues({}, AURANGABAD_STATION_DRAFT));
+  const [touched, setTouched] = useStateLib({});
+  const [submitted, setSubmitted] = useStateLib(false);
+  const errors = getAddStationErrors(form, existingCodes);
+  const hasErrors = Object.keys(errors).length > 0;
+  const canSubmit = !hasErrors;
+  const showErr = (key) => (touched[key] || submitted) && errors[key];
+  const touch = (key) => () => setTouched((prev) => __spreadProps(__spreadValues({}, prev), { [key]: true }));
   React.useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
@@ -2476,28 +2881,24 @@ const AddStationModal = ({ initialZone, initialDivision, initialSectionScope, ex
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
-  const updateName = (value) => setForm((prev) => ({
-    ...prev,
+  const updateName = (value) => setForm((prev) => __spreadProps(__spreadValues({}, prev), {
     stationName: value,
     stationTitle: !prev.stationTitle || prev.stationTitle === prev.stationName ? value : prev.stationTitle
   }));
   const updateZone = (value) => {
     const division = resolveDivision(value, "");
-    setForm((prev) => ({
-      ...prev,
-      zone: value,
-      division,
-      section: resolveSection(division, "all")
-    }));
+    setForm((prev) => __spreadProps(__spreadValues({}, prev), { zone: value, division, section: resolveSection(division, "all") }));
   };
-  const updateDivision = (value) => setForm((prev) => ({
-    ...prev,
+  const updateDivision = (value) => setForm((prev) => __spreadProps(__spreadValues({}, prev), {
     division: value,
     section: resolveSection(value, "all")
   }));
   const submit = (e) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    setSubmitted(true);
+    if (hasErrors) return;
+    const name = form.stationName.trim();
+    const code = form.stationCode.trim().toUpperCase();
     onAdd({
       name,
       code,
@@ -2510,78 +2911,178 @@ const AddStationModal = ({ initialZone, initialDivision, initialSectionScope, ex
       trainDirection: form.trainDirection
     });
   };
-  return ReactDOM.createPortal(/* @__PURE__ */ React.createElement("div", { className: "dl-add-overlay", onClick: onClose }, /* @__PURE__ */ React.createElement(
-    "form",
-    {
-      className: "dl-add-modal",
-      role: "dialog",
-      "aria-modal": "true",
-      "aria-labelledby": "add-station-title",
-      onClick: (e) => e.stopPropagation(),
-      onSubmit: submit
-    },
-    /* @__PURE__ */ React.createElement("div", { className: "dl-add-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "dl-add-title", id: "add-station-title" }, "Add New Station"), /* @__PURE__ */ React.createElement("div", { className: "dl-add-subtitle" }, "Create a station record and add basic railway details.")), /* @__PURE__ */ React.createElement("button", { type: "button", className: "dl-add-close", onClick: onClose }, /* @__PURE__ */ React.createElement(Icon, { name: "x", size: 15 }))),
-    /* @__PURE__ */ React.createElement("div", { className: "dl-add-body" }, /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Station"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.stationName,
-        placeholder: "e.g. Tirupati",
-        onChange: (e) => updateName(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Code"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.stationCode,
-        placeholder: "e.g. BIWK",
-        maxLength: 8,
-        onChange: (e) => setForm((prev) => ({ ...prev, stationCode: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") }))
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Station Title"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.stationTitle,
-        placeholder: "Display title",
-        onChange: (e) => setForm((prev) => ({ ...prev, stationTitle: e.target.value }))
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Station ID"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.stationId,
-        placeholder: "e.g. 24055",
-        onChange: (e) => setForm((prev) => ({ ...prev, stationId: e.target.value }))
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Central Line Location"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        value: form.cll,
-        placeholder: "e.g. 433.560",
-        onChange: (e) => setForm((prev) => ({ ...prev, cll: e.target.value }))
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Train Direction"), /* @__PURE__ */ React.createElement(
-      "select",
-      {
-        value: form.trainDirection,
-        onChange: (e) => setForm((prev) => ({ ...prev, trainDirection: e.target.value }))
-      },
-      TRAIN_DIRECTIONS.map(
-        (direction) => /* @__PURE__ */ React.createElement("option", { key: direction, value: direction }, direction)
+  const FErr = (key) => showErr(key) ? React.createElement("div", { className: "dl-field-error" }, errors[key]) : null;
+  const Req = () => React.createElement("span", { className: "dl-req" }, " *");
+  return ReactDOM.createPortal(
+    React.createElement(
+      "div",
+      { className: "dl-add-overlay", onClick: onClose },
+      React.createElement(
+        "form",
+        {
+          className: "dl-add-modal",
+          role: "dialog",
+          "aria-modal": "true",
+          "aria-labelledby": "add-station-title",
+          onClick: (e) => e.stopPropagation(),
+          onSubmit: submit
+        },
+        React.createElement(
+          "div",
+          { className: "dl-add-head" },
+          React.createElement(
+            "div",
+            null,
+            React.createElement("div", { className: "dl-add-title", id: "add-station-title" }, "Add New Station"),
+            React.createElement("div", { className: "dl-add-subtitle" }, "Create a station record and add basic railway details.")
+          ),
+          React.createElement("button", { type: "button", className: "dl-add-close", onClick: onClose }, React.createElement(Icon, { name: "x", size: 15 }))
+        ),
+        React.createElement(
+          "div",
+          { className: "dl-add-body" },
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Station", React.createElement(Req)),
+            React.createElement("input", {
+              value: form.stationName,
+              placeholder: "e.g. Tirupati",
+              onBlur: touch("stationName"),
+              "data-error": showErr("stationName") ? "true" : void 0,
+              onChange: (e) => updateName(e.target.value)
+            }),
+            FErr("stationName")
+          ),
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Code", React.createElement(Req)),
+            React.createElement("input", {
+              value: form.stationCode,
+              placeholder: "e.g. BIWK",
+              maxLength: 8,
+              onBlur: touch("stationCode"),
+              "data-error": showErr("stationCode") ? "true" : void 0,
+              onChange: (e) => setForm((prev) => __spreadProps(__spreadValues({}, prev), { stationCode: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") }))
+            }),
+            FErr("stationCode")
+          ),
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Station Title"),
+            React.createElement("input", {
+              value: form.stationTitle,
+              placeholder: "Display title",
+              onBlur: touch("stationTitle"),
+              "data-error": showErr("stationTitle") ? "true" : void 0,
+              onChange: (e) => setForm((prev) => __spreadProps(__spreadValues({}, prev), { stationTitle: e.target.value }))
+            }),
+            FErr("stationTitle")
+          ),
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Station ID"),
+            React.createElement("input", {
+              value: form.stationId,
+              placeholder: "e.g. 24055",
+              onBlur: touch("stationId"),
+              "data-error": showErr("stationId") ? "true" : void 0,
+              onChange: (e) => setForm((prev) => __spreadProps(__spreadValues({}, prev), { stationId: e.target.value }))
+            }),
+            FErr("stationId")
+          ),
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Central Line Location"),
+            React.createElement("input", {
+              value: form.cll,
+              placeholder: "e.g. 433.560",
+              onBlur: touch("cll"),
+              "data-error": showErr("cll") ? "true" : void 0,
+              onChange: (e) => setForm((prev) => __spreadProps(__spreadValues({}, prev), { cll: e.target.value }))
+            }),
+            FErr("cll")
+          ),
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Train Direction", React.createElement(Req)),
+            React.createElement(
+              "select",
+              {
+                value: form.trainDirection,
+                onBlur: touch("trainDirection"),
+                "data-error": showErr("trainDirection") ? "true" : void 0,
+                onChange: (e) => setForm((prev) => __spreadProps(__spreadValues({}, prev), { trainDirection: e.target.value }))
+              },
+              TRAIN_DIRECTIONS.map((direction) => React.createElement("option", { key: direction, value: direction }, direction))
+            ),
+            FErr("trainDirection")
+          ),
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Zone", React.createElement(Req)),
+            React.createElement(
+              "select",
+              {
+                value: form.zone,
+                onBlur: touch("zone"),
+                "data-error": showErr("zone") ? "true" : void 0,
+                onChange: (e) => updateZone(e.target.value)
+              },
+              ZONE_OPTIONS.map((option) => React.createElement("option", { key: option.value, value: option.value }, option.label))
+            ),
+            FErr("zone")
+          ),
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Division", React.createElement(Req)),
+            React.createElement(
+              "select",
+              {
+                value: form.division,
+                onBlur: touch("division"),
+                "data-error": showErr("division") ? "true" : void 0,
+                onChange: (e) => updateDivision(e.target.value)
+              },
+              (DIVISION_OPTIONS[form.zone] || []).map((division) => React.createElement("option", { key: division, value: division }, division))
+            ),
+            FErr("division")
+          ),
+          React.createElement(
+            "div",
+            { className: "dl-add-field" },
+            React.createElement("label", null, "Section", React.createElement(Req)),
+            React.createElement(
+              "select",
+              {
+                value: form.section,
+                onBlur: touch("section"),
+                "data-error": showErr("section") ? "true" : void 0,
+                onChange: (e) => setForm((prev) => __spreadProps(__spreadValues({}, prev), { section: e.target.value }))
+              },
+              (SECTION_OPTIONS[form.division] || []).map((section) => React.createElement("option", { key: section, value: section }, section))
+            ),
+            FErr("section")
+          ),
+          React.createElement("div", { className: "dl-add-note" }, "This creates the station registry shell. ESP, SIP, LOP and survey data start empty so the next step can be document upload or survey linking.")
+        ),
+        React.createElement(
+          "div",
+          { className: "dl-add-actions" },
+          React.createElement(Btn, { type: "button", variant: "secondary", onClick: onClose }, "Cancel"),
+          React.createElement(Btn, { type: "submit", variant: "accent", leadingIcon: "plus", disabled: !canSubmit }, "Add Station")
+        )
       )
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Zone"), /* @__PURE__ */ React.createElement("select", { value: form.zone, onChange: (e) => updateZone(e.target.value) }, ZONE_OPTIONS.map(
-      (option) => /* @__PURE__ */ React.createElement("option", { key: option.value, value: option.value }, option.label)
-    ))), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Division"), /* @__PURE__ */ React.createElement("select", { value: form.division, onChange: (e) => updateDivision(e.target.value) }, (DIVISION_OPTIONS[form.zone] || []).map(
-      (division) => /* @__PURE__ */ React.createElement("option", { key: division, value: division }, division)
-    ))), /* @__PURE__ */ React.createElement("div", { className: "dl-add-field" }, /* @__PURE__ */ React.createElement("label", null, "Section"), /* @__PURE__ */ React.createElement(
-      "select",
-      {
-        value: form.section,
-        onChange: (e) => setForm((prev) => ({ ...prev, section: e.target.value }))
-      },
-      (SECTION_OPTIONS[form.division] || []).map(
-        (section) => /* @__PURE__ */ React.createElement("option", { key: section, value: section }, section)
-      )
-    )), /* @__PURE__ */ React.createElement("div", { className: "dl-add-note" }, "This creates the station registry shell. ESP, SIP, LOP and survey data start empty so the next step can be document upload or survey linking."), duplicateCode && /* @__PURE__ */ React.createElement("div", { className: "dl-add-error" }, "Station code ", code, " already exists in the Digital Library.")),
-    /* @__PURE__ */ React.createElement("div", { className: "dl-add-actions" }, /* @__PURE__ */ React.createElement(Btn, { type: "button", variant: "secondary", onClick: onClose }, "Cancel"), /* @__PURE__ */ React.createElement(Btn, { type: "submit", variant: "accent", leadingIcon: "plus", disabled: !canSubmit }, "Add Station"))
-  )), document.body);
+    ),
+    document.body
+  );
 };
 const BULK_REQUIRED_COLUMNS = [
   "Zone",
@@ -2648,29 +3149,32 @@ const normalizeBulkZone = (value) => {
 const stationIdForExisting = (station) => (station.stationId || station.idCode || station.stationID || "").trim().toUpperCase();
 const stationIdentity = (name, division, section) => [name, division, section].map((value) => String(value || "").trim().toLowerCase()).join("|");
 const isBlankBulkRow = (row) => Object.values(row || {}).every((value) => !String(value || "").trim());
-const newBulkRow = (rowNumber, source = {}) => ({
-  rowNumber,
-  zone: normalizeBulkZone(source.Zone ?? source.zone),
-  division: String(source.Division ?? source.division ?? "").trim(),
-  section: String(source.Section ?? source.section ?? "").trim(),
-  stationName: String(source["Station Name"] ?? source.stationName ?? "").trim(),
-  stationCode: String(source["Station Code"] ?? source.stationCode ?? "").trim().toUpperCase().replace(/[^A-Z0-9]/g, ""),
-  stationTitle: String(source["Station Title"] ?? source.stationTitle ?? "").trim(),
-  stationId: String(source["Station ID"] ?? source.stationId ?? "").trim(),
-  cll: String(source["Central Line Location"] ?? source.cll ?? "").trim(),
-  trainDirection: String(source["Train Direction"] ?? source.trainDirection ?? "").trim(),
-  state: String(source.State ?? source.state ?? "").trim(),
-  route: String(source.Route ?? source.route ?? "").trim(),
-  latitude: String(source.Latitude ?? source.latitude ?? "").trim(),
-  longitude: String(source.Longitude ?? source.longitude ?? "").trim(),
-  remarks: String(source.Remarks ?? source.remarks ?? "").trim(),
-  errors: {},
-  status: "pending",
-  statusLabel: "Pending validation",
-  skipReason: "pending"
-});
+const newBulkRow = (rowNumber, source = {}) => {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A;
+  return {
+    rowNumber,
+    zone: normalizeBulkZone((_a = source.Zone) != null ? _a : source.zone),
+    division: String((_c = (_b = source.Division) != null ? _b : source.division) != null ? _c : "").trim(),
+    section: String((_e = (_d = source.Section) != null ? _d : source.section) != null ? _e : "").trim(),
+    stationName: String((_g = (_f = source["Station Name"]) != null ? _f : source.stationName) != null ? _g : "").trim(),
+    stationCode: String((_i = (_h = source["Station Code"]) != null ? _h : source.stationCode) != null ? _i : "").trim().toUpperCase().replace(/[^A-Z0-9]/g, ""),
+    stationTitle: String((_k = (_j = source["Station Title"]) != null ? _j : source.stationTitle) != null ? _k : "").trim(),
+    stationId: String((_m = (_l = source["Station ID"]) != null ? _l : source.stationId) != null ? _m : "").trim(),
+    cll: String((_o = (_n = source["Central Line Location"]) != null ? _n : source.cll) != null ? _o : "").trim(),
+    trainDirection: String((_q = (_p = source["Train Direction"]) != null ? _p : source.trainDirection) != null ? _q : "").trim(),
+    state: String((_s = (_r = source.State) != null ? _r : source.state) != null ? _s : "").trim(),
+    route: String((_u = (_t = source.Route) != null ? _t : source.route) != null ? _u : "").trim(),
+    latitude: String((_w = (_v = source.Latitude) != null ? _v : source.latitude) != null ? _w : "").trim(),
+    longitude: String((_y = (_x = source.Longitude) != null ? _x : source.longitude) != null ? _y : "").trim(),
+    remarks: String((_A = (_z = source.Remarks) != null ? _z : source.remarks) != null ? _A : "").trim(),
+    errors: {},
+    status: "pending",
+    statusLabel: "Pending validation",
+    skipReason: "pending"
+  };
+};
 const csvEscape = (value) => {
-  const text = String(value ?? "");
+  const text = String(value != null ? value : "");
   return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 };
 const parseCsvRows = (text) => {
@@ -2733,6 +3237,7 @@ const bulkRowMessage = (row) => {
   return Object.values(row.errors || {}).join(" ") || "Fix validation errors";
 };
 const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
+  var _a;
   const [rows, setRows] = useStateLib([]);
   const [uploadedFile, setUploadedFile] = useStateLib(null);
   const [extractionReport, setExtractionReport] = useStateLib(null);
@@ -2747,7 +3252,7 @@ const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
   const existingCodeSet = useMemoLib(() => new Set(existingStations.map((station) => station.code.toUpperCase())), [existingStations]);
   const existingIdSet = useMemoLib(() => new Set(existingStations.map(stationIdForExisting).filter(Boolean)), [existingStations]);
   const existingNameSet = useMemoLib(() => new Set(existingStations.map((station) => stationIdentity(station.name, station.division, station.section))), [existingStations]);
-  const buildExtractionReport = (nextRows, errors = [], fileName = uploadedFile?.name || "") => {
+  const buildExtractionReport = (nextRows, errors = [], fileName = (uploadedFile == null ? void 0 : uploadedFile.name) || "") => {
     const successRows = nextRows.filter((row) => row.status === "valid").length;
     const errorRows = nextRows.filter((row) => row.status !== "valid" && row.status !== "skipped").length + errors.length;
     return {
@@ -2758,7 +3263,7 @@ const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
       errors
     };
   };
-  const setValidatedRows = (nextRows, nextMessage, errors = [], fileName = uploadedFile?.name || "") => {
+  const setValidatedRows = (nextRows, nextMessage, errors = [], fileName = (uploadedFile == null ? void 0 : uploadedFile.name) || "") => {
     setRows(nextRows);
     setExtractionReport(buildExtractionReport(nextRows, errors, fileName));
     setValidated(true);
@@ -2809,15 +3314,14 @@ const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
       if (row.longitude && Number.isNaN(Number(row.longitude))) errors.longitude = "Longitude must be numeric.";
       const values = Object.values(errors);
       const status = values.some((error) => error.includes("uploaded file")) ? "duplicate" : values.some((error) => error.includes("already exists")) ? "existing" : values.length ? "error" : "valid";
-      return {
-        ...row,
+      return __spreadProps(__spreadValues({}, row), {
         zone,
         stationCode: code,
         errors,
         status,
         statusLabel: status === "valid" ? "Valid" : status === "duplicate" ? "Duplicate" : status === "existing" ? "Existing Station" : "Error",
         skipReason: status
-      };
+      });
     });
     return nextRows;
   };
@@ -2962,7 +3466,7 @@ const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
         file.name
       );
       setTemplateMissing(false);
-    } catch {
+    } catch (e) {
       setRows([]);
       setExtractionReport({
         fileName: file.name,
@@ -2978,31 +3482,35 @@ const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
       setReadingUpload(false);
     }
   };
-  const openFilePicker = () => fileInputRef.current?.click();
+  const openFilePicker = () => {
+    var _a2;
+    return (_a2 = fileInputRef.current) == null ? void 0 : _a2.click();
+  };
   const handleFileChange = (event) => {
-    const file = event.target.files?.[0];
+    var _a2;
+    const file = (_a2 = event.target.files) == null ? void 0 : _a2[0];
     readUpload(file);
     event.target.value = "";
   };
   const handleDrop = (event) => {
+    var _a2;
     event.preventDefault();
     setDragActive(false);
-    readUpload(event.dataTransfer.files?.[0]);
+    readUpload((_a2 = event.dataTransfer.files) == null ? void 0 : _a2[0]);
   };
   const updateCell = (index, key, value) => {
     setRows((current) => {
       const nextRows = current.map((row, i) => {
         if (i !== index) return row;
-        const nextErrors = { ...row.errors || {} };
+        const nextErrors = __spreadValues({}, row.errors || {});
         delete nextErrors[key];
-        return {
-          ...row,
+        return __spreadProps(__spreadValues({}, row), {
           [key]: key === "stationCode" ? value.toUpperCase().replace(/[^A-Z0-9]/g, "") : value,
           errors: nextErrors,
           status: "pending",
           statusLabel: "Edited",
           skipReason: "pending"
-        };
+        });
       });
       setExtractionReport(buildExtractionReport(nextRows));
       return nextRows;
@@ -3028,12 +3536,11 @@ const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
   };
   const skipErrorRows = () => {
     setRows((current) => {
-      const nextRows = current.map((row) => ["error", "duplicate", "existing", "pending"].includes(row.status) ? {
-        ...row,
+      const nextRows = current.map((row) => ["error", "duplicate", "existing", "pending"].includes(row.status) ? __spreadProps(__spreadValues({}, row), {
         status: "skipped",
         statusLabel: "Skipped",
         skipReason: "skipped"
-      } : row);
+      }) : row);
       setExtractionReport(buildExtractionReport(nextRows));
       return nextRows;
     });
@@ -3063,26 +3570,27 @@ const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
   };
   const revalidateRow = () => validateRows(rows);
   const fieldControl = (row, rowIndex, header) => {
+    var _a2, _b;
     const key = BULK_FIELD_KEYS[header];
-    const invalid = !!row.errors?.[key];
+    const invalid = !!((_a2 = row.errors) == null ? void 0 : _a2[key]);
     const common = {
       value: row[key] || "",
       onChange: (event) => updateCell(rowIndex, key, event.target.value),
-      title: row.errors?.[key] || void 0
+      title: ((_b = row.errors) == null ? void 0 : _b[key]) || void 0
     };
     if (header === "Zone") {
-      return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("select", { ...common }, ["", ...ZONE_OPTIONS.map((option) => option.value)].map((value) => /* @__PURE__ */ React.createElement("option", { key: value, value }, value || "Select"))));
+      return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("select", __spreadValues({}, common), ["", ...ZONE_OPTIONS.map((option) => option.value)].map((value) => /* @__PURE__ */ React.createElement("option", { key: value, value }, value || "Select"))));
     }
     if (header === "Division") {
-      return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("select", { ...common }, ["", ...Object.values(DIVISION_OPTIONS).flat()].map((value) => /* @__PURE__ */ React.createElement("option", { key: value, value }, value || "Select"))));
+      return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("select", __spreadValues({}, common), ["", ...Object.values(DIVISION_OPTIONS).flat()].map((value) => /* @__PURE__ */ React.createElement("option", { key: value, value }, value || "Select"))));
     }
     if (header === "Section") {
-      return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("select", { ...common }, ["", ...Object.values(SECTION_OPTIONS).flat()].map((value) => /* @__PURE__ */ React.createElement("option", { key: value, value }, value || "Select"))));
+      return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("select", __spreadValues({}, common), ["", ...Object.values(SECTION_OPTIONS).flat()].map((value) => /* @__PURE__ */ React.createElement("option", { key: value, value }, value || "Select"))));
     }
     if (header === "Train Direction") {
-      return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("select", { ...common }, ["", ...TRAIN_DIRECTIONS].map((value) => /* @__PURE__ */ React.createElement("option", { key: value, value }, value || "Select"))));
+      return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("select", __spreadValues({}, common), ["", ...TRAIN_DIRECTIONS].map((value) => /* @__PURE__ */ React.createElement("option", { key: value, value }, value || "Select"))));
     }
-    return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("input", { ...common }));
+    return /* @__PURE__ */ React.createElement("td", { key: header, "data-invalid": invalid || void 0 }, /* @__PURE__ */ React.createElement("input", __spreadValues({}, common)));
   };
   return /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-page" }, /* @__PURE__ */ React.createElement("div", { className: "dl-page-header" }, /* @__PURE__ */ React.createElement("div", { className: "dl-page-icon-badge" }, /* @__PURE__ */ React.createElement(Icon, { name: "upload", size: 20 })), /* @__PURE__ */ React.createElement("div", { className: "dl-page-heading" }, /* @__PURE__ */ React.createElement("div", { className: "dl-page-title" }, "Bulk Upload Stations"), /* @__PURE__ */ React.createElement("div", { className: "dl-page-sub" }, "Upload a station template, validate rows, fix errors, and import valid stations."))), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-panel" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-workflow" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-toolbar" }, /* @__PURE__ */ React.createElement(Btn, { type: "button", variant: "secondary", leadingIcon: "download", onClick: downloadTemplate }, "Download Template"), /* @__PURE__ */ React.createElement(
     "input",
@@ -3112,7 +3620,7 @@ const BulkUploadStationsPage = ({ existingStations = [], onAdd, onClose }) => {
     /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-upload-icon" }, /* @__PURE__ */ React.createElement(Icon, { name: "upload", size: 19 })),
     /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-upload-title" }, "Drop the completed station template here"), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-upload-sub" }, "Use the downloaded `.xlsx` or `.csv` template with one station per row.")),
     /* @__PURE__ */ React.createElement(Btn, { type: "button", variant: "secondary", leadingIcon: "upload", onClick: openFilePicker }, "Upload File")
-  ), uploadedFile && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-file-card" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-file-meta" }, /* @__PURE__ */ React.createElement("strong", null, uploadedFile.name), /* @__PURE__ */ React.createElement("span", null, formatBulkFileSize(uploadedFile.size))), /* @__PURE__ */ React.createElement("button", { type: "button", className: "dl-bulk-link-btn", onClick: resetUpload }, "Remove")), message && /* @__PURE__ */ React.createElement("div", { className: "dl-add-note" }, message), extractionReport && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-title" }, "Extraction Report"), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-sub" }, extractionReport.fileName)), readingUpload && /* @__PURE__ */ React.createElement(Chip, { tone: "info", pulse: true }, "Reading")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-grid" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-card" }, /* @__PURE__ */ React.createElement("strong", null, extractionReport.totalRows), /* @__PURE__ */ React.createElement("span", null, "Rows Count")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-card", "data-tone": "success" }, /* @__PURE__ */ React.createElement("strong", null, extractionReport.successRows), /* @__PURE__ */ React.createElement("span", null, "Success")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-card", "data-tone": "error" }, /* @__PURE__ */ React.createElement("strong", null, extractionReport.errorRows), /* @__PURE__ */ React.createElement("span", null, "Error"))), !!extractionReport.errors?.length && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-errors" }, extractionReport.errors.map((error, index) => /* @__PURE__ */ React.createElement("div", { key: `${error}-${index}` }, error)))), !validated && rows.length > 0 && !validating && !readingUpload && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-preview" }, /* @__PURE__ */ React.createElement("span", null, rows.length, " row", rows.length === 1 ? "" : "s", " ready for validation."), /* @__PURE__ */ React.createElement(Btn, { type: "button", variant: "primary", size: "sm", leadingIcon: "check", onClick: runValidation }, "Validate File")), validating && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-loading" }, /* @__PURE__ */ React.createElement("span", { className: "dl-bulk-spinner", "aria-hidden": "true" }), /* @__PURE__ */ React.createElement("span", null, "Validating station records\u2026")), validated && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-summary-grid" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.totalRows), /* @__PURE__ */ React.createElement("span", null, "Total Rows")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.validRows), /* @__PURE__ */ React.createElement("span", null, "Valid Rows")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.errorRows), /* @__PURE__ */ React.createElement("span", null, "Error Rows")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.duplicateRows), /* @__PURE__ */ React.createElement("span", null, "Duplicate Rows")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.existingRows), /* @__PURE__ */ React.createElement("span", null, "Existing Stations")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.skippedRows), /* @__PURE__ */ React.createElement("span", null, "Rows to Fix/Skip"))), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-info" }, /* @__PURE__ */ React.createElement(Icon, { name: "info", size: 14 }), /* @__PURE__ */ React.createElement("span", null, "Skipped rows will not be added as stations. Only valid rows will be imported.")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-row-tabs", "aria-label": "Review row filter" }, [
+  ), uploadedFile && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-file-card" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-file-meta" }, /* @__PURE__ */ React.createElement("strong", null, uploadedFile.name), /* @__PURE__ */ React.createElement("span", null, formatBulkFileSize(uploadedFile.size))), /* @__PURE__ */ React.createElement("button", { type: "button", className: "dl-bulk-link-btn", onClick: resetUpload }, "Remove")), message && /* @__PURE__ */ React.createElement("div", { className: "dl-add-note" }, message), extractionReport && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-title" }, "Extraction Report"), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-sub" }, extractionReport.fileName)), readingUpload && /* @__PURE__ */ React.createElement(Chip, { tone: "info", pulse: true }, "Reading")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-grid" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-card" }, /* @__PURE__ */ React.createElement("strong", null, extractionReport.totalRows), /* @__PURE__ */ React.createElement("span", null, "Rows Count")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-card", "data-tone": "success" }, /* @__PURE__ */ React.createElement("strong", null, extractionReport.successRows), /* @__PURE__ */ React.createElement("span", null, "Success")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-card", "data-tone": "error" }, /* @__PURE__ */ React.createElement("strong", null, extractionReport.errorRows), /* @__PURE__ */ React.createElement("span", null, "Error"))), !!((_a = extractionReport.errors) == null ? void 0 : _a.length) && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-extraction-errors" }, extractionReport.errors.map((error, index) => /* @__PURE__ */ React.createElement("div", { key: `${error}-${index}` }, error)))), !validated && rows.length > 0 && !validating && !readingUpload && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-preview" }, /* @__PURE__ */ React.createElement("span", null, rows.length, " row", rows.length === 1 ? "" : "s", " ready for validation."), /* @__PURE__ */ React.createElement(Btn, { type: "button", variant: "primary", size: "sm", leadingIcon: "check", onClick: runValidation }, "Validate File")), validating && /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-loading" }, /* @__PURE__ */ React.createElement("span", { className: "dl-bulk-spinner", "aria-hidden": "true" }), /* @__PURE__ */ React.createElement("span", null, "Validating station records\u2026")), validated && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-summary-grid" }, /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.totalRows), /* @__PURE__ */ React.createElement("span", null, "Total Rows")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.validRows), /* @__PURE__ */ React.createElement("span", null, "Valid Rows")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.errorRows), /* @__PURE__ */ React.createElement("span", null, "Error Rows")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.duplicateRows), /* @__PURE__ */ React.createElement("span", null, "Duplicate Rows")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.existingRows), /* @__PURE__ */ React.createElement("span", null, "Existing Stations")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-card" }, /* @__PURE__ */ React.createElement("strong", null, stats.skippedRows), /* @__PURE__ */ React.createElement("span", null, "Rows to Fix/Skip"))), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-info" }, /* @__PURE__ */ React.createElement(Icon, { name: "info", size: 14 }), /* @__PURE__ */ React.createElement("span", null, "Skipped rows will not be added as stations. Only valid rows will be imported.")), /* @__PURE__ */ React.createElement("div", { className: "dl-bulk-row-tabs", "aria-label": "Review row filter" }, [
     { id: "all", label: "All Rows", count: stats.totalRows },
     { id: "valid", label: "Valid Rows", count: stats.validRows },
     { id: "skipped", label: "Rows to Fix", count: stats.skippedRows }
@@ -3226,13 +3734,20 @@ const LibrarySidebar = ({ collapsed, onToggle, active = "library", onNavigate })
         it.badge && /* @__PURE__ */ React.createElement("span", { className: "ds-sidebar-badge" }, it.badge)
       )
     ))
-  )), /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-foot" }, /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-user", title: collapsed ? "Sarath" : void 0 }, "S"), /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-userinfo" }, /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-username" }, "Sarath"), /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-userrole" }, "Admin SCoR")), /* @__PURE__ */ React.createElement("button", { className: "ds-sidebar-foot-btn", title: "Sign out", onClick: () => { try { sessionStorage.removeItem("ir-login-session"); sessionStorage.removeItem("lr-authed"); } catch(e) {} window.location.reload(); } }, /* @__PURE__ */ React.createElement(Icon, { name: "log_out", size: 15 }))));
+  )), /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-foot" }, /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-user", title: collapsed ? "Sarath" : void 0 }, "S"), /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-userinfo" }, /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-username" }, "Sarath"), /* @__PURE__ */ React.createElement("div", { className: "ds-sidebar-userrole" }, "Admin SCoR")), /* @__PURE__ */ React.createElement("button", { className: "ds-sidebar-foot-btn", title: "Sign out", onClick: () => {
+    try {
+      sessionStorage.removeItem("ir-login-session");
+      sessionStorage.removeItem("lr-authed");
+    } catch (e) {
+    }
+    window.location.reload();
+  } }, /* @__PURE__ */ React.createElement(Icon, { name: "log_out", size: 15 }))));
 };
 const readLoginSession = () => {
   try {
     const stored = window.sessionStorage.getItem("ir-login-session");
     return stored ? JSON.parse(stored) : null;
-  } catch {
+  } catch (e) {
     return null;
   }
 };
@@ -3261,7 +3776,7 @@ const LoginPage = ({ onLogin }) => {
       } else {
         window.sessionStorage.removeItem("ir-login-session");
       }
-    } catch {
+    } catch (e) {
     }
     onLogin(session);
   };
@@ -3319,6 +3834,8 @@ const DigitalLibraryPage = () => {
   const [currentPage, setCurrentPage] = useStateLib(1);
   const rows = useMemoLib(() => {
     let list = stations;
+    if (zone) list = list.filter((s) => s.zone === zone);
+    if (division) list = list.filter((s) => s.division === division);
     const sectionMap = {
       "VJA-GDV": "Vijayawada\u2013Gudivada",
       "GNT-TEL": "Guntur\u2013Tenali",
@@ -3364,11 +3881,12 @@ const DigitalLibraryPage = () => {
       return true;
     });
     return [...list].sort((a, b) => {
-      const av = a[sort.key] ?? "", bv = b[sort.key] ?? "";
+      var _a, _b;
+      const av = (_a = a[sort.key]) != null ? _a : "", bv = (_b = b[sort.key]) != null ? _b : "";
       const cmp = String(av).localeCompare(String(bv));
       return sort.dir === "asc" ? cmp : -cmp;
     });
-  }, [stations, search, sort, sectionScope, filters]);
+  }, [stations, search, sort, zone, division, sectionScope, filters]);
   const existingCodes = useMemoLib(
     () => new Set(stations.map((s) => s.code.toUpperCase())),
     [stations]
@@ -3393,16 +3911,16 @@ const DigitalLibraryPage = () => {
   };
   const toggleRow = (id, e) => {
     if (e) e.stopPropagation();
-    setSelected((prev) => ({ ...prev, [id]: !prev[id] }));
+    setSelected((prev) => __spreadProps(__spreadValues({}, prev), { [id]: !prev[id] }));
   };
   const clearSelection = () => setSelected({});
   const addStation = (station) => {
     const nextId = Math.max(0, ...stations.map((s) => s.id)) + 1;
     setStations(
       (current) => [
-        {
-          id: nextId,
-          ...station,
+        __spreadProps(__spreadValues({
+          id: nextId
+        }, station), {
           addedOrder: Date.now(),
           esp: null,
           sip: null,
@@ -3412,7 +3930,7 @@ const DigitalLibraryPage = () => {
           versions: null,
           lastTime: "Just added",
           lastBy: "Admin"
-        },
+        }),
         ...current
       ]
     );
@@ -3432,9 +3950,9 @@ const DigitalLibraryPage = () => {
   const addStationsBulk = (newStations, skippedRows = 0) => {
     const addedAt = Date.now();
     let nextId = Math.max(0, ...stations.map((s) => s.id)) + 1;
-    const additions = newStations.map((station, index) => ({
-      id: nextId++,
-      ...station,
+    const additions = newStations.map((station, index) => __spreadProps(__spreadValues({
+      id: nextId++
+    }, station), {
       addedOrder: addedAt + index,
       esp: null,
       sip: null,
@@ -3465,7 +3983,7 @@ const DigitalLibraryPage = () => {
     window.setTimeout(() => setToast(""), 3200);
   };
   const onSort = (key) => setSort((s) => ({ key, dir: s.key === key && s.dir === "asc" ? "desc" : "asc" }));
-  const setFilterValue = (key, value) => setFilters((current) => ({ ...current, [key]: value }));
+  const setFilterValue = (key, value) => setFilters((current) => __spreadProps(__spreadValues({}, current), { [key]: value }));
   const clearFilters = () => {
     setSearch("");
     setFilters(DEFAULT_FILTERS);
@@ -3753,7 +4271,7 @@ const DigitalLibraryPage = () => {
       {
         key: s.id,
         "data-selected": isSelected,
-        "data-new": recentlyAdded?.id === s.id ? "true" : void 0,
+        "data-new": (recentlyAdded == null ? void 0 : recentlyAdded.id) === s.id ? "true" : void 0,
         onClick: () => {
           setActiveNav("library");
           setHubStation(s);
