@@ -1,11 +1,15 @@
 import React, { useRef, useState } from 'react';
-import { Save, History, Upload, ChevronRight, Cpu, Check } from 'lucide-react';
+import { Save, History, Upload, ArrowLeft, Check, FileOutput } from 'lucide-react';
 import { useEditor } from '../store/editorStore';
 import { downloadDocument, readDocumentFile, savePersistedDocument } from '../lib/serialize';
 import { importDwgFile } from '../lib/dwgImporter';
 import { importDxfFile } from '../lib/dxfImporter';
 
-const TopBar: React.FC = () => {
+interface TopBarProps {
+  onGenerateSip: () => void;
+}
+
+const TopBar: React.FC<TopBarProps> = ({ onGenerateSip }) => {
   const { getDocument, loadDocument, importObjects, layers, activeLayerId } = useEditor();
   const importRef = useRef<HTMLInputElement>(null);
   const [savedTick, setSavedTick] = useState(false);
@@ -62,17 +66,32 @@ const TopBar: React.FC = () => {
     zIndex: 100,
     gap: 12,
   }}>
-    {/* Left: logo + project name */}
+    {/* Left: back button + heading */}
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-      <div style={{
-        width: 28, height: 28,
-        background: 'var(--color-primary)',
-        borderRadius: 6,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexShrink: 0,
-      }}>
-        <Cpu size={15} color="#fff" strokeWidth={2} />
-      </div>
+      <button
+        title="Back to station"
+        style={{
+          width: 28, height: 28,
+          background: 'transparent',
+          border: 'none',
+          borderRadius: 6,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
+          cursor: 'pointer',
+          color: 'var(--color-text-muted)',
+          transition: 'background 0.12s, color 0.12s',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = 'var(--color-hover)';
+          e.currentTarget.style.color = 'var(--color-text)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.color = 'var(--color-text-muted)';
+        }}
+      >
+        <ArrowLeft size={16} strokeWidth={2} />
+      </button>
       <span style={{
         fontWeight: 600,
         fontSize: 13.5,
@@ -80,13 +99,22 @@ const TopBar: React.FC = () => {
         letterSpacing: '-0.01em',
         whiteSpace: 'nowrap',
       }}>
-        Digital ESP Editor
+        ESP Editor
       </span>
-      <ChevronRight size={14} color="#9ca3af" style={{ flexShrink: 0 }} />
-      <span style={{ color: '#4b5563', fontSize: 12.5, whiteSpace: 'nowrap' }}>
-        Station A — Main Yard
+      <span style={{
+        fontSize: 11,
+        fontWeight: 600,
+        color: '#1d4ed8',
+        background: '#dbeafe',
+        border: '1px solid #bfdbfe',
+        borderRadius: 5,
+        padding: '2px 7px',
+        letterSpacing: '0.04em',
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+      }}>
+        BWK
       </span>
-
     </div>
 
     {/* Center: autosave badge */}
@@ -146,6 +174,30 @@ const TopBar: React.FC = () => {
       >
         {savedTick ? <Check size={13} /> : <Save size={13} />}
         {savedTick ? 'Saved' : 'Save'}
+      </button>
+
+      <div style={{ width: 1, height: 20, background: 'var(--color-border)', flexShrink: 0 }} />
+
+      <button
+        onClick={onGenerateSip}
+        title="Configure section details and generate SIP"
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          background: '#7c3aed',
+          color: '#fff',
+          borderRadius: 'var(--radius-sm)',
+          padding: '6px 14px',
+          fontSize: 12.5,
+          fontWeight: 600,
+          letterSpacing: '0.01em',
+          transition: 'opacity 0.15s',
+          whiteSpace: 'nowrap',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+        onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+      >
+        <FileOutput size={13} strokeWidth={2} />
+        Generate SIP
       </button>
     </div>
   </header>

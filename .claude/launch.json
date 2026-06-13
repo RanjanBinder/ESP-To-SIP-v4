@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["serve", "-p", "3456", "."],
       "port": 3456
+    },
+    {
+      "name": "SprintDashboard",
+      "runtimeExecutable": "C:\\Python314\\python.exe",
+      "runtimeArgs": ["-m", "http.server", "3478", "--directory", "Sprint Dashboard"],
+      "port": 3478
     }
   ]
 }

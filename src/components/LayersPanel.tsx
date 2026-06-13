@@ -311,7 +311,7 @@ const MoreMenu: React.FC<{
     <div
       ref={menuRef}
       style={{
-        position: 'absolute', top: 44, right: 8, width: 196,
+        position: 'absolute', top: '100%', right: 0, width: 196,
         background: '#ffffff', border: '1px solid #e5e7eb',
         borderRadius: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06)',
         zIndex: 300, overflow: 'hidden', padding: '4px 0',
@@ -340,52 +340,8 @@ const MoreMenu: React.FC<{
 };
 
 /* ═══════════════════════════════════════════════════════════════════
-   Panel header
+   More menu — positioned below its anchor via absolute in rel wrapper
 ════════════════════════════════════════════════════════════════════ */
-
-const PanelHeader: React.FC<{
-  searchOpen: boolean; searchQuery: string;
-  onSearchToggle: () => void; onSearchChange: (q: string) => void;
-  onAddLayer: () => void; onMoreToggle: () => void; moreMenuOpen: boolean;
-  moreButtonRef: React.RefObject<HTMLButtonElement | null>;
-}> = ({ searchOpen, searchQuery, onSearchToggle, onSearchChange, onAddLayer, onMoreToggle, moreMenuOpen, moreButtonRef }) => (
-  <div style={{ height: 44, display: 'flex', alignItems: 'center', padding: '0 10px 0 14px', borderBottom: '1px solid #e5e7eb', gap: 4, flexShrink: 0 }}>
-    {searchOpen ? (
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6, background: '#f3f4f6', borderRadius: 6, padding: '0 8px', height: 28 }}>
-        <Search size={12} color="#9ca3af" strokeWidth={2} />
-        <input
-          autoFocus value={searchQuery}
-          onChange={e => onSearchChange(e.target.value)}
-          placeholder="Search layers…"
-          style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 12.5, color: '#111827', outline: 'none' }}
-        />
-        {searchQuery && (
-          <button onClick={() => onSearchChange('')} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center', padding: 0 }}>
-            <X size={11} strokeWidth={2} />
-          </button>
-        )}
-      </div>
-    ) : (
-      <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#111827', letterSpacing: '-0.01em' }}>Layers</span>
-    )}
-    <IconBtn Icon={Search} title="Search" active={searchOpen} onClick={onSearchToggle} />
-    <IconBtn Icon={Plus}   title="Add layer"                   onClick={onAddLayer} />
-    <button
-      ref={moreButtonRef as React.RefObject<HTMLButtonElement>}
-      title="More options"
-      onClick={onMoreToggle}
-      style={{
-        width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        borderRadius: 4, border: 'none',
-        background: moreMenuOpen ? '#eff6ff' : 'transparent',
-        color: moreMenuOpen ? '#2563eb' : '#6b7280',
-        cursor: 'pointer',
-      }}
-    >
-      <MoreHorizontal size={13} strokeWidth={1.75} />
-    </button>
-  </div>
-);
 
 /* ═══════════════════════════════════════════════════════════════════
    Active layer footer
@@ -418,10 +374,11 @@ const LayersPanel: React.FC = () => {
     selectedLayerId, reorderLayer, expandLayer,
   } = useEditor();
 
-  /* ── Search ──────────────────────────────────────────────────────── */
-  const [searchOpen,   setSearchOpen]   = useState(false);
-  const [searchQuery,  setSearchQuery]  = useState('');
-  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  /* ── Search / filter ────────────────────────────────────────────── */
+  const [searchOpen,        setSearchOpen]        = useState(false);
+  const [searchQuery,       setSearchQuery]        = useState('');
+  const [moreMenuOpen,      setMoreMenuOpen]       = useState(false);
+  const [showSelectedOnly,  setShowSelectedOnly]   = useState(false);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleSearchToggle = useCallback(() => {
@@ -441,10 +398,13 @@ const LayersPanel: React.FC = () => {
   const flatVisible = flattenTreeForRender(tree);
   const visibleIds  = flatVisible.map(n => n.id);
 
-  /* ── Search list ─────────────────────────────────────────────────── */
-  const displayLayers = searchQuery
-    ? flattenLayers(layers).filter(l => l.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    : null;
+  /* ── Search / show-selected filter list ─────────────────────────── */
+  const displayLayers = (() => {
+    const flat = flattenLayers(layers);
+    if (searchQuery) return flat.filter(l => l.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (showSelectedOnly && selectedLayerId) return flat.filter(l => l.id === selectedLayerId);
+    return null;
+  })();
 
   /* ── DnD state ───────────────────────────────────────────────────── */
   const [activeId,     setActiveId]     = useState<string | null>(null);
@@ -528,22 +488,48 @@ const LayersPanel: React.FC = () => {
 
   const activeLayer = activeId ? layers.find(l => l.id === activeId) : null;
 
-  /* ── LAYERS section header ───────────────────────────────────────── */
+  /* ── LAYERS section header with tools ───────────────────────────── */
   const LayersSectionHeader = () => (
     <div style={{
-      height: 32, display: 'flex', alignItems: 'center',
-      padding: '0 10px', gap: 6,
-      background: '#fafafa', borderBottom: '1px solid #e5e7eb',
+      display: 'flex', alignItems: 'center',
+      minHeight: 32, padding: '0 6px 0 10px', gap: 2,
+      background: '#fafafa', borderBottom: '1px solid #e5e7eb', flexShrink: 0,
     }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: '#374151', letterSpacing: '0.06em', flex: 1 }}>
-        LAYERS
-      </span>
-      {selectedLayerId && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <CheckCheck size={11} strokeWidth={2} color="#3b82f6" />
-          <span style={{ fontSize: 10.5, color: '#6b7280' }}>Selected</span>
+      {searchOpen ? (
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 5, background: '#f3f4f6', borderRadius: 5, padding: '0 7px', height: 24, margin: '4px 0' }}>
+          <Search size={11} color="#9ca3af" strokeWidth={2} />
+          <input
+            autoFocus value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search layers…"
+            style={{ flex: 1, border: 'none', background: 'transparent', fontSize: 12, color: '#111827', outline: 'none' }}
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center', padding: 0 }}>
+              <X size={10} strokeWidth={2} />
+            </button>
+          )}
         </div>
+      ) : (
+        <span style={{ flex: 1, fontSize: 11, fontWeight: 700, color: '#374151', letterSpacing: '0.06em' }}>LAYERS</span>
       )}
+      <IconBtn Icon={Search}    title="Search layers"       active={searchOpen}        onClick={handleSearchToggle} />
+      <IconBtn Icon={CheckCheck} title="Show selected only" active={showSelectedOnly}   onClick={() => setShowSelectedOnly(o => !o)} />
+      <IconBtn Icon={Plus}      title="Add layer"                                       onClick={addLayer} />
+      <button
+        ref={moreButtonRef as React.RefObject<HTMLButtonElement>}
+        title="More options"
+        onClick={() => setMoreMenuOpen(o => !o)}
+        style={{
+          width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          borderRadius: 4, border: 'none',
+          background: moreMenuOpen ? '#eff6ff' : 'transparent',
+          color: moreMenuOpen ? '#2563eb' : '#6b7280',
+          cursor: 'pointer',
+        }}
+      >
+        <MoreHorizontal size={13} strokeWidth={1.75} />
+      </button>
     </div>
   );
 
@@ -552,20 +538,18 @@ const LayersPanel: React.FC = () => {
       position: 'fixed', top: 'var(--header-h)', left: 'var(--sidebar-w)',
       bottom: 0, width: 300,
       background: '#ffffff', borderRight: '1px solid #e5e7eb',
-      display: 'flex', flexDirection: 'column', zIndex: 85, overflow: 'hidden',
+      display: 'flex', flexDirection: 'column', zIndex: 85,
     }}>
-      <PanelHeader
-        searchOpen={searchOpen} searchQuery={searchQuery}
-        onSearchToggle={handleSearchToggle} onSearchChange={setSearchQuery}
-        onAddLayer={addLayer}
-        onMoreToggle={() => setMoreMenuOpen(o => !o)}
-        moreMenuOpen={moreMenuOpen}
-        moreButtonRef={moreButtonRef}
-      />
+      {/* Canvases at top, always visible */}
+      <CanvasesSection />
 
-      {moreMenuOpen && (
-        <MoreMenu onClose={() => setMoreMenuOpen(false)} anchorRef={moreButtonRef} />
-      )}
+      {/* Layers section header with search / select-all / add / more */}
+      <div style={{ position: 'relative', flexShrink: 0 }}>
+        <LayersSectionHeader />
+        {moreMenuOpen && (
+          <MoreMenu onClose={() => setMoreMenuOpen(false)} anchorRef={moreButtonRef} />
+        )}
+      </div>
 
       <DndContext
         sensors={sensors}
@@ -575,9 +559,7 @@ const LayersPanel: React.FC = () => {
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div style={{ flex: 1, overflowY: 'auto' }}>
-          <CanvasesSection />
-          <LayersSectionHeader />
+        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
 
           {/* Search results (no DnD) */}
           {displayLayers ? (

@@ -4,10 +4,16 @@ import {
   Bold, Italic, Underline, Link, Check, X, MessageSquare,
 } from 'lucide-react';
 import { useEditor, DraftTextObject, TextObject, isTextObject, isShape, isSymbol } from '../store/editorStore';
-import { Vec2 } from '../types/scene';
+import { Vec2, CanvasObject } from '../types/scene';
 import { ToolContext, ToolPointer, DragSession, ArcPreview, RubberBand } from '../types/tool';
 import { getTool } from '../lib/tools/registry';
 import { findSnapPoint } from '../lib/snapPoints';
+import {
+  PARAM_DRAW_TOOLS, DrawingCommand, makeDrawingCommand, advanceToStep1,
+  updateArg, cycleActiveArg,
+  computeCirclePreview, computeLinePreview, computeRectPreview, computeLiveValues,
+} from '../lib/drawing/drawingCommand';
+import DrawingCommandPanel from './DrawingCommandPanel';
 import ShapeView from './ShapeView';
 import SymbolView from './SymbolView';
 import CanvasGrid from './CanvasGrid';
@@ -372,6 +378,16 @@ const Canvas: React.FC = () => {
   const [rubberBand, setRubberBandState] = useState<RubberBand | null>(null);
   const [draftCommentPos, setDraftCommentPos] = useState<{ x: number; y: number } | null>(null);
 
+  /* ── Param drawing command state ──────────────────────────────── */
+  const [drawCmd, setDrawCmd] = useState<DrawingCommand | null>(null);
+  const drawCmdRef = useRef<DrawingCommand | null>(null);
+  drawCmdRef.current = drawCmd;
+  /* Always-current cursor ref for use in stable finalize callbacks */
+  const mouseWorldRef = useRef<Vec2>({ x: 0, y: 0 });
+  mouseWorldRef.current = mouseWorld;
+  /* Monotonic counter for generated shape names */
+  const drawShapeCounterRef = useRef(1);
+
   /* ── Context menu ──────────────────────────────────────────────── */
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
   const ctxMenuRef = useRef<HTMLDivElement>(null);
@@ -428,6 +444,15 @@ const Canvas: React.FC = () => {
     setSnapPoint(null);
     snapPointRef.current = null;
     setRubberBandState(null);
+  }, [activeTool]);
+
+  /* Initialise / clear drawing command when tool changes */
+  useEffect(() => {
+    if (PARAM_DRAW_TOOLS.has(activeTool)) {
+      setDrawCmd(makeDrawingCommand(activeTool));
+    } else {
+      setDrawCmd(null);
+    }
   }, [activeTool]);
 
   /* ── Pointer → world / hit-test helpers ────────────────────────── */
@@ -563,6 +588,12 @@ const Canvas: React.FC = () => {
           cancelDraftText();
           return;
         }
+        // Cancel active drawing command
+        if (drawCmdRef.current) {
+          setDrawCmd(null);
+          setActiveTool('select');
+          return;
+        }
         // Cancel comment draft
         if (draftCommentPosRef.current) {
           setDraftCommentPosRef.current(null);
@@ -575,6 +606,13 @@ const Canvas: React.FC = () => {
         }
         getTool(activeToolRef.current).onCancel?.();
         setActiveTool('select');
+        return;
+      }
+
+      // Enter — confirm drawing command (when not typing in a text field)
+      if (e.key === 'Enter' && drawCmdRef.current?.step === 'previewing' && !isTyping(e.target)) {
+        e.preventDefault();
+        handleDrawCmdDoneRef.current();
         return;
       }
 
@@ -699,6 +737,13 @@ const Canvas: React.FC = () => {
     const snappedWorld = (SNAP_TOOLS.has(activeTool) && snapPointRef.current)
       ? snapPointRef.current
       : rawWorld;
+
+    // Param drawing tools intercept the click before it reaches the drag-based tool.
+    if (PARAM_DRAW_TOOLS.has(activeTool) && drawCmdRef.current) {
+      handleDrawCmdPointerDown(snappedWorld);
+      return;
+    }
+
     const pointer: ToolPointer = {
       world: snappedWorld,
       hitObjectId: hitFromEvent(e),
@@ -744,6 +789,99 @@ const Canvas: React.FC = () => {
   const handleCancelDraft = useCallback(() => {
     cancelDraftText();
   }, [cancelDraftText]);
+
+  /* ── Param drawing helpers ─────────────────────────────────────── */
+
+  /** Create the final CanvasObject and commit it to the scene. */
+  const finalizeDrawCmd = useCallback((cmd: DrawingCommand, cursor: Vec2) => {
+    const center = cmd.points[0];
+    if (!center) return;
+    const num = drawShapeCounterRef.current++;
+    const common = {
+      layerId: activeLayerId, locked: false, visible: true,
+      rotation: 0, scale: 100,
+      stroke: '#1f2937', strokeWidth: 2, strokeStyle: 'solid' as const,
+    };
+    let obj: CanvasObject;
+
+    if (cmd.tool === 'circle') {
+      const { cx, cy, r } = computeCirclePreview(center, cursor, cmd.args);
+      if (r <= 0) return;
+      obj = {
+        ...common, id: `ellipse-${Date.now()}`, type: 'ellipse',
+        name: `Circle ${num}`,
+        x: cx - r, y: cy - r, width: r * 2, height: r * 2,
+        fill: 'none',
+      };
+    } else if (cmd.tool === 'line') {
+      const { x1, y1, x2, y2 } = computeLinePreview(center, cursor, cmd.args);
+      const dx = x2 - x1, dy = y2 - y1;
+      if (Math.hypot(dx, dy) < 1) return;
+      obj = {
+        ...common, id: `line-${Date.now()}`, type: 'line',
+        name: `Line ${num}`,
+        x: x1, y: y1, dx, dy,
+        width: Math.abs(dx), height: Math.abs(dy),
+      };
+    } else if (cmd.tool === 'rectangle') {
+      const { x, y, width, height } = computeRectPreview(center, cursor, cmd.args);
+      if (width < 1 || height < 1) return;
+      obj = {
+        ...common, id: `rectangle-${Date.now()}`, type: 'rectangle',
+        name: `Rectangle ${num}`,
+        x, y, width, height,
+        fill: 'none', cornerRadius: 0,
+      };
+    } else {
+      return;
+    }
+
+    addObject(obj);
+    setActiveTool('select');
+    setDrawCmd(null);
+  }, [activeLayerId, addObject, setActiveTool]);
+
+  /** Called when the user clicks the canvas during a param-drawing command. */
+  const handleDrawCmdPointerDown = useCallback((world: Vec2) => {
+    const cmd = drawCmdRef.current;
+    if (!cmd) return;
+    if (cmd.step === 'awaiting_first_point') {
+      setDrawCmd(advanceToStep1(cmd, world));
+    } else if (cmd.step === 'previewing') {
+      finalizeDrawCmd(cmd, world);
+    }
+  }, [finalizeDrawCmd]);
+
+  /** Called by Done button or Enter key. */
+  const handleDrawCmdDone = useCallback(() => {
+    const cmd = drawCmdRef.current;
+    if (!cmd || cmd.step !== 'previewing') return;
+    finalizeDrawCmd(cmd, mouseWorldRef.current);
+  }, [finalizeDrawCmd]);
+
+  const handleDrawCmdArgChange = useCallback((argId: string, text: string) => {
+    setDrawCmd(prev => prev ? updateArg(prev, argId, text) : null);
+  }, []);
+
+  const handleDrawCmdArgFocus = useCallback((argId: string) => {
+    setDrawCmd(prev => {
+      if (!prev || prev.activeArgId === argId) return prev;
+      const arg = prev.args.find(a => a.id === argId);
+      return { ...prev, activeArgId: argId, inputText: arg?.value != null ? String(arg.value) : '' };
+    });
+  }, []);
+
+  const handleDrawCmdTabNext = useCallback(() => {
+    setDrawCmd(prev => prev ? cycleActiveArg(prev, 1) : null);
+  }, []);
+
+  const handleDrawCmdTabPrev = useCallback(() => {
+    setDrawCmd(prev => prev ? cycleActiveArg(prev, -1) : null);
+  }, []);
+
+  /* Stable ref so the keyboard effect can call Done without re-subscribing */
+  const handleDrawCmdDoneRef = useRef(handleDrawCmdDone);
+  handleDrawCmdDoneRef.current = handleDrawCmdDone;
 
   /* ── Render ────────────────────────────────────────────────────── */
 
@@ -920,6 +1058,111 @@ const Canvas: React.FC = () => {
         );
       })()}
 
+      {/* ── Param drawing preview overlay ── */}
+      {drawCmd && drawCmd.step === 'previewing' && drawCmd.points[0] && (() => {
+        const center = drawCmd.points[0];
+        const cursor = mouseWorld;
+        const { zoom, panX, panY } = viewport;
+        const sx = (wx: number) => wx * zoom + panX;
+        const sy = (wy: number) => wy * zoom + panY;
+
+        if (drawCmd.tool === 'circle') {
+          const { cx, cy, r } = computeCirclePreview(center, cursor, drawCmd.args);
+          const scx = sx(cx), scy = sy(cy);
+          const ecx = sx(cx + (cursor.x - cx) / Math.max(Math.hypot(cursor.x - cx, cursor.y - cy), 0.001) * r);
+          const ecy = sy(cy + (cursor.y - cy) / Math.max(Math.hypot(cursor.x - cx, cursor.y - cy), 0.001) * r);
+          const curSx = sx(cursor.x), curSy = sy(cursor.y);
+          const sr = r * zoom;
+          const live = computeLiveValues(drawCmd, cursor);
+          const labelX = (scx + curSx) / 2;
+          const labelY = (scy + curSy) / 2 - 14;
+
+          return (
+            <svg key="draw-preview" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible', zIndex: 33 }}>
+              {/* Dashed guide: center → cursor edge */}
+              <line x1={scx} y1={scy} x2={curSx} y2={curSy}
+                stroke="#3b6ff0" strokeWidth="1.5" strokeDasharray="5 4" strokeLinecap="round" opacity="0.6" />
+              {/* Circle outline */}
+              <circle cx={scx} cy={scy} r={Math.max(sr, 1)}
+                fill="rgba(59,111,240,0.05)" stroke="#3b6ff0" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.8" />
+              {/* Center dot */}
+              <circle cx={scx} cy={scy} r="4" fill="#3b6ff0" opacity="0.85" />
+              {/* Radius label chip */}
+              <g transform={`translate(${labelX},${labelY})`}>
+                <rect x="-26" y="-11" width="52" height="20" rx="5" fill="#1d4ed8" opacity="0.92" />
+                <text textAnchor="middle" dominantBaseline="middle" fontSize="11"
+                  fontWeight="700" fill="white" fontFamily="Inter, system-ui, sans-serif">
+                  {(live.radius ?? r).toFixed(2)}
+                </text>
+              </g>
+            </svg>
+          );
+        }
+
+        if (drawCmd.tool === 'line') {
+          const { x1, y1, x2, y2, length, angleDeg } = computeLinePreview(center, cursor, drawCmd.args);
+          const lx1 = sx(x1), ly1 = sy(y1), lx2 = sx(x2), ly2 = sy(y2);
+          const midX = (lx1 + lx2) / 2, midY = (ly1 + ly2) / 2;
+          const live = computeLiveValues(drawCmd, cursor);
+          return (
+            <svg key="draw-preview" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible', zIndex: 33 }}>
+              <line x1={lx1} y1={ly1} x2={lx2} y2={ly2}
+                stroke="#3b6ff0" strokeWidth="1.5" strokeDasharray="6 4" strokeLinecap="round" opacity="0.85" />
+              <circle cx={lx1} cy={ly1} r="4" fill="#3b6ff0" opacity="0.85" />
+              <circle cx={lx2} cy={ly2} r="3" fill="#3b6ff0" opacity="0.5" />
+              {/* Length label */}
+              <g transform={`translate(${midX},${midY - 14})`}>
+                <rect x="-28" y="-11" width="56" height="20" rx="5" fill="#1d4ed8" opacity="0.92" />
+                <text textAnchor="middle" dominantBaseline="middle" fontSize="11"
+                  fontWeight="700" fill="white" fontFamily="Inter, system-ui, sans-serif">
+                  {(live.length ?? length).toFixed(2)}
+                </text>
+              </g>
+              {/* Angle label */}
+              <g transform={`translate(${lx1 + 22},${ly1 - 10})`}>
+                <rect x="-22" y="-10" width="44" height="18" rx="4" fill="#374151" opacity="0.88" />
+                <text textAnchor="middle" dominantBaseline="middle" fontSize="10"
+                  fill="white" fontFamily="Inter, system-ui, sans-serif">
+                  {((live.angle ?? angleDeg) % 360 + 360).toFixed(1)}°
+                </text>
+              </g>
+            </svg>
+          );
+        }
+
+        if (drawCmd.tool === 'rectangle') {
+          const { x, y, width, height } = computeRectPreview(center, cursor, drawCmd.args);
+          const rx = sx(x), ry = sy(y);
+          const rw = width * zoom, rh = height * zoom;
+          const live = computeLiveValues(drawCmd, cursor);
+          return (
+            <svg key="draw-preview" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible', zIndex: 33 }}>
+              <rect x={rx} y={ry} width={rw} height={rh}
+                fill="rgba(59,111,240,0.05)" stroke="#3b6ff0" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.85" />
+              <circle cx={rx} cy={ry} r="4" fill="#3b6ff0" opacity="0.85" />
+              {/* Width label (bottom edge) */}
+              <g transform={`translate(${rx + rw / 2},${ry + rh + 14})`}>
+                <rect x="-28" y="-10" width="56" height="18" rx="4" fill="#1d4ed8" opacity="0.92" />
+                <text textAnchor="middle" dominantBaseline="middle" fontSize="11"
+                  fontWeight="700" fill="white" fontFamily="Inter, system-ui, sans-serif">
+                  {(live.width ?? width).toFixed(2)}
+                </text>
+              </g>
+              {/* Height label (right edge) */}
+              <g transform={`translate(${rx + rw + 14},${ry + rh / 2})`}>
+                <rect x="-28" y="-10" width="56" height="18" rx="4" fill="#1d4ed8" opacity="0.92" />
+                <text textAnchor="middle" dominantBaseline="middle" fontSize="11"
+                  fontWeight="700" fill="white" fontFamily="Inter, system-ui, sans-serif">
+                  {(live.height ?? height).toFixed(2)}
+                </text>
+              </g>
+            </svg>
+          );
+        }
+
+        return null;
+      })()}
+
       {/* Object snap indicator */}
       {snapPoint && (
         <svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible', zIndex: 32 }}>
@@ -1042,6 +1285,20 @@ const Canvas: React.FC = () => {
           />
         );
       })()}
+
+      {/* ── Drawing command panel ── */}
+      {drawCmd && (
+        <DrawingCommandPanel
+          cmd={drawCmd}
+          liveValues={computeLiveValues(drawCmd, mouseWorld)}
+          onArgChange={handleDrawCmdArgChange}
+          onArgFocus={handleDrawCmdArgFocus}
+          onTabNext={handleDrawCmdTabNext}
+          onTabPrev={handleDrawCmdTabPrev}
+          onDone={handleDrawCmdDone}
+          onCancel={() => { setDrawCmd(null); setActiveTool('select'); }}
+        />
+      )}
 
       {/* Comment placement bar (above bottom toolbar) */}
       {activeTool === 'comment' && (

@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sprint Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --canvas: #F0F2F5;
+  --surface: #FFFFFF;
+  --ink: #1A1D23;
+  --ink-2: #5A6472;
+  --line: #E5E8EC;
+  --accent: #4F46E5;
+  --green: #16A34A;   --green-t: #DCFCE7;
+  --blue: #2563EB;    --blue-t: #DBEAFE;
+  --amber: #D97706;   --amber-t: #FEF3C7;
+  --red: #DC2626;     --red-t: #FEE2E2;
+  --gray: #6B7280;    --gray-t: #F3F4F6;
+  --navy: #1E2A3B;
+  --navy-2: #253348;
+  --radius: 10px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Inter", "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+.num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+a { color: var(--accent); }
+
+/* ── App Bar ── */
+header.appbar {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--navy);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.appbar-inner {
+  max-width: 1400px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: stretch; height: 56px;
+}
+.head-brand {
+  display: flex; flex-direction: column; justify-content: center;
+  min-width: 200px; padding-right: 24px;
+  border-right: 1px solid rgba(255,255,255,.1);
+  flex-shrink: 0;
+}
+.head-brand .hb-project { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.45); }
+.head-brand .hb-sprint  { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -.01em; line-height: 1.2; }
+.head-brand .hb-meta    { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 1px; }
+
+/* Tab nav */
+.tab-nav { display: flex; align-items: stretch; flex: 1; padding: 0 8px; }
+.tab-btn {
+  background: none; border: none; color: rgba(255,255,255,.5);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  padding: 0 18px; cursor: pointer; position: relative;
+  white-space: nowrap; border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s; letter-spacing: .01em;
+}
+.tab-btn:hover { color: rgba(255,255,255,.85); }
+.tab-btn.active { color: #fff; border-bottom-color: #6366F1; }
+.tab-btn .tb-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; border-radius: 999px; background: rgba(255,255,255,.15);
+  font-size: 10px; font-weight: 700; padding: 0 5px; margin-left: 6px;
+  color: rgba(255,255,255,.7);
+}
+.tab-btn.active .tb-badge { background: var(--accent); color: #fff; }
+
+/* Head actions */
+.head-actions {
+  display: flex; align-items: center; gap: 8px;
+  padding-left: 20px; border-left: 1px solid rgba(255,255,255,.1);
+  flex-shrink: 0;
+}
+.health {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  padding: 5px 12px; border-radius: 999px; text-transform: uppercase; white-space: nowrap;
+}
+.health .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.health.h-good { color: #4ADE80; background: rgba(74,222,128,.18); }
+.health.h-risk { color: #FCD34D; background: rgba(252,211,77,.18); }
+.health.h-bad  { color: #F87171; background: rgba(248,113,113,.18); }
+.btn {
+  cursor: pointer; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.75); padding: 6px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 500; display: inline-flex; align-items: center;
+  gap: 6px; transition: .15s; font-family: inherit; white-space: nowrap;
+}
+.btn:hover { background: rgba(255,255,255,.15); color: #fff; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.12); }
+.btn.light { background: var(--surface); border-color: var(--line); color: var(--ink); }
+.btn.light:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Filter Bar ── */
+.filter-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 56px; z-index: 40;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.filter-bar-inner {
+  max-width: 1400px; margin: 0 auto; padding: 8px 24px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.fb-label { font-size: 11px; font-weight: 700; color: var(--ink-2); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+select.gf-sel {
+  background: var(--canvas); border: 1px solid var(--line); color: var(--ink);
+  padding: 6px 10px; border-radius: 7px; font-size: 12px; font-family: inherit;
+  min-width: 130px; cursor: pointer;
+}
+select.gf-sel:focus { outline: 2px solid #C7D2FE; border-color: var(--accent); }
+select.gf-sel.active { border-color: var(--accent); color: var(--accent); font-weight: 600; background: #EEF2FF; }
+.gf-divider { width: 1px; height: 24px; background: var(--line); flex-shrink: 0; }
+.gf-chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.fchip {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 999px; background: #EEF2FF; color: var(--accent);
+  border: 1px solid #C7D2FE; cursor: pointer; white-space: nowrap;
+}
+.fchip:hover { background: #E0E7FF; }
+.gf-clear { font-size: 11px; font-weight: 600; color: var(--ink-2); background: none; border: none; cursor: pointer; padding: 3px 6px; font-family: inherit; }
+.gf-clear:hover { color: var(--red); }
+.fb-spacer { flex: 1; min-width: 8px; }
+.gf-count { font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+
+/* ── Main ── */
+main { max-width: 1400px; margin: 0 auto; padding: 24px 24px 0; }
+.band { margin-bottom: 24px; }
+
+/* ── Empty state ── */
+#dropzone {
+  border: 2px dashed var(--line); border-radius: var(--radius); background: var(--surface);
+  padding: 80px 24px; text-align: center; color: var(--ink-2); transition: .15s; margin-bottom: 0;
+}
+#dropzone.drag { border-color: var(--accent); background: #EEF2FF; }
+#dropzone h2 { color: var(--ink); margin: 0 0 8px; font-size: 20px; }
+#dropzone p { margin: 6px 0; }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 20px 24px;
+  transition: box-shadow .15s;
+}
+.card:hover { box-shadow: 0 2px 12px rgba(26,29,35,.07); }
+.card h3 {
+  margin: 0 0 14px; font-size: 11px; color: var(--ink-2);
+  text-transform: uppercase; letter-spacing: .07em; font-weight: 700;
+}
+
+/* ── KPI strip ── */
+.kpis { display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+.kpi .label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); font-weight: 700; }
+.kpi .value { font-size: 36px; font-weight: 800; margin-top: 6px; line-height: 1.05; letter-spacing: -.02em; }
+.kpi .sub   { margin-top: 6px; font-size: 12px; color: var(--ink-2); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.delta { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+.d-up   { background: var(--green-t); color: #15803D; }
+.d-down { background: var(--amber-t); color: #B45309; }
+.d-bad  { background: var(--red-t);   color: #B91C1C; }
+.d-flat { background: var(--gray-t);  color: var(--ink-2); }
+.meter { margin-top: 12px; height: 5px; border-radius: 999px; background: var(--gray-t); overflow: hidden; }
+.meter i { display: block; height: 100%; border-radius: 999px; }
+
+/* ── Summary cards row ── */
+.summary-cards { display: grid; gap: 16px; grid-template-columns: 1.3fr 1fr; }
+@media (max-width: 920px) { .summary-cards { grid-template-columns: 1fr; } }
+
+/* Story Points card */
+.sp-top-row { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 16px; }
+.sp-metric { text-align: center; padding: 4px 12px; border-right: 1px solid var(--line); }
+.sp-metric:last-child { border-right: none; }
+.sp-metric .sp-n { font-size: 42px; font-weight: 800; line-height: 1; letter-spacing: -.025em; }
+.sp-metric .sp-l { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-2); font-weight: 700; margin-top: 6px; }
+.sp-bar { height: 7px; border-radius: 999px; background: var(--gray-t); overflow: hidden; margin-bottom: 14px; }
+.sp-bar i { display: block; height: 100%; border-radius: 999px; transition: width .5s ease; }
+.sp-bottom-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.sp-sub { text-align: center; padding: 10px 8px; background: var(--canvas); border-radius: 8px; }
+.sp-sub .ss-n { font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -.015em; }
+.sp-sub .ss-l { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); font-weight: 700; margin-top: 4px; }
+.sp-foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); }
+
+/* Bug Count card */
+.bc-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.bc-head h3 { margin: 0; }
+.bc-total-chip { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--gray-t); color: var(--ink-2); border: 1px solid var(--line); }
+.bc-rows { display: flex; flex-direction: column; gap: 9px; }
+.bc-row { display: grid; grid-template-columns: 100px 1fr 34px; align-items: center; gap: 12px; }
+.bc-lbl { font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.bc-lbl.alarm { color: var(--red); font-weight: 700; }
+.bc-bar { height: 7px; border-radius: 999px; background: var(--gray-t); overflow: hidden; }
+.bc-bar i { display: block; height: 100%; border-radius: 999px; transition: width .5s ease; }
+.bc-cnt { font-size: 15px; font-weight: 800; text-align: right; color: var(--ink); }
+.bc-cnt.alarm { color: var(--red); }
+.bc-cnt.ok    { color: var(--green); }
+
+/* ── Charts ── */
+.charts-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+.chart-box { position: relative; height: 260px; }
+.click-hint { font-size: 11px; color: var(--ink-2); margin-top: 8px; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+}
+.b-done   { background: var(--green-t); color: #15803D; }
+.b-prog   { background: var(--blue-t);  color: #1D4ED8; }
+.b-todo   { background: var(--gray-t);  color: #4B5563; }
+.b-part   { background: var(--amber-t); color: #B45309; }
+.b-reopen { background: var(--red-t);   color: #B91C1C; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  background: var(--gray-t); color: var(--ink-2); border: 1px solid var(--line); white-space: nowrap;
+}
+
+/* ── Goals ── */
+.panel-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.panel-head h3 { margin: 0; }
+.goal-row {
+  display: grid; grid-template-columns: 1fr 140px 160px 120px; gap: 16px;
+  align-items: center; padding: 11px 8px; border-bottom: 1px solid var(--line);
+}
+.goal-row:last-child { border-bottom: 0; }
+.goal-row.not-done { background: #FEF6F6; border-radius: 8px; }
+.goal-row .gtext  { font-size: 13px; font-weight: 500; }
+.goal-row .gowner { font-size: 12px; color: var(--ink-2); }
+.gbar { height: 5px; border-radius: 999px; background: var(--gray-t); overflow: hidden; }
+.gbar i { display: block; height: 100%; border-radius: 999px; }
+@media (max-width: 800px) { .goal-row { grid-template-columns: 1fr 110px; } .goal-row .gowner, .goal-row .gbar { display: none; } }
+
+/* ── Ticket table ── */
+.table-card { max-width: 100%; }
+.table-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+input.search, select.tbl-filter {
+  background: var(--surface); border: 1px solid var(--line); color: var(--ink);
+  padding: 7px 11px; border-radius: 8px; font-size: 13px; font-family: inherit;
+}
+input.search { min-width: 240px; }
+input.search:focus, select.tbl-filter:focus { outline: 2px solid #C7D2FE; border-color: var(--accent); }
+select.tbl-filter.active { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.result-count { font-size: 12px; color: var(--ink-2); margin-left: auto; }
+.filter-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 10px; min-height: 0; }
+.clear-all { font-size: 11px; font-weight: 600; color: var(--ink-2); background: none; border: none; cursor: pointer; padding: 4px 6px; font-family: inherit; }
+.clear-all:hover { color: var(--red); }
+.table-scroll { max-height: 520px; overflow: auto; border-top: 1px solid var(--line); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 0 10px; border-bottom: 1px solid var(--line); height: 42px; }
+th {
+  color: var(--ink-2); font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  cursor: pointer; user-select: none; position: sticky; top: 0; background: var(--surface); z-index: 2; white-space: nowrap;
+}
+th .arrow { font-size: 9px; color: var(--accent); margin-left: 4px; }
+th.num-col, td.num-col { text-align: right; }
+tbody tr:hover { background: #FAFBFC; }
+td.t-title { max-width: 300px; }
+td.t-title .trunc, td.t-remarks .trunc {
+  display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+td.t-remarks { max-width: 200px; color: var(--ink-2); font-size: 12px; }
+td .key { font-weight: 600; }
+.muted { color: var(--ink-2); }
+.empty-row td { text-align: center; padding: 32px; color: var(--ink-2); }
+
+/* ── Placeholder tabs ── */
+.ph-grid { display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .ph-grid { grid-template-columns: repeat(2, 1fr); } }
+.ph-metric { text-align: center; }
+.ph-metric .phm-n { font-size: 32px; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+.ph-metric .phm-l { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-2); font-weight: 700; margin-top: 6px; }
+.ph-metric .phm-s { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+
+/* Lighthouse score rings */
+.lh-scores { display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .lh-scores { grid-template-columns: repeat(2, 1fr); } }
+.lh-score { text-align: center; }
+.lh-ring { display: inline-block; position: relative; width: 100px; height: 100px; margin-bottom: 10px; }
+.lh-ring svg { width: 100px; height: 100px; transform: rotate(-90deg); }
+.lh-ring .lr-val { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 24px; font-weight: 800; }
+.lh-score .ls-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); }
+.cwv-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
+.cwv-item { text-align: center; padding: 18px 12px; background: var(--canvas); border-radius: 10px; }
+.cwv-item .ci-v { font-size: 24px; font-weight: 800; line-height: 1; }
+.cwv-item .ci-l { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-2); font-weight: 700; margin-top: 5px; }
+.cwv-item .ci-s { font-size: 11px; margin-top: 4px; }
+.cwv-good { color: var(--green); }
+.cwv-ok   { color: var(--amber); }
+.cwv-bad  { color: var(--red); }
+
+/* SonarQube */
+.sq-issues { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
+.sq-issue { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--canvas); border-radius: 9px; }
+.sq-issue .si-ico { font-size: 24px; line-height: 1; }
+.sq-issue .si-n   { font-size: 26px; font-weight: 800; line-height: 1; letter-spacing: -.01em; }
+.sq-issue .si-l   { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); font-weight: 700; margin-top: 3px; }
+.sq-gate-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.sq-gate-row h3 { margin: 0; }
+
+/* QA */
+.qa-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+.qa-bar-row { display: grid; grid-template-columns: 110px 1fr 50px; gap: 10px; align-items: center; margin-bottom: 10px; }
+.qa-bar { height: 20px; border-radius: 5px; background: var(--gray-t); overflow: hidden; }
+.qa-bar i { display: block; height: 100%; border-radius: 5px; }
+.qa-bar-lbl { font-size: 13px; font-weight: 500; }
+.qa-bar-cnt { font-size: 13px; font-weight: 700; text-align: right; }
+.qa-donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+/* Upload hint */
+.upload-hint { text-align: center; padding: 36px 20px; color: var(--ink-2); border: 1px dashed var(--line); border-radius: var(--radius); margin-top: 16px; }
+.upload-hint .uh-ico { font-size: 32px; margin-bottom: 10px; }
+.upload-hint h4 { color: var(--ink); margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+.upload-hint p { margin: 0; font-size: 12px; }
+
+footer { text-align: center; color: var(--ink-2); padding: 36px 0 24px; font-size: 12px; }
+.hidden { display: none !important; }
+
+@media print {
+  header.appbar, .filter-bar { position: static; box-shadow: none; }
+  .btn, .table-tools, .filter-chips, #dropzone, .click-hint, .tab-nav, .head-actions { display: none !important; }
+  .table-scroll { max-height: none; overflow: visible; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── App Bar ── -->
+<header class="appbar">
+  <div class="appbar-inner">
+    <!-- Brand -->
+    <div class="head-brand">
+      <div class="hb-project" id="projectName">Sprint Dashboard</div>
+      <div class="hb-sprint" id="sprintTitle">Load a report</div>
+      <div class="hb-meta num hidden" id="sprintMeta"></div>
+    </div>
+    <!-- Tab nav -->
+    <nav class="tab-nav" id="tabNav">
+      <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="goals">Goals <span class="tb-badge hidden" id="goalsBadge"></span></button>
+      <button class="tab-btn" data-tab="sonarqube">SonarQube</button>
+      <button class="tab-btn" data-tab="lighthouse">Lighthouse</button>
+      <button class="tab-btn" data-tab="qa">QA Reports</button>
+    </nav>
+    <!-- Actions -->
+    <div class="head-actions">
+      <div class="health hidden" id="healthBadge"><span class="dot"></span><span id="healthText"></span></div>
+      <button class="btn hidden" id="exportBtn" title="Print / save as PDF">⎙ Export</button>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden" />
+      <button class="btn" id="demoBtn">▶ Demo</button>
+      <button class="btn primary" id="chooseBtn">⬆ Load File</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── Global Filter Bar ── -->
+<div class="filter-bar hidden" id="filterBar">
+  <div class="filter-bar-inner">
+    <span class="fb-label">Filter:</span>
+    <select class="gf-sel" id="gfSprint"><option value="">All Sprints</option></select>
+    <select class="gf-sel" id="gfAssignee"><option value="">All Assignees</option></select>
+    <select class="gf-sel" id="gfEpic"><option value="">All Epics</option></select>
+    <select class="gf-sel" id="gfType"><option value="">All Types</option></select>
+    <select class="gf-sel" id="gfStatus"><option value="">All Statuses</option></select>
+    <div class="gf-divider"></div>
+    <div class="gf-chips" id="gfChips"></div>
+    <div class="fb-spacer"></div>
+    <span class="gf-count num" id="gfCount"></span>
+  </div>
+</div>
+
+<main>
+  <!-- Empty state -->
+  <div id="dropzone">
+    <h2>Drop your sprint report here</h2>
+    <p>Accepts <b>.xlsx</b>, <b>.xls</b> or <b>.csv</b> — or click <b>Load File</b> above.</p>
+    <p class="muted">Supports the <b>Sprint Details + Epic List</b> template, or a workbook with <b>Summary</b>, <b>Goals</b>, <b>Tickets</b> sheets.</p>
+    <p style="margin-top:20px"><button class="btn light" id="demoBtn2">▶ Load demo data</button></p>
+  </div>
+
+  <!-- ── Tab: Dashboard ── -->
+  <div id="tab-dashboard" class="tab-panel hidden">
+    <!-- KPI strip -->
+    <section class="band">
+      <div class="kpis" id="kpis"></div>
+    </section>
+    <!-- Story Points + Bug Count -->
+    <section class="band summary-cards">
+      <div class="card">
+        <h3>Story Points</h3>
+        <div class="sp-top-row num" id="spTop"></div>
+        <div class="sp-bar"><i id="spBarFill"></i></div>
+        <div class="sp-bottom-row num" id="spBottom"></div>
+        <div class="sp-foot" id="spFoot"></div>
+      </div>
+      <div class="card">
+        <div class="bc-head">
+          <h3>Bug Count</h3>
+          <span class="bc-total-chip num" id="bcTotalChip">0 bugs</span>
+        </div>
+        <div class="bc-rows num" id="bcRows"></div>
+      </div>
+    </section>
+    <!-- Charts 2×2 -->
+    <section class="band charts-grid">
+      <div class="card">
+        <h3>Ticket Status</h3>
+        <div class="chart-box"><canvas id="statusChart"></canvas></div>
+        <div class="click-hint">Click a segment to filter.</div>
+      </div>
+      <div class="card">
+        <h3>Story Points — Committed vs Done</h3>
+        <div class="chart-box"><canvas id="trendChart"></canvas></div>
+        <div class="click-hint" id="trendHint"></div>
+      </div>
+      <div class="card">
+        <h3>Epic vs Story Points</h3>
+        <div class="chart-box"><canvas id="epicChart"></canvas></div>
+        <div class="click-hint">Click a bar to filter.</div>
+      </div>
+      <div class="card">
+        <h3>Work Item Type</h3>
+        <div class="chart-box"><canvas id="typeChart"></canvas></div>
+        <div class="click-hint">Click a segment to filter.</div>
+      </div>
+    </section>
+    <!-- Workload -->
+    <section class="band">
+      <div class="card">
+        <h3>Status by Assignee — story points</h3>
+        <div class="chart-box" style="height:300px"><canvas id="assigneeChart"></canvas></div>
+        <div class="click-hint">Click a bar to filter.</div>
+      </div>
+    </section>
+    <!-- Ticket table -->
+    <section class="band" id="ticketSection">
+      <div class="card table-card">
+        <div class="panel-head">
+          <h3>Ticket Details</h3>
+          <span class="chip num" id="ticketCountChip"></span>
+        </div>
+        <div class="table-tools">
+          <input class="search" id="search" placeholder="Search ID, title, assignee…" />
+          <select class="tbl-filter" id="filterType"><option value="">Type</option></select>
+          <select class="tbl-filter" id="filterStatus"><option value="">Status</option></select>
+          <select class="tbl-filter" id="filterEpic"><option value="">Epic</option></select>
+          <select class="tbl-filter" id="filterAssignee"><option value="">Assignee</option></select>
+          <select class="tbl-filter" id="filterPriority"><option value="">Priority</option></select>
+          <select class="tbl-filter" id="filterSprint"><option value="">Sprint</option></select>
+          <span class="result-count num" id="resultCount"></span>
+        </div>
+        <div class="filter-chips" id="filterChips"></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th data-k="key">ID</th>
+              <th data-k="summary">Title</th>
+              <th data-k="type">Type</th>
+              <th data-k="epic">Epic</th>
+              <th data-k="assignee">Assignee</th>
+              <th data-k="status">Status</th>
+              <th data-k="statusRaw">Raw Status</th>
+              <th data-k="points" class="num-col">Story Points</th>
+              <th data-k="priority">Priority</th>
+              <th data-k="sprint">Sprint</th>
+              <th data-k="remarks">Remarks</th>
+            </tr></thead>
+            <tbody id="ticketBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── Tab: Goals ── -->
+  <div id="tab-goals" class="tab-panel hidden">
+    <section class="band">
+      <div class="card">
+        <div class="panel-head">
+          <h3>Sprint Goals</h3>
+          <span class="chip num" id="goalsChip"></span>
+        </div>
+        <div id="goals"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── Tab: SonarQube ── -->
+  <div id="tab-sonarqube" class="tab-panel hidden">
+    <section class="band">
+      <div class="card">
+        <div class="sq-gate-row">
+          <h3>Quality Gate</h3>
+          <span class="badge b-done" id="sqGate">Passed</span>
+        </div>
+        <div class="ph-grid" id="sqKpis"></div>
+      </div>
+    </section>
+    <section class="band">
+      <div class="card">
+        <h3>Issues Breakdown</h3>
+        <div class="sq-issues" id="sqIssues"></div>
+      </div>
+    </section>
+    <div class="upload-hint">
+      <div class="uh-ico">🔬</div>
+      <h4>Connect your SonarQube project</h4>
+      <p>Upload a SonarQube JSON export or configure the project key to pull live metrics.</p>
+    </div>
+  </div>
+
+  <!-- ── Tab: Lighthouse ── -->
+  <div id="tab-lighthouse" class="tab-panel hidden">
+    <section class="band">
+      <div class="card">
+        <h3>Lighthouse Scores</h3>
+        <div class="lh-scores" id="lhScores"></div>
+      </div>
+    </section>
+    <section class="band">
+      <div class="card">
+        <h3>Core Web Vitals</h3>
+        <div class="cwv-grid" id="lhCWV"></div>
+      </div>
+    </section>
+    <div class="upload-hint">
+      <div class="uh-ico">🚦</div>
+      <h4>Connect your Lighthouse CI</h4>
+      <p>Upload a Lighthouse JSON report or integrate with your CI pipeline to track scores over time.</p>
+    </div>
+  </div>
+
+  <!-- ── Tab: QA Reports ── -->
+  <div id="tab-qa" class="tab-panel hidden">
+    <section class="band">
+      <div class="card">
+        <div class="panel-head"><h3>Test Summary</h3></div>
+        <div class="ph-grid" id="qaKpis"></div>
+      </div>
+    </section>
+    <section class="band">
+      <div class="qa-grid">
+        <div class="card">
+          <h3>Test Results</h3>
+          <div id="qaResults"></div>
+        </div>
+        <div class="card">
+          <h3>Automation vs Manual</h3>
+          <div class="chart-box" style="height:220px"><canvas id="qaChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+    <div class="upload-hint">
+      <div class="uh-ico">🧪</div>
+      <h4>Connect your test reports</h4>
+      <p>Upload a JUnit XML, Allure, or JSON test report to populate real test metrics.</p>
+    </div>
+  </div>
+
+</main>
+<footer>Sprint Dashboard · runs fully in your browser · no data leaves your machine</footer>
+
+<script>
+/* ============================================================
+   Column alias maps + normalisation
+   ============================================================ */
+const ALIASES = {
+  key:      ["key","ticket","ticket id","ticketid","id","issue","issue key"],
+  summary:  ["summary","title","name","description","desc","issue summary"],
+  type:     ["type","issue type","work type","task type"],
+  epic:     ["epic (clean)","epic","epic link","feature","epic name"],
+  parent:   ["parent","parent key","f"],
+  points:   ["story point estimate","story points","sp","points","point","estimate","story point"],
+  status:   ["status","state","status group"],
+  assignee: ["assignee","owner","developer","assigned to","resource"],
+  priority: ["priority","prio"],
+  remarks:  ["remarks","remark","comment","comments","notes","note","root cause"],
+  sprint:   ["sprint","sprint name","iteration"]
+};
+const GOAL_ALIASES = {
+  text:     ["goal","objective","goal description","description","title"],
+  owner:    ["owner","assignee","responsible","lead"],
+  status:   ["status","state","result"],
+  progress: ["progress","% complete","percent","completion","% done"]
+};
+
+function normStatus(raw) {
+  const s = (raw || "").toString().trim().toLowerCase();
+  if (!s) return "To Do";
+  if (/re-?open/.test(s)) return "Re-opened";
+  if (/block/.test(s)) return "Blocked";
+  if (/done|closed|resolved|complete|fixed|verified|deployed/.test(s)) return "Done";
+  if (/progress|doing|dev in|code review|in review|in qa|qa|testing/.test(s)) return "In Progress";
+  if (/open|new|todo|to do|backlog|ready|selected|not started/.test(s)) return "To Do";
+  return raw.toString().trim();
+}
+function normPriority(raw) {
+  const s = (raw || "").toString().trim().toLowerCase();
+  if (/critical|highest|urgent|p0|p1|high/.test(s)) return "High";
+  if (/medium|med|normal|p2/.test(s)) return "Medium";
+  if (/low|minor|trivial|p3|p4/.test(s)) return "Low";
+  return "";
+}
+function bugBucket(raw) {
+  const s = (raw || "").toString().trim().toLowerCase();
+  if (/re-?open/.test(s)) return "Reopen";
+  if (/done|closed|resolved|complete|fixed|verified/.test(s)) return "Closed";
+  if (/progress|doing|dev|review|qa|testing/.test(s)) return "Prog";
+  return "Todo";
+}
+function isBug(type) { return /bug|defect/i.test(type || ""); }
+
+const STATUS_COLORS = {
+  "Done": "#16A34A", "In Progress": "#2563EB", "To Do": "#6B7280",
+  "Re-opened": "#DC2626", "Blocked": "#B91C1C"
+};
+const STATUS_BADGE = {
+  "Done": "b-done", "In Progress": "b-prog", "To Do": "b-todo",
+  "Re-opened": "b-reopen", "Blocked": "b-reopen"
+};
+const STATUS_ORDER   = { "Re-opened": 0, "Blocked": 1, "In Progress": 2, "To Do": 3, "Done": 4 };
+const PRIORITY_ORDER = { "High": 0, "Medium": 1, "Low": 2, "": 3 };
+const PRIORITY_ICON  = { "High": "⬆", "Medium": "—", "Low": "⬇" };
+const TYPE_COLORS    = { "Story": "#4F46E5", "User Story": "#4F46E5", "Bug": "#DC2626", "Task": "#64748B", "Spike": "#8B5CF6" };
+const TYPE_FALLBACK  = ["#4F46E5","#0EA5E9","#8B5CF6","#14B8A6","#EC4899","#84CC16"];
+const ACCENT = "#4F46E5";
+
+/* ============================================================
+   Parsing helpers
+   ============================================================ */
+function pickFrom(aliases, row, field) {
+  const keys = Object.keys(row);
+  for (const alias of aliases[field]) {
+    const hit = keys.find(k => k.trim().toLowerCase() === alias);
+    if (hit !== undefined) return row[hit];
+  }
+  return undefined;
+}
+const pick = (row, field) => pickFrom(ALIASES, row, field);
+
+function parseEpicList(rows) {
+  const map = {};
+  rows.forEach(r => {
+    const keys   = Object.keys(r);
+    const keyCol  = keys.find(k => /^(key|issue key|b)$/i.test(k.trim()));
+    const nameCol = keys.find(k => /^(summary|name|description|d)$/i.test(k.trim()));
+    const vals    = Object.values(r);
+    const issueKey = keyCol ? r[keyCol] : vals[1];
+    const name     = nameCol ? r[nameCol] : vals[3];
+    if (issueKey && name) map[issueKey.toString().trim()] = name.toString().trim();
+  });
+  return map;
+}
+
+function parseTickets(rows, epicMap) {
+  epicMap = epicMap || {};
+  return rows.filter(r => Object.keys(r).length).map(r => {
+    const rawEpic   = (pick(r,"epic") ?? "").toString().trim();
+    const rawParent = (pick(r,"parent") ?? "").toString().trim();
+    const isFormula = rawEpic.startsWith("=") || rawEpic === "";
+    const epicName  = isFormula
+      ? (epicMap[rawParent] || (rawParent ? rawParent : "—"))
+      : (rawEpic || "—");
+    return {
+      key:       (pick(r,"key") ?? "").toString().trim(),
+      summary:   (pick(r,"summary") ?? "").toString().trim(),
+      type:      (pick(r,"type") ?? "Task").toString().trim() || "Task",
+      epic:      epicName,
+      parent:    rawParent,
+      points:    Number(pick(r,"points")) || 0,
+      statusRaw: (pick(r,"status") ?? "").toString().trim(),
+      status:    normStatus(pick(r,"status")),
+      assignee:  (pick(r,"assignee") ?? "Unassigned").toString().trim() || "Unassigned",
+      priority:  normPriority(pick(r,"priority")),
+      remarks:   (pick(r,"remarks") ?? "").toString().trim(),
+      sprint:    (pick(r,"sprint") ?? "").toString().trim()
+    };
+  }).filter(t => t.key || t.summary);
+}
+
+function deriveSummaryFromTickets(tickets) {
+  const sprints = tickets.map(t => t.sprint).filter(Boolean);
+  const sprintName = sprints[0] || "";
+  const m = sprintName.match(/(\d+)/);
+  const project = (() => {
+    const k = tickets.find(t => t.key)?.key || "";
+    const p = k.match(/^([A-Z]+)-/);
+    return p ? p[1] : "";
+  })();
+  return {
+    project, sprintNo: m ? m[1] : "—", sprintName,
+    start: null, end: null, pm: null, manHours: null,
+    members: [...new Set(tickets.map(t => t.assignee))].filter(a => a !== "Unassigned").length,
+    committed: null, done: null, velocity: null
+  };
+}
+
+function parseGoals(rows) {
+  return rows.filter(r => Object.keys(r).length).map(r => {
+    const text = pickFrom(GOAL_ALIASES, r, "text");
+    const vals = Object.values(r);
+    return {
+      text:     (text ?? vals[0] ?? "").toString().trim(),
+      owner:    (pickFrom(GOAL_ALIASES, r, "owner") ?? "").toString().trim(),
+      status:   (pickFrom(GOAL_ALIASES, r, "status") ?? "").toString().trim(),
+      progress: Number(pickFrom(GOAL_ALIASES, r, "progress"))
+    };
+  }).filter(g => g.text);
+}
+
+function summaryFromSheet(rows) {
+  const m = {};
+  rows.forEach(r => {
+    const vals = Object.values(r);
+    if (vals.length >= 2 && vals[0] != null) m[vals[0].toString().trim().toLowerCase()] = vals[1];
+  });
+  const get = (...names) => { for (const n of names){ const v = m[n.toLowerCase()]; if (v != null && v !== "") return v; } return undefined; };
+  return {
+    project:   get("project","project name"),
+    sprintNo:  get("sprint no","sprint number","sprint"),
+    sprintName:get("sprint name","name"),
+    start:     get("start date","sprint start","start"),
+    end:       get("end date","sprint end","end"),
+    pm:        get("project manager","pm","manager"),
+    manHours:  get("man hours","man-hour","man hour","capacity","man-hours"),
+    members:   get("members","team size","team members","team"),
+    committed: get("story points committed","committed","sp committed","points committed"),
+    done:      get("story points done","done","sp done","points done"),
+    velocity:  get("sprint velocity","velocity")
+  };
+}
+
+function parseHistory(rows) {
+  return rows.filter(r => Object.keys(r).length).map(r => {
+    const keys = Object.keys(r);
+    const find = (...names) => {
+      for (const n of names) { const k = keys.find(k => k.trim().toLowerCase() === n); if (k !== undefined) return r[k]; }
+      return undefined;
+    };
+    return {
+      sprint:    (find("sprint","sprint no","name","label") ?? "").toString().trim(),
+      committed: Number(find("committed","sp committed","story points committed")) || 0,
+      done:      Number(find("done","sp done","story points done","velocity")) || 0
+    };
+  }).filter(h => h.sprint && (h.committed || h.done));
+}
+
+function fmtDate(v) {
+  if (v == null || v === "") return null;
+  if (typeof v === "number") {
+    const d = new Date(Math.round((v - 25569) * 86400 * 1000));
+    return d.toISOString().slice(0,10);
+  }
+  return v.toString();
+}
+function prettyDate(s) {
+  if (!s) return null;
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+/* ============================================================
+   Model
+   ============================================================ */
+function buildModel(summaryRaw, goals, tickets, history) {
+  const s = summaryRaw || {};
+  const committed = Number(s.committed) || tickets.reduce((a,t) => a + t.points, 0);
+  const done      = Number(s.done)      || tickets.filter(t => t.status === "Done").reduce((a,t) => a + t.points, 0);
+  const pct       = committed ? (done / committed) * 100 : 0;
+  const bugs      = { Opened:0, Todo:0, Prog:0, Reopen:0, Closed:0 };
+  tickets.filter(t => isBug(t.type)).forEach(t => { bugs.Opened++; bugs[bugBucket(t.statusRaw)]++; });
+  const reopenedTickets = tickets.filter(t => t.status === "Re-opened").length;
+  return {
+    project:   s.project   ?? "",
+    sprintNo:  s.sprintNo  ?? "—",
+    sprintName:s.sprintName ?? "",
+    start: fmtDate(s.start), end: fmtDate(s.end),
+    pm: s.pm ?? "—", manHours: s.manHours ?? null,
+    members: s.members ?? [...new Set(tickets.map(t=>t.assignee))].filter(a=>a!=="Unassigned").length,
+    committed, done, pct,
+    velocity: Number(s.velocity) || done,
+    goals: goals || [], history: history || [],
+    bugs, reopenedTickets, tickets
+  };
+}
+
+/* ============================================================
+   Utility
+   ============================================================ */
+let charts = {};
+let MODEL  = null;
+const $ = id => document.getElementById(id);
+const fmt = n => (Math.round(n * 10) / 10).toLocaleString("en-US");
+const esc = s => (s ?? "").toString()
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+/* ============================================================
+   Tab system
+   ============================================================ */
+function switchTab(name) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  const panel = $("tab-" + name);
+  if (panel) panel.classList.remove("hidden");
+  $("filterBar").classList.toggle("hidden", name !== "dashboard");
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.onclick = () => {
+    if (!MODEL && btn.dataset.tab === "dashboard") return;
+    switchTab(btn.dataset.tab);
+    // lazy-render placeholder tabs on first switch
+    if (btn.dataset.tab === "sonarqube" && !btn._rendered) { renderSonarQube(); renderSonarChart(); btn._rendered = true; }
+    if (btn.dataset.tab === "lighthouse" && !btn._rendered) { renderLighthouse(); btn._rendered = true; }
+    if (btn.dataset.tab === "qa"         && !btn._rendered) { renderQA(); renderQAChart(); btn._rendered = true; }
+  };
+});
+
+/* ============================================================
+   Global filter state
+   ============================================================ */
+const GF = { sprint:"", assignee:"", epic:"", type:"", status:"" };
+const GF_SEL   = { sprint:"gfSprint", assignee:"gfAssignee", epic:"gfEpic", type:"gfType", status:"gfStatus" };
+const GF_LABEL = { sprint:"Sprint", assignee:"Assignee", epic:"Epic", type:"Type", status:"Status" };
+
+function filteredTickets() {
+  if (!MODEL) return [];
+  return MODEL.tickets.filter(t =>
+    (!GF.sprint   || t.sprint   === GF.sprint)   &&
+    (!GF.assignee || t.assignee === GF.assignee) &&
+    (!GF.epic     || t.epic     === GF.epic)     &&
+    (!GF.type     || t.type     === GF.type)     &&
+    (!GF.status   || t.status   === GF.status)
+  );
+}
+
+function renderGFState() {
+  Object.entries(GF_SEL).forEach(([k, id]) => $(id).classList.toggle("active", !!GF[k]));
+  const active = Object.entries(GF).filter(([,v]) => v);
+  $("gfChips").innerHTML = active.map(([k,v]) =>
+    `<span class="fchip" data-gf="${k}">${GF_LABEL[k]}: ${esc(v)} ✕</span>`
+  ).join("") + (active.length ? `<button class="gf-clear" id="gfClear">Clear all</button>` : "");
+  document.querySelectorAll(".fchip[data-gf]").forEach(ch =>
+    ch.onclick = () => { GF[ch.dataset.gf] = ""; $(GF_SEL[ch.dataset.gf]).value = ""; applyGlobalFilter(); }
+  );
+  const cb = $("gfClear");
+  if (cb) cb.onclick = () => { Object.keys(GF).forEach(k => { GF[k]=""; $(GF_SEL[k]).value=""; }); applyGlobalFilter(); };
+  const ft = filteredTickets();
+  $("gfCount").textContent = ft.length < MODEL.tickets.length
+    ? `${ft.length} of ${MODEL.tickets.length} tickets`
+    : `${MODEL.tickets.length} tickets`;
+}
+
+function applyGlobalFilter() {
+  const ft = filteredTickets();
+  renderGFState();
+  renderBugCard(ft);
+  renderChartsFiltered(ft);
+  drawTable();
+}
+
+function setupGlobalFilters(tickets) {
+  const fill = (id, vals) => {
+    const sel = $(id);
+    sel.innerHTML = sel.children[0].outerHTML + vals.map(v => `<option>${esc(v)}</option>`).join("");
+    sel.value = "";
+  };
+  const sprints = [...new Set(tickets.map(t=>t.sprint))].filter(Boolean).sort();
+  $("gfSprint").style.display = sprints.length > 1 ? "" : "none";
+  fill("gfSprint",   sprints.length > 1 ? sprints : []);
+  fill("gfAssignee", [...new Set(tickets.map(t=>t.assignee))].sort());
+  fill("gfEpic",     [...new Set(tickets.map(t=>t.epic))].sort());
+  fill("gfType",     [...new Set(tickets.map(t=>t.type))].sort());
+  fill("gfStatus",   [...new Set(tickets.map(t=>t.status))].sort((a,b)=>(STATUS_ORDER[a]??9)-(STATUS_ORDER[b]??9)));
+  Object.entries(GF_SEL).forEach(([k, id]) => {
+    $(id).onchange = () => { GF[k] = $(id).value; applyGlobalFilter(); };
+  });
+  Object.keys(GF).forEach(k => { GF[k] = ""; });
+  renderGFState();
+}
+
+function crossFilter(gfKey, value) {
+  const selId = GF_SEL[gfKey];
+  if (!selId) return;
+  const sel = $(selId);
+  if (![...sel.options].some(o => o.value === value)) return;
+  const newVal = GF[gfKey] === value ? "" : value;
+  GF[gfKey] = newVal;
+  sel.value = newVal;
+  applyGlobalFilter();
+  $("ticketSection").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ============================================================
+   Rendering — master entry
+   ============================================================ */
+function render(model) {
+  MODEL = model;
+  $("dropzone").classList.add("hidden");
+  $("filterBar").classList.remove("hidden");
+  switchTab("dashboard");
+  renderHeader(model);
+  renderKPIs(model);
+  renderStoryPoints(model);
+  renderBugCard(model.tickets);
+  renderGoals(model);
+  renderChartsFiltered(model.tickets);
+  setupTable(model.tickets);
+  setupGlobalFilters(model.tickets);
+  // Goals badge
+  const met = model.goals.filter(g => goalState(g.status) === "done").length;
+  const gb = $("goalsBadge");
+  if (model.goals.length) { gb.textContent = `${met}/${model.goals.length}`; gb.classList.remove("hidden"); }
+}
+
+/* ── Header ── */
+function renderHeader(m) {
+  $("projectName").textContent = m.project || "Sprint Report";
+  const name = m.sprintName ? ` · ${m.sprintName}` : "";
+  $("sprintTitle").textContent = `Sprint ${m.sprintNo}${name}`;
+  const meta = [];
+  if (m.start || m.end) meta.push(`${prettyDate(m.start)||"?"} – ${prettyDate(m.end)||"?"}`);
+  if (m.pm && m.pm !== "—") meta.push(`PM: ${m.pm}`);
+  if (m.members) meta.push(`${m.members} members`);
+  const mr = $("sprintMeta");
+  mr.textContent = meta.join(" · ");
+  mr.classList.toggle("hidden", !meta.length);
+  const hb = $("healthBadge");
+  hb.classList.remove("hidden","h-good","h-risk","h-bad");
+  hb.classList.add({ good:"h-good", risk:"h-risk", bad:"h-bad" }[m.health()]);
+  $("healthText").textContent = { good:"Healthy", risk:"At Risk", bad:"Off Track" }[m.health()];
+  $("exportBtn").classList.remove("hidden");
+}
+
+/* ── KPI strip (ticket-count metrics) ── */
+function renderKPIs(m) {
+  const t = m.tickets;
+  const done   = t.filter(x => x.status === "Done").length;
+  const inProg = t.filter(x => x.status === "In Progress").length;
+  const bugs   = t.filter(x => isBug(x.type)).length;
+  const reopen = t.filter(x => x.status === "Re-opened").length;
+  const pctDone = t.length ? Math.round(done / t.length * 100) : 0;
+  $("kpis").innerHTML = `
+    <div class="card kpi">
+      <div class="label">Total Tickets</div>
+      <div class="value num">${t.length}</div>
+      <div class="sub">${m.members} team members</div>
+    </div>
+    <div class="card kpi">
+      <div class="label">Completed</div>
+      <div class="value num" style="color:var(--green)">${done}</div>
+      <div class="sub num">${pctDone}% of tickets done</div>
+    </div>
+    <div class="card kpi">
+      <div class="label">In Progress</div>
+      <div class="value num" style="color:var(--blue)">${inProg}</div>
+      <div class="sub">active this sprint</div>
+    </div>
+    <div class="card kpi">
+      <div class="label">Bugs</div>
+      <div class="value num" style="color:${bugs > 0 ? "var(--red)" : "var(--green)"}">${bugs}</div>
+      <div class="sub num">${reopen > 0 ? `<span class="delta d-bad">${reopen} re-opened</span>` : "no re-opens this sprint"}</div>
+    </div>`;
+}
+
+/* ── Story Points card (always sprint-level, not filtered) ── */
+function renderStoryPoints(m) {
+  const pct = m.pct;
+  const pctColor = pct >= 85 ? "var(--green)" : pct >= 60 ? "var(--amber)" : "var(--red)";
+  const hist  = m.history;
+  const last  = hist.length ? hist[hist.length - 1] : null;
+  const last3 = hist.slice(-3);
+  const avg3  = last3.length ? last3.reduce((a,h) => a + h.done, 0) / last3.length : null;
+  const gap   = m.done - m.committed;
+
+  $("spTop").innerHTML = `
+    <div class="sp-metric">
+      <div class="sp-n">${fmt(m.committed)}</div>
+      <div class="sp-l">Planned</div>
+    </div>
+    <div class="sp-metric">
+      <div class="sp-n" style="color:${pctColor}">${fmt(m.done)}</div>
+      <div class="sp-l">Done</div>
+    </div>
+    <div class="sp-metric">
+      <div class="sp-n" style="color:${pctColor}">${fmt(pct)}%</div>
+      <div class="sp-l">Completion</div>
+    </div>`;
+
+  $("spBarFill").style.cssText = `width:${Math.min(pct,100)}%;background:${pctColor}`;
+
+  $("spBottom").innerHTML = `
+    <div class="sp-sub">
+      <div class="ss-n">${fmt(m.velocity)}</div>
+      <div class="ss-l">Velocity</div>
+    </div>
+    <div class="sp-sub">
+      <div class="ss-n" style="color:${gap >= 0 ? "var(--green)" : "var(--amber)"}">${gap >= 0 ? "+" : ""}${fmt(gap)}</div>
+      <div class="ss-l">Velocity Gap</div>
+    </div>
+    <div class="sp-sub">
+      <div class="ss-n">${avg3 != null ? fmt(avg3) : "—"}</div>
+      <div class="ss-l">3-Sprint Avg</div>
+    </div>`;
+
+  let foot = "";
+  if (last) {
+    const d = m.done - last.done;
+    foot = d >= 0
+      ? `<span class="delta d-up num">▲ +${fmt(d)} vs ${esc(last.sprint)}</span>`
+      : `<span class="delta d-down num">▼ ${fmt(Math.abs(d))} vs ${esc(last.sprint)}</span>`;
+  }
+  if (avg3 != null) foot += `<span class="muted">3-sprint avg: <b>${fmt(avg3)} story points</b></span>`;
+  $("spFoot").innerHTML = foot;
+}
+
+/* ── Bug Count card (uses filtered tickets) ── */
+function renderBugCard(tickets) {
+  const b = { Opened:0, Todo:0, Prog:0, Reopen:0, Closed:0 };
+  tickets.filter(t => isBug(t.type)).forEach(t => { b.Opened++; b[bugBucket(t.statusRaw)]++; });
+  const total = b.Opened;
+  $("bcTotalChip").textContent = `${total} bug${total !== 1 ? "s" : ""}`;
+  const rows = [
+    { lbl:"Opened",      n:total,    color:STATUS_COLORS["To Do"],       alarm:false, ok:false },
+    { lbl:"To Do",       n:b.Todo,   color:STATUS_COLORS["To Do"],       alarm:false, ok:false },
+    { lbl:"In Progress", n:b.Prog,   color:STATUS_COLORS["In Progress"], alarm:false, ok:false },
+    { lbl:"Re-opened",   n:b.Reopen, color:STATUS_COLORS["Re-opened"],   alarm:b.Reopen > 0, ok:false },
+    { lbl:"Closed",      n:b.Closed, color:STATUS_COLORS["Done"],        alarm:false, ok:true },
+  ];
+  $("bcRows").innerHTML = total === 0
+    ? `<div class="muted" style="padding:8px 0">No bugs in this sprint.</div>`
+    : rows.map(r => `
+      <div class="bc-row">
+        <div class="bc-lbl${r.alarm ? " alarm" : ""}">${r.alarm ? "⚠ " : ""}${esc(r.lbl)}</div>
+        <div class="bc-bar"><i style="width:${total ? Math.round(r.n / total * 100) : 0}%;background:${r.color}"></i></div>
+        <div class="bc-cnt${r.alarm ? " alarm" : r.ok ? " ok" : ""}">${r.n}</div>
+      </div>`).join("");
+}
+
+/* ── Goals ── */
+function goalState(st) {
+  const s = (st || "").toLowerCase().trim();
+  if (/^(not|no|miss|fail|incomplete|carry|spill|drop)/.test(s) || /not done|not complete/.test(s)) return "not";
+  if (/part|progress|wip|ongoing|partial/.test(s)) return "part";
+  if (/done|complete|achiev|yes|met/.test(s)) return "done";
+  return "not";
+}
+function renderGoals(m) {
+  const met = m.goals.filter(g => goalState(g.status) === "done").length;
+  $("goalsChip").textContent = m.goals.length ? `${met} of ${m.goals.length} goals met` : "no goals";
+  if (!m.goals.length) {
+    $("goals").innerHTML = `<div class="muted">No goals provided in the report.</div>`;
+    return;
+  }
+  $("goals").innerHTML = m.goals.map(g => {
+    const state = goalState(g.status);
+    const pct = !isNaN(g.progress) && g.progress > 0
+      ? Math.min(g.progress <= 1 ? g.progress * 100 : g.progress, 100)
+      : state === "done" ? 100 : state === "part" ? 50 : 10;
+    const barColor = state === "done" ? "var(--green)" : state === "part" ? "var(--amber)" : "var(--red)";
+    const badge = state === "done" ? `<span class="badge b-done">Done</span>`
+                : state === "part" ? `<span class="badge b-part">Partially Done</span>`
+                : `<span class="badge b-reopen">Not Done</span>`;
+    return `<div class="goal-row${state === "not" ? " not-done" : ""}" title="${esc(g.text)}">
+      <div class="gtext">${esc(g.text)}</div>
+      <div class="gowner">${g.owner ? "@" + esc(g.owner) : ""}</div>
+      <div class="gbar"><i style="width:${pct}%;background:${barColor}"></i></div>
+      <div style="text-align:right">${badge}</div>
+    </div>`;
+  }).join("");
+}
+
+/* ============================================================
+   Charts (use filtered tickets)
+   ============================================================ */
+const countBy = (arr, fn) => { const m={}; arr.forEach(x => { const k=fn(x); m[k]=(m[k]||0)+1; }); return m; };
+const sumBy   = (arr, kf, vf) => { const m={}; arr.forEach(x => { const k=kf(x); m[k]=(m[k]||0)+vf(x); }); return m; };
+function makeChart(id, cfg) { if (charts[id]) charts[id].destroy(); charts[id] = new Chart($(id), cfg); }
+
+const centerLabel = {
+  id: "centerLabel",
+  afterDraw(chart, _a, opts) {
+    if (!opts.text) return;
+    const { ctx } = chart;
+    const meta = chart.getDatasetMeta(0);
+    if (!meta.data.length) return;
+    const { x, y } = meta.data[0];
+    ctx.save();
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = "#1A1D23"; ctx.font = "800 22px Inter,'Segoe UI',sans-serif";
+    ctx.fillText(opts.text, x, y - 7);
+    ctx.fillStyle = "#5A6472"; ctx.font = "500 11px Inter,'Segoe UI',sans-serif";
+    ctx.fillText(opts.sub || "", x, y + 13);
+    ctx.restore();
+  }
+};
+const barTotals = {
+  id: "barTotals",
+  afterDatasetsDraw(chart, _a, opts) {
+    if (!opts.totals) return;
+    const { ctx, scales: { x, y } } = chart;
+    ctx.save();
+    ctx.fillStyle = "#1A1D23"; ctx.font = "700 12px Inter,'Segoe UI',sans-serif";
+    ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    opts.totals.forEach((t, i) =>
+      ctx.fillText(`${t} pts`, x.getPixelForValue(t) + 8, y.getPixelForValue(i)));
+    ctx.restore();
+  }
+};
+Chart.register(centerLabel, barTotals);
+
+function renderChartsFiltered(tickets) {
+  const m = MODEL;
+  Chart.defaults.color = "#5A6472";
+  Chart.defaults.borderColor = "#E5E8EC";
+  Chart.defaults.font.family = "Inter,'IBM Plex Sans','Segoe UI',system-ui,sans-serif";
+  const totalSP = tickets.reduce((a,t) => a + t.points, 0) || 1;
+
+  /* Status donut */
+  const stCount  = countBy(tickets, t => t.status);
+  const stSP     = sumBy(tickets, t => t.status, t => t.points);
+  const stLabels = Object.keys(stCount).sort((a,b) => (STATUS_ORDER[a]??9) - (STATUS_ORDER[b]??9));
+  makeChart("statusChart", {
+    type: "doughnut",
+    data: { labels: stLabels, datasets: [{ data: stLabels.map(l=>stCount[l]),
+      backgroundColor: stLabels.map(l => STATUS_COLORS[l] || "#6B7280"),
+      borderWidth: 2, borderColor: "#fff" }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: "68%",
+      plugins: {
+        legend: { position: "right", labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true } },
+        centerLabel: { text: `${tickets.length}`, sub: "tickets" },
+        tooltip: { callbacks: { label: c => {
+          const l=c.label, n=stCount[l], sp=stSP[l]||0;
+          return ` ${l} — ${n} tickets · ${fmt(sp)} story points · ${fmt(n/tickets.length*100)}%`;
+        } } }
+      },
+      onClick: (_e, els, chart) => { if (els.length) crossFilter("status", chart.data.labels[els[0].index]); }
+    }
+  });
+
+  /* Committed vs Done trend */
+  const trend = [...m.history, { sprint: `S${m.sprintNo}`, committed: m.committed, done: m.done }];
+  $("trendHint").textContent = m.history.length ? "" : "Add a History sheet for multi-sprint trend.";
+  makeChart("trendChart", {
+    data: {
+      labels: trend.map(h => h.sprint),
+      datasets: [
+        { type:"bar",  label:"Committed", data:trend.map(h=>h.committed), backgroundColor:ACCENT, borderRadius:4, maxBarThickness:32 },
+        { type:"bar",  label:"Done",      data:trend.map(h=>h.done), backgroundColor:"#16A34A", borderRadius:4, maxBarThickness:32 },
+        { type:"line", label:"Velocity",  data:trend.map(h=>h.done), borderColor:"#1A1D23", borderWidth:2, pointRadius:3, pointBackgroundColor:"#1A1D23", tension:.3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position:"bottom", labels:{ boxWidth:10, boxHeight:10, usePointStyle:true } } },
+      scales: {
+        y: { beginAtZero:true, title:{ display:true, text:"Story points" } },
+        x: { grid:{ display:false } }
+      }
+    }
+  });
+
+  /* Epic vs story points */
+  const ep = sumBy(tickets, t => t.epic, t => t.points);
+  const epLabels = Object.keys(ep).sort((a,b) => ep[b] - ep[a]);
+  makeChart("epicChart", {
+    type: "bar",
+    data: { labels: epLabels, datasets: [{ data: epLabels.map(l=>ep[l]),
+      backgroundColor: ACCENT, borderRadius: 4, maxBarThickness: 20 }] },
+    options: {
+      indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => ` ${fmt(c.parsed.x)} story points · ${fmt(c.parsed.x/totalSP*100)}% of sprint` } }
+      },
+      scales: {
+        x: { beginAtZero:true, title:{ display:true, text:"Story points" } },
+        y: { grid:{ display:false } }
+      },
+      onClick: (_e, els, chart) => { if (els.length) crossFilter("epic", chart.data.labels[els[0].index]); }
+    }
+  });
+
+  /* Work item type donut */
+  const ty = countBy(tickets, t => t.type);
+  const tyLabels = Object.keys(ty).sort((a,b) => ty[b]-ty[a]);
+  makeChart("typeChart", {
+    type: "doughnut",
+    data: { labels: tyLabels, datasets: [{ data: tyLabels.map(l=>ty[l]),
+      backgroundColor: tyLabels.map((l,i) => TYPE_COLORS[l] || TYPE_FALLBACK[i % TYPE_FALLBACK.length]),
+      borderWidth: 2, borderColor: "#fff" }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: "68%",
+      plugins: {
+        legend: { position:"right", labels:{ boxWidth:10, boxHeight:10, usePointStyle:true } },
+        centerLabel: { text:`${tickets.length}`, sub:"items" },
+        tooltip: { callbacks: { label: c => ` ${c.label} — ${c.parsed} items · ${fmt(c.parsed/tickets.length*100)}%` } }
+      },
+      onClick: (_e, els, chart) => { if (els.length) crossFilter("type", chart.data.labels[els[0].index]); }
+    }
+  });
+
+  /* Status by assignee */
+  const assignees = Object.entries(sumBy(tickets, t=>t.assignee, t=>t.points))
+    .sort((a,b) => b[1]-a[1]).map(([a]) => a);
+  const statuses = stLabels;
+  const totals = assignees.map(a => tickets.filter(t=>t.assignee===a).reduce((s,t)=>s+t.points,0));
+  makeChart("assigneeChart", {
+    type: "bar",
+    data: {
+      labels: assignees,
+      datasets: statuses.map(s => ({
+        label: s, backgroundColor: STATUS_COLORS[s] || "#6B7280",
+        data: assignees.map(a => tickets.filter(t=>t.assignee===a&&t.status===s).reduce((x,t)=>x+t.points,0))
+      }))
+    },
+    options: {
+      indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:"bottom", labels:{ boxWidth:10, boxHeight:10, usePointStyle:true } },
+        barTotals: { totals },
+        tooltip: { callbacks: { label: c => {
+          const a=c.label, s=c.dataset.label;
+          const n = tickets.filter(t=>t.assignee===a&&t.status===s).length;
+          return ` ${a} — ${s}: ${fmt(c.parsed.x)} story points (${n} ticket${n===1?"":"s"})`;
+        } } }
+      },
+      scales: {
+        x: { stacked:true, beginAtZero:true, grace:"12%", title:{ display:true, text:"Story points" } },
+        y: { stacked:true, grid:{ display:false } }
+      },
+      onClick: (_e, els, chart) => { if (els.length) crossFilter("assignee", chart.data.labels[els[0].index]); }
+    }
+  });
+}
+
+/* ============================================================
+   Ticket table
+   ============================================================ */
+let SORT = { k:"status", dir:1 };
+const FILTER_IDS   = ["filterType","filterStatus","filterEpic","filterAssignee","filterPriority","filterSprint"];
+const FILTER_FIELD = { filterType:"type", filterStatus:"status", filterEpic:"epic", filterAssignee:"assignee", filterPriority:"priority", filterSprint:"sprint" };
+const FILTER_LABEL = { filterType:"Type", filterStatus:"Status", filterEpic:"Epic", filterAssignee:"Assignee", filterPriority:"Priority", filterSprint:"Sprint" };
+
+function statusBadge(st) { return `<span class="badge ${STATUS_BADGE[st]||"b-todo"}">${esc(st)}</span>`; }
+function priorityBadge(p) {
+  if (!p) return `<span class="muted">—</span>`;
+  const cls = p==="High" ? "b-reopen" : p==="Low" ? "b-todo" : "b-part";
+  return `<span class="badge ${cls}">${PRIORITY_ICON[p]} ${p}</span>`;
+}
+function compareTickets(a, b) {
+  const k = SORT.k;
+  let x = a[k], y = b[k];
+  if (k==="status")   { x=STATUS_ORDER[x]??9;   y=STATUS_ORDER[y]??9; }
+  if (k==="priority") { x=PRIORITY_ORDER[x]??9; y=PRIORITY_ORDER[y]??9; }
+  const r = (typeof x==="number" && typeof y==="number") ? x-y : (""+x).localeCompare(""+y);
+  return r * SORT.dir;
+}
+
+function drawTable() {
+  const base = filteredTickets();
+  const q  = $("search").value.toLowerCase();
+  const af = FILTER_IDS.map(id => [id, $(id).value]).filter(([,v]) => v);
+  let rows = base.filter(t =>
+    (!q || (t.key+" "+t.summary+" "+t.assignee+" "+t.epic+" "+t.statusRaw).toLowerCase().includes(q)) &&
+    af.every(([id,v]) => t[FILTER_FIELD[id]] === v));
+  rows = [...rows].sort(compareTickets);
+
+  $("filterChips").innerHTML = af.map(([id,v]) =>
+    `<span class="fchip" data-id="${id}" title="Remove filter">${FILTER_LABEL[id]}: ${esc(v)} ✕</span>`
+  ).join("") + (af.length ? `<button class="clear-all" id="clearAll">Clear all</button>` : "");
+  document.querySelectorAll(".fchip[data-id]").forEach(ch =>
+    ch.onclick = () => { $(ch.dataset.id).value = ""; drawTable(); });
+  const ca = $("clearAll");
+  if (ca) ca.onclick = () => { FILTER_IDS.forEach(id => $(id).value = ""); drawTable(); };
+  FILTER_IDS.forEach(id => $(id).classList.toggle("active", !!$(id).value));
+  $("resultCount").textContent = `${rows.length} of ${MODEL.tickets.length} tickets`;
+
+  document.querySelectorAll("th[data-k]").forEach(th => {
+    const sp = th.querySelector(".arrow"); if (sp) sp.remove();
+    if (th.dataset.k === SORT.k) th.insertAdjacentHTML("beforeend", `<span class="arrow">${SORT.dir===1?"▲":"▼"}</span>`);
+  });
+
+  $("ticketBody").innerHTML = rows.map(t => `
+    <tr>
+      <td class="key num">${esc(t.key)||"—"}</td>
+      <td class="t-title"><span class="trunc" title="${esc(t.summary)}">${esc(t.summary)}</span></td>
+      <td>${esc(t.type)}</td>
+      <td>${esc(t.epic)}</td>
+      <td>${esc(t.assignee)}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td class="muted" style="font-size:11px;white-space:nowrap">${esc(t.statusRaw)||"—"}</td>
+      <td class="num-col num">${t.points||""}</td>
+      <td>${priorityBadge(t.priority)}</td>
+      <td class="muted" style="font-size:11px;white-space:nowrap">${esc(t.sprint)||"—"}</td>
+      <td class="t-remarks">${t.remarks?`<span class="trunc" title="${esc(t.remarks)}">${esc(t.remarks)}</span>`:`<span class="muted">—</span>`}</td>
+    </tr>`).join("")
+    || `<tr class="empty-row"><td colspan="11">No tickets match — <a href="#" id="emptyClear">clear filters?</a></td></tr>`;
+  const ec = $("emptyClear");
+  if (ec) ec.onclick = e => { e.preventDefault(); $("search").value=""; FILTER_IDS.forEach(id=>$(id).value=""); drawTable(); };
+}
+
+function setupTable(tickets) {
+  $("ticketCountChip").textContent = `${tickets.length} tickets`;
+  const fill = (id, vals) => {
+    const sel = $(id);
+    sel.innerHTML = sel.children[0].outerHTML + vals.map(v => `<option>${esc(v)}</option>`).join("");
+  };
+  fill("filterType",     [...new Set(tickets.map(t=>t.type))].sort());
+  fill("filterStatus",   [...new Set(tickets.map(t=>t.status))].sort((a,b)=>(STATUS_ORDER[a]??9)-(STATUS_ORDER[b]??9)));
+  fill("filterEpic",     [...new Set(tickets.map(t=>t.epic))].sort());
+  fill("filterAssignee", [...new Set(tickets.map(t=>t.assignee))].sort());
+  fill("filterPriority", [...new Set(tickets.map(t=>t.priority))].filter(Boolean).sort((a,b)=>(PRIORITY_ORDER[a]??9)-(PRIORITY_ORDER[b]??9)));
+  const sprints = [...new Set(tickets.map(t=>t.sprint))].filter(Boolean).sort();
+  fill("filterSprint", sprints);
+  $("filterSprint").style.display = sprints.length > 1 ? "" : "none";
+  ["search", ...FILTER_IDS].forEach(id => { const el=$(id); el.oninput=drawTable; el.onchange=drawTable; });
+  document.querySelectorAll("th[data-k]").forEach(th => {
+    th.onclick = () => { const k=th.dataset.k; SORT.dir=(SORT.k===k)?-SORT.dir:1; SORT.k=k; drawTable(); };
+  });
+  SORT = { k:"status", dir:1 };
+  drawTable();
+}
+
+/* ============================================================
+   Placeholder tabs
+   ============================================================ */
+function renderSonarQube() {
+  $("sqKpis").innerHTML = [
+    { n:"78.4%", l:"Code Coverage",  s:"target ≥ 80%",    c:"var(--amber)" },
+    { n:"23",    l:"Code Smells",     s:"technical debt: 3d 2h", c:"var(--amber)" },
+    { n:"4.2%",  l:"Duplications",    s:"target < 3%",     c:"var(--amber)" },
+    { n:"0",     l:"Security Issues", s:"no vulnerabilities", c:"var(--green)" },
+  ].map(m => `<div class="card ph-metric">
+    <div class="phm-n" style="color:${m.c}">${m.n}</div>
+    <div class="phm-l">${m.l}</div>
+    <div class="phm-s">${m.s}</div>
+  </div>`).join("");
+
+  $("sqIssues").innerHTML = [
+    { ico:"🐛", n:5,  l:"Bugs",           c:"var(--red)"   },
+    { ico:"🔒", n:2,  l:"Vulnerabilities", c:"var(--amber)" },
+    { ico:"♻️", n:23, l:"Code Smells",     c:"var(--amber)" },
+    { ico:"🔵", n:0,  l:"Security Hotspots", c:"var(--green)" },
+    { ico:"📋", n:12, l:"To Review",       c:"var(--blue)"  },
+    { ico:"✅", n:41, l:"Issues Fixed",    c:"var(--green)" },
+  ].map(x => `<div class="sq-issue">
+    <div class="si-ico">${x.ico}</div>
+    <div><div class="si-n" style="color:${x.c}">${x.n}</div><div class="si-l">${x.l}</div></div>
+  </div>`).join("");
+}
+
+function renderSonarChart() {
+  makeChart("sqChart", {
+    type: "bar",
+    data: {
+      labels: ["Blocker","Critical","Major","Minor","Info"],
+      datasets: [{
+        label: "Issues",
+        data: [1, 4, 11, 18, 9],
+        backgroundColor: ["#DC2626","#D97706","#2563EB","#6B7280","#94A3B8"],
+        borderRadius: 5, maxBarThickness: 40
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{ display:false } },
+      scales: { y:{ beginAtZero:true, title:{ display:true, text:"Issue count" } }, x:{ grid:{ display:false } } }
+    }
+  });
+}
+
+function lhColor(score) {
+  return score >= 90 ? "#16A34A" : score >= 50 ? "#D97706" : "#DC2626";
+}
+function lhRing(score, label) {
+  const c = lhColor(score);
+  const r = 44, circ = 2 * Math.PI * r;
+  const dash = (score / 100) * circ;
+  return `<div class="card lh-score">
+    <div class="lh-ring">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="${r}" fill="none" stroke="#E5E8EC" stroke-width="8"/>
+        <circle cx="50" cy="50" r="${r}" fill="none" stroke="${c}" stroke-width="8"
+          stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}" stroke-linecap="round"/>
+      </svg>
+      <div class="lr-val" style="color:${c}">${score}</div>
+    </div>
+    <div class="ls-lbl">${label}</div>
+  </div>`;
+}
+
+function renderLighthouse() {
+  $("lhScores").innerHTML =
+    lhRing(92,"Performance") + lhRing(97,"Accessibility") + lhRing(83,"Best Practices") + lhRing(100,"SEO");
+
+  $("lhCWV").innerHTML = [
+    { v:"1.8s",  l:"LCP",  s:"Largest Contentful Paint", cls:"cwv-good" },
+    { v:"12ms",  l:"FID",  s:"First Input Delay",        cls:"cwv-good" },
+    { v:"0.05",  l:"CLS",  s:"Cumulative Layout Shift",  cls:"cwv-good" },
+    { v:"1.2s",  l:"FCP",  s:"First Contentful Paint",   cls:"cwv-good" },
+    { v:"3.4s",  l:"TTI",  s:"Time to Interactive",      cls:"cwv-ok"   },
+    { v:"780ms", l:"TBT",  s:"Total Blocking Time",      cls:"cwv-ok"   },
+  ].map(x => `<div class="cwv-item">
+    <div class="ci-v ${x.cls}">${x.v}</div>
+    <div class="ci-l">${x.l}</div>
+    <div class="ci-s muted">${x.s}</div>
+  </div>`).join("");
+}
+
+function renderQA() {
+  const total=1247, passed=1189, failed=41, skipped=17;
+  const rate = Math.round(passed/total*100);
+  $("qaKpis").innerHTML = [
+    { n:total,   l:"Total Tests",   s:"this sprint",  c:"var(--ink)" },
+    { n:passed,  l:"Passed",        s:`${rate}% pass rate`, c:"var(--green)" },
+    { n:failed,  l:"Failed",        s:"need attention",     c:"var(--red)"   },
+    { n:skipped, l:"Skipped",       s:"pending",            c:"var(--amber)" },
+  ].map(m => `<div class="card ph-metric">
+    <div class="phm-n" style="color:${m.c}">${m.n.toLocaleString()}</div>
+    <div class="phm-l">${m.l}</div>
+    <div class="phm-s">${m.s}</div>
+  </div>`).join("");
+
+  const pct = n => total ? Math.round(n / total * 100) : 0;
+  $("qaResults").innerHTML = [
+    { lbl:"Passed",  n:passed,  color:"var(--green)" },
+    { lbl:"Failed",  n:failed,  color:"var(--red)"   },
+    { lbl:"Skipped", n:skipped, color:"var(--amber)"  },
+  ].map(r => `<div class="qa-bar-row">
+    <div class="qa-bar-lbl">${r.lbl}</div>
+    <div class="qa-bar"><i style="width:${pct(r.n)}%;background:${r.color}"></i></div>
+    <div class="qa-bar-cnt" style="color:${r.color}">${r.n}</div>
+  </div>`).join("")
+  + `<p class="muted" style="font-size:12px;margin-top:12px">Coverage: <b>71.3%</b> · Automation rate: <b>67.9%</b></p>`;
+}
+
+function renderQAChart() {
+  makeChart("qaChart", {
+    type: "doughnut",
+    data: {
+      labels: ["Automated", "Manual"],
+      datasets: [{ data:[847, 400],
+        backgroundColor:["#4F46E5","#94A3B8"], borderWidth:2, borderColor:"#fff" }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout:"65%",
+      plugins: {
+        legend: { position:"bottom", labels:{ boxWidth:10, boxHeight:10, usePointStyle:true } },
+        centerLabel: { text:"1,247", sub:"tests" }
+      }
+    }
+  });
+}
+
+/* ============================================================
+   File handling
+   ============================================================ */
+function findSheet(wb, names) {
+  const lower = wb.SheetNames.map(n => n.toLowerCase());
+  for (const want of names) { const i=lower.indexOf(want); if (i>=0) return wb.Sheets[wb.SheetNames[i]]; }
+  return null;
+}
+function sheetToRows(sheet) { return sheet ? XLSX.utils.sheet_to_json(sheet, { defval:"" }) : []; }
+
+function handleWorkbook(wb) {
+  const ticketsSheet = findSheet(wb, ["sprint details","tickets","ticket","issues","backlog"])
+                       || wb.Sheets[wb.SheetNames[0]];
+  const summarySheet = findSheet(wb, ["summary","sprint summary","details","overview"]);
+  const goalsSheet   = findSheet(wb, ["goals","goal","objectives"]);
+  const historySheet = findSheet(wb, ["history","velocity history","trend","sprints","velocity"]);
+  const epicSheet    = findSheet(wb, ["epic list","epics","epic"]);
+  const epicMap      = epicSheet ? parseEpicList(sheetToRows(epicSheet)) : {};
+  const tickets = parseTickets(sheetToRows(ticketsSheet), epicMap);
+  const summary = summarySheet ? summaryFromSheet(sheetToRows(summarySheet)) : deriveSummaryFromTickets(tickets);
+  const goals   = goalsSheet   ? parseGoals(sheetToRows(goalsSheet))         : [];
+  const history = historySheet ? parseHistory(sheetToRows(historySheet))      : [];
+  renderModel(buildModel(summary, goals, tickets, history));
+}
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(e.target.result, { type:"array" });
+      handleWorkbook(wb);
+    } catch(err) { alert("Could not read file: " + err.message); console.error(err); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderModel(model) {
+  model.health = function() {
+    if (this.pct >= 85 && this.reopenedTickets === 0 && this.bugs.Reopen === 0) return "good";
+    if (this.pct < 60) return "bad";
+    return "risk";
+  };
+  render(model);
+}
+
+/* ============================================================
+   Events
+   ============================================================ */
+$("chooseBtn").onclick = () => $("fileInput").click();
+$("fileInput").onchange = e => { if (e.target.files[0]) readFile(e.target.files[0]); };
+$("exportBtn").onclick  = () => window.print();
+
+const dz = $("dropzone");
+["dragenter","dragover"].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add("drag"); }));
+["dragleave","drop"].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove("drag"); }));
+dz.addEventListener("drop", e => { if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });
+
+/* ============================================================
+   Demo data — Sprint 14, Project Phoenix
+   ============================================================ */
+function loadDemo() {
+  const summary = {
+    project:"Project Phoenix", sprintNo:14, sprintName:"",
+    start:"2026-04-01", end:"2026-04-14",
+    pm:"Priya Sharma", manHours:480, members:6,
+    committed:85, done:72, velocity:72
+  };
+  const goals = [
+    { text:"Launch payment gateway v2",       owner:"Rahul",  status:"Done",     progress:100 },
+    { text:"Migrate auth to OAuth 2.1",       owner:"Sneha",  status:"Done",     progress:100 },
+    { text:"Checkout page redesign",          owner:"Arjun",  status:"Done",     progress:100 },
+    { text:"Reduce API p95 latency < 300ms",  owner:"Vikram", status:"Partial",  progress:65  },
+    { text:"Mobile push notifications",       owner:"Meera",  status:"Not Done", progress:10  },
+  ];
+  const history = [
+    { sprint:"S10", committed:72, done:65 },
+    { sprint:"S11", committed:75, done:68 },
+    { sprint:"S12", committed:80, done:76 },
+    { sprint:"S13", committed:78, done:66 },
+  ];
+  const T = (key, summary, type, epic, points, status, assignee, priority, remarks) => ({
+    key, summary, type, epic, points,
+    statusRaw:status, status:normStatus(status),
+    assignee, priority:normPriority(priority), remarks:remarks||"", sprint:"S14"
+  });
+  const tickets = [
+    T("PHX-201","Payment retry logic",        "Story","Payments",    5,"Done",        "Rahul", "High"),
+    T("PHX-202","Gateway v2 API integration", "Story","Payments",    8,"Done",        "Rahul", "High"),
+    T("PHX-203","Refund webhook handler",      "Story","Payments",    3,"Done",        "Sneha", "Medium"),
+    T("PHX-204","Payment reconciliation job",  "Task", "Payments",    5,"Done",        "Karan", "Medium"),
+    T("PHX-205","Duplicate charge on retry",   "Bug",  "Payments",    2,"Closed",      "Rahul", "High",   "Race in idempotency key; fixed"),
+    T("PHX-206","Currency rounding error",     "Bug",  "Payments",    1,"Closed",      "Sneha", "Medium", "Switched to integer minor units"),
+    T("PHX-207","3DS fallback flow",           "Story","Payments",    1,"In Progress", "Arjun", "High"),
+    T("PHX-208","Payment metrics dashboard",   "Task", "Payments",    1,"To Do",       "Vikram","Low"),
+    T("PHX-214","OAuth token refresh",         "Story","Auth",        8,"Done",        "Sneha", "High"),
+    T("PHX-215","Migrate session store",       "Story","Auth",        3,"Done",        "Sneha", "Medium"),
+    T("PHX-216","OAuth scopes audit",          "Task", "Auth",        2,"Done",        "Vikram","Medium"),
+    T("PHX-217","Login rate limiting",         "Story","Auth",        3,"Done",        "Karan", "Medium"),
+    T("PHX-218","Token expiry edge case",      "Bug",  "Auth",        1,"Closed",      "Sneha", "High",   "Clock skew; added 30s leeway"),
+    T("PHX-219","SSO logout loop",             "Bug",  "Auth",        1,"In Progress", "Karan", "Medium", "Reproduced on staging; fix in review"),
+    T("PHX-230","Checkout page redesign",      "Story","Checkout UX", 5,"Done",        "Arjun", "High"),
+    T("PHX-231","Address autocomplete",        "Story","Checkout UX", 3,"Done",        "Arjun", "Medium"),
+    T("PHX-232","Promo code UI",               "Story","Checkout UX", 3,"Done",        "Meera", "Low"),
+    T("PHX-233","Checkout A/B test setup",     "Task", "Checkout UX", 2,"Done",        "Arjun", "Medium"),
+    T("PHX-238","Cart total mismatch",         "Bug",  "Checkout UX", 2,"Re-opened",   "Arjun", "High",   "Failed retest: discount applied twice"),
+    T("PHX-239","Coupon applies twice",        "Bug",  "Checkout UX", 1,"Re-opened",   "Meera", "High",   "Regression after promo UI merge"),
+    T("PHX-245","API p95 latency profiling",   "Spike","Performance", 2,"Done",        "Vikram","High"),
+    T("PHX-246","DB index for orders query",   "Story","Performance", 5,"Done",        "Vikram","High"),
+    T("PHX-247","Cache layer for catalog",     "Story","Performance", 1,"In Progress", "Vikram","High"),
+    T("PHX-248","N+1 in order history",        "Bug",  "Performance", 1,"Closed",      "Karan", "Medium", "Eager-load order lines"),
+    T("PHX-249","Memory leak in worker",       "Bug",  "Performance", 1,"In Progress", "Vikram","High",   "Heap dump points at unclosed stream"),
+    T("PHX-255","Push notification service",   "Story","Mobile",      1,"To Do",       "Meera", "High"),
+    T("PHX-256","Spike: FCM vs OneSignal",     "Spike","Mobile",      2,"Done",        "Meera", "Medium"),
+    T("PHX-257","Deep link routing",           "Story","Mobile",      1,"To Do",       "Meera", "Medium"),
+    T("PHX-258","Android crash on resume",     "Bug",  "Mobile",      1,"To Do",       "Karan", "High",   "NPE in lifecycle observer"),
+    T("PHX-259","App icon & splash refresh",   "Task", "Mobile",      3,"Done",        "Meera", "Low"),
+    T("PHX-260","CI pipeline caching",         "Task", "Platform",    2,"Done",        "Karan", "Medium"),
+    T("PHX-261","Upgrade Node 22 LTS",         "Task", "Platform",    1,"Done",        "Vikram","Low"),
+    T("PHX-262","Log retention policy",        "Task", "Platform",    1,"Done",        "Karan", "Low"),
+    T("PHX-263","Spike: feature flag vendor",  "Spike","Platform",    1,"Done",        "Rahul", "Low"),
+    T("PHX-264","Flaky e2e test suite",        "Bug",  "Platform",    1,"In Progress", "Arjun", "Medium", "Quarantined 3 specs; shared test data"),
+    T("PHX-265","Secrets rotation script",     "Task", "Platform",    1,"To Do",       "Sneha", "Medium"),
+  ];
+  renderModel(buildModel(summary, goals, tickets, history));
+}
+
+$("demoBtn").onclick  = loadDemo;
+$("demoBtn2").onclick = loadDemo;
+</script>
+</body>
+</html>
