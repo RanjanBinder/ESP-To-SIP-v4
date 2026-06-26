@@ -10,10 +10,11 @@ interface TopBarProps {
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onGenerateSip }) => {
-  const { getDocument, loadDocument, importObjects, layers, activeLayerId } = useEditor();
+  const { getDocument, loadDocument, importObjects, fitToObjects, layers, activeLayerId } = useEditor();
   const importRef = useRef<HTMLInputElement>(null);
   const [savedTick, setSavedTick] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [importMsg, setImportMsg] = useState<string | null>(null);
 
   const handleSave = () => {
     savePersistedDocument(getDocument());
@@ -34,10 +35,18 @@ const TopBar: React.FC<TopBarProps> = ({ onGenerateSip }) => {
         const buffer = await file.arrayBuffer();
         const result = await importDwgFile(buffer, layers, activeLayerId);
         importObjects(result.objects, result.newLayers);
+        const layerNote = result.newLayers.length > 0 ? `, ${result.newLayers.length} new layers` : '';
+        setImportMsg(`Imported ${result.objects.length} objects${layerNote}`);
+        setTimeout(() => { fitToObjects(); }, 80);
+        setTimeout(() => setImportMsg(null), 4000);
       } else if (ext === 'dxf') {
         const buffer = await file.arrayBuffer();
         const result = await importDxfFile(buffer, layers, activeLayerId);
         importObjects(result.objects, result.newLayers);
+        const layerNote = result.newLayers.length > 0 ? `, ${result.newLayers.length} new layers` : '';
+        setImportMsg(`Imported ${result.objects.length} objects${layerNote}`);
+        setTimeout(() => { fitToObjects(); }, 80);
+        setTimeout(() => setImportMsg(null), 4000);
       } else {
         const doc = await readDocumentFile(file);
         if (doc) loadDocument(doc);
@@ -147,6 +156,18 @@ const TopBar: React.FC<TopBarProps> = ({ onGenerateSip }) => {
         onChange={handleImportFile}
         style={{ display: 'none' }}
       />
+      {importMsg && (
+        <span style={{
+          fontSize: 11.5, color: '#16a34a',
+          background: '#f0fdf4', border: '1px solid #bbf7d0',
+          borderRadius: 6, padding: '3px 9px',
+          whiteSpace: 'nowrap', flexShrink: 0,
+          display: 'flex', alignItems: 'center', gap: 5,
+        }}>
+          <Check size={11} strokeWidth={2.5} />
+          {importMsg}
+        </span>
+      )}
       <TopBarBtn icon={<History size={14} />} label="History" />
       <TopBarBtn
         icon={importing

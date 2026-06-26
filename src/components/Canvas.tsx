@@ -342,13 +342,19 @@ const Canvas: React.FC = () => {
     hoveredObjectId, setHoveredObject,
     setTextHyperlink, removeTextHyperlink,
     beginHistory, undo, redo,
-    activeLayerId,
+    activeLayerId, layers,
     selectLayer,
     symbols, selectedSymbolId,
     viewport, zoomAtPoint, panBy,
     comments, selectedCommentId, commentFilter,
     selectComment, createComment, cancelAddingComment, addCommentReply, resolveComment, reopenComment,
   } = useEditor();
+
+  // Visible layer id set — objects on hidden layers are not rendered
+  const visibleLayerIds = React.useMemo(
+    () => new Set(layers.filter(l => l.visible).map(l => l.id)),
+    [layers],
+  );
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const isPanningRef    = useRef(false);
@@ -912,7 +918,7 @@ const Canvas: React.FC = () => {
 
       {/* World-space transform container */}
       <CanvasViewport>
-        {objects.filter(isShape).map(s => (
+        {objects.filter(isShape).filter(s => visibleLayerIds.has(s.layerId)).map(s => (
           <ShapeView
             key={s.id}
             shape={s}
@@ -920,7 +926,7 @@ const Canvas: React.FC = () => {
             hovered={hoveredObjectId === s.id}
           />
         ))}
-        {objects.filter(isSymbol).map(s => (
+        {objects.filter(isSymbol).filter(s => visibleLayerIds.has(s.layerId)).map(s => (
           <SymbolView
             key={s.id}
             symbol={s}
@@ -930,7 +936,7 @@ const Canvas: React.FC = () => {
         ))}
         {objects
           .filter(isTextObject)
-          .filter(t => t.id !== editingObjectId)
+          .filter(t => visibleLayerIds.has(t.layerId) && t.id !== editingObjectId)
           .map(t => (
             <PlacedTextView
               key={t.id}
