@@ -426,6 +426,8 @@ export interface EditorStore {
   loadDocument: (doc: EspDocument) => void;
   /** Batch-import objects + optional new layers as a single undoable step. */
   importObjects: (objects: CanvasObject[], newLayers: Layer[]) => void;
+  /** Zoom + pan the viewport to fit all current objects with padding. */
+  fitToObjects: () => void;
 
   /* Text-specific conveniences, built on the scene API above. */
   selectedTextObject: TextObject | null;
@@ -904,6 +906,38 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     });
   }, [pushHistory]);
 
+  const fitToObjects = useCallback(() => {
+    const all = objectsRef.current;
+    if (all.length === 0) return;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const obj of all) {
+      let x2: number, y2: number;
+      if (obj.type === 'line') {
+        const lo = obj as LineObject;
+        x2 = lo.x + lo.dx; y2 = lo.y + lo.dy;
+      } else {
+        x2 = obj.x + obj.width; y2 = obj.y + obj.height;
+      }
+      minX = Math.min(minX, obj.x, x2);
+      minY = Math.min(minY, obj.y, y2);
+      maxX = Math.max(maxX, obj.x, x2);
+      maxY = Math.max(maxY, obj.y, y2);
+    }
+    if (!isFinite(minX) || !isFinite(minY)) return;
+    const contentW = maxX - minX;
+    const contentH = maxY - minY;
+    if (contentW <= 0 || contentH <= 0) return;
+    // Estimate visible canvas area: subtract header (48px), left panel (300px), right panel (280px)
+    const cw = Math.max(window.innerWidth - 48 - 280, 400);
+    const ch = Math.max(window.innerHeight - 48, 300);
+    const PAD = 60;
+    const rawZoom = Math.min((cw - PAD * 2) / contentW, (ch - PAD * 2) / contentH);
+    const zoom = Math.max(0.01, Math.min(8, rawZoom));
+    const panX = cw / 2 - (minX + contentW / 2) * zoom;
+    const panY = ch / 2 - (minY + contentH / 2) * zoom;
+    setViewport({ zoom, panX, panY });
+  }, []); // setViewport from useState is stable
+
   /* ── Text-specific conveniences (built on the scene API) ── */
 
   /** Patch the currently selected object (text panel binds to this). */
@@ -1186,7 +1220,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     canUndo: past.length > 0,
     canRedo: future.length > 0,
     /* document */
-    getDocument, loadDocument, importObjects,
+    getDocument, loadDocument, importObjects, fitToObjects,
     /* text conveniences */
     selectedTextObject, updateTextObject,
     setTextHyperlink, removeTextHyperlink, enterTextEditMode,

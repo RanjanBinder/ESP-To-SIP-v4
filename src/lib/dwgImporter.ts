@@ -34,15 +34,43 @@ async function getLib() {
   return cachedLib;
 }
 
-// ── ACI table (partial) ───────────────────────────────────────────────────────
-const ACI: Partial<Record<number, string>> = {
-  1: '#ff0000', 2: '#ffff00', 3: '#00ff00',  4: '#00ffff',
-  5: '#0000ff', 6: '#ff00ff', 7: '#000000',
-  8: '#414141', 9: '#808080',
-  250: '#333333', 251: '#505050', 252: '#6a6a6a',
-  253: '#838383', 254: '#bebebe', 255: '#c8c8c8',
-};
-function aciToHex(n: number): string { return ACI[n] ?? '#6b7280'; }
+// ── Full 255-entry AutoCAD Color Index (ACI) table ───────────────────────────
+function hslToHex(h: number, s: number, l: number): string {
+  s /= 100; l /= 100;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * c).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+const ACI_TABLE: string[] = (() => {
+  const t = new Array<string>(256).fill('#6b7280');
+  // Standard 1-9
+  t[0] = '#000000'; t[1] = '#ff0000'; t[2] = '#ffff00'; t[3] = '#00ff00';
+  t[4] = '#00ffff'; t[5] = '#0000ff'; t[6] = '#ff00ff';
+  t[7] = '#000000'; // white → black on white background
+  t[8] = '#414141'; t[9] = '#808080';
+  // 10–239: 24 hue groups × 10 indices, 5 shade pairs per group
+  const shades: [number, number][] = [[100,50],[100,75],[75,50],[50,50],[50,25]];
+  for (let h = 0; h < 24; h++) {
+    const hue = h * 15;
+    const base = 10 + h * 10;
+    shades.forEach(([s, l], i) => {
+      const hex = hslToHex(hue, s, l);
+      t[base + i * 2] = hex;
+      t[base + i * 2 + 1] = hex;
+    });
+  }
+  // 250–255: greyscale ramp
+  t[250] = '#333333'; t[251] = '#505050'; t[252] = '#6a6a6a';
+  t[253] = '#838383'; t[254] = '#bebebe'; t[255] = '#c8c8c8';
+  return t;
+})();
+
+function aciToHex(n: number): string { return ACI_TABLE[n] ?? '#6b7280'; }
 
 function dwgColorToHex(color: number | undefined): string {
   if (!color) return '#6b7280';
