@@ -4,6 +4,7 @@ import {
   Bold, Italic, Underline, Link, Check, X, MessageSquare,
 } from 'lucide-react';
 import { useEditor, DraftTextObject, TextObject, isTextObject, isShape, isSymbol } from '../store/editorStore';
+import { useSODStore } from '../store/sodStore';
 import { Vec2, CanvasObject } from '../types/scene';
 import { ToolContext, ToolPointer, DragSession, ArcPreview, RubberBand } from '../types/tool';
 import { getTool } from '../lib/tools/registry';
@@ -349,6 +350,8 @@ const Canvas: React.FC = () => {
     comments, selectedCommentId, commentFilter,
     selectComment, createComment, cancelAddingComment, addCommentReply, resolveComment, reopenComment,
   } = useEditor();
+
+  const { checkResult: sodResult } = useSODStore();
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const isPanningRef    = useRef(false);
@@ -1219,6 +1222,36 @@ const Canvas: React.FC = () => {
           );
         });
       })()}
+
+      {/* SOD violation dots (screen space) — one per violation, coloured by severity */}
+      {sodResult && sodResult.violations.map(v => {
+        if (v.canvasX == null || v.canvasY == null) return null;
+        const sx = v.canvasX * viewport.zoom + viewport.panX;
+        const sy = v.canvasY * viewport.zoom + viewport.panY;
+        const isCritical = v.severity === 'V2';
+        const color = isCritical ? '#dc2626' : '#d97706';
+        return (
+          <div
+            key={v.id}
+            title={`${v.ruleCode ?? ''} ${v.title}${v.measured != null ? ` — ${v.measured}${v.unit ?? ''}` : ''}`}
+            onClick={e => { e.stopPropagation(); if (v.assetId) selectObject(v.assetId); }}
+            style={{
+              position: 'absolute',
+              left: sx - 8, top: sy - 8,
+              width: 16, height: 16,
+              borderRadius: '50%',
+              background: color,
+              border: '2px solid #fff',
+              boxShadow: `0 0 0 2px ${color}55, 0 2px 6px rgba(0,0,0,0.25)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontSize: 8.5, fontWeight: 800,
+              cursor: 'pointer', zIndex: 34, userSelect: 'none',
+            }}
+          >
+            {v.severity}
+          </div>
+        );
+      })}
 
       {/* Draft comment pin (not yet submitted) */}
       {draftCommentPos && (() => {

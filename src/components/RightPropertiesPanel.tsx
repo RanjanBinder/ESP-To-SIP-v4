@@ -12,6 +12,8 @@ import {
 import TextPropertiesPanel from './TextPropertiesPanel';
 import ShapePropertiesPanel from './ShapePropertiesPanel';
 import SymbolPropertiesPanel from './SymbolPropertiesPanel';
+import SODViolationsPanel from './SODViolationsPanel';
+import { useSODStore } from '../store/sodStore';
 import {
   SegmentedControl, PropertySelect, ColorValueInput, PropertyRow, PropertySection,
 } from './ui';
@@ -1001,6 +1003,7 @@ const BottomScaleStatus: React.FC = () => {
 
 const RightPropertiesPanel: React.FC = () => {
   const { selectedLayerId, getLayer, selectedTextObject, selectedObject } = useEditor();
+  const { panelOpen: sodPanelOpen } = useSODStore();
   const selectedLayer = selectedLayerId ? getLayer(selectedLayerId) : null;
   const selectedShape = selectedObject && isShape(selectedObject) ? selectedObject : null;
   const selectedSymbol = selectedObject && isSymbol(selectedObject) ? selectedObject : null;
@@ -1027,12 +1030,18 @@ const RightPropertiesPanel: React.FC = () => {
       fontSize: 13,
       boxSizing: 'border-box',
     }}>
-      {/* Body */}
-      {mode === 'text'   && selectedTextObject && <TextPropertiesPanel obj={selectedTextObject} />}
-      {mode === 'shape'  && selectedShape       && <ShapePropertiesPanel obj={selectedShape} />}
-      {mode === 'symbol' && selectedSymbol      && <SymbolPropertiesPanel obj={selectedSymbol} />}
-      {mode === 'layer'  && selectedLayer       && <LayerPropertiesPanel layer={selectedLayer} />}
-      {mode === 'canvas' && <CanvasSettingsPanel />}
+      {/* Body — the Violations panel takes over the right panel when open */}
+      {sodPanelOpen ? (
+        <SODViolationsPanel />
+      ) : (
+        <>
+          {mode === 'text'   && selectedTextObject && <TextPropertiesPanel obj={selectedTextObject} />}
+          {mode === 'shape'  && selectedShape       && <ShapePropertiesPanel obj={selectedShape} />}
+          {mode === 'symbol' && selectedSymbol      && <SymbolPropertiesPanel obj={selectedSymbol} />}
+          {mode === 'layer'  && selectedLayer       && <LayerPropertiesPanel layer={selectedLayer} />}
+          {mode === 'canvas' && <CanvasSettingsPanel />}
+        </>
+      )}
 
       <BottomScaleStatus />
     </aside>

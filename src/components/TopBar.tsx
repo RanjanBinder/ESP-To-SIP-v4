@@ -1,19 +1,45 @@
 import React, { useRef, useState } from 'react';
-import { Save, History, Upload, ArrowLeft, Check, FileOutput } from 'lucide-react';
+import { Save, History, Upload, ArrowLeft, Check, ShieldCheck } from 'lucide-react';
 import { useEditor } from '../store/editorStore';
-import { downloadDocument, readDocumentFile, savePersistedDocument } from '../lib/serialize';
+import { useSODStore } from '../store/sodStore';
+import { runSODValidation } from '../lib/validation/sodValidator';
+import type { SODCheckResult } from '../lib/validation/sodValidator';
+import { readDocumentFile, savePersistedDocument } from '../lib/serialize';
 import { importDwgFile } from '../lib/dwgImporter';
 import { importDxfFile } from '../lib/dxfImporter';
+import { POTHULAPADU_ASSETS, pothulapaduToCanvasObjects } from '../data/pothulapaduAssets';
 
-interface TopBarProps {
-  onGenerateSip: () => void;
-}
-
-const TopBar: React.FC<TopBarProps> = ({ onGenerateSip }) => {
-  const { getDocument, loadDocument, importObjects, layers, activeLayerId } = useEditor();
+const TopBar: React.FC = () => {
+  const { getDocument, loadDocument, importObjects, layers, activeLayerId, objects } = useEditor();
+  const { checkResult, setCheckResult, setPanelOpen, setStation, stationCode } = useSODStore();
   const importRef = useRef<HTMLInputElement>(null);
   const [savedTick, setSavedTick] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+
+  async function handleRunSODCheck() {
+    setIsRunning(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 400)); // gives UI time to show spinner
+      const result = runSODValidation(objects, 'existing-esp');
+      setCheckResult(result);
+      setPanelOpen(true);
+    } catch (err) {
+      console.error('SOD check failed:', err);
+    } finally {
+      setIsRunning(false);
+    }
+  }
+
+  /** Replace the scene with the parsed Pothulapadu assets and load its
+   *  station identity. Keeps current layers/settings, resets any prior check. */
+  function loadPothulapaduFixture() {
+    const fixtureObjects = pothulapaduToCanvasObjects(POTHULAPADU_ASSETS);
+    loadDocument({ ...getDocument(), objects: fixtureObjects });
+    setStation(POTHULAPADU_ASSETS.stationCode, POTHULAPADU_ASSETS.stationName);
+    setCheckResult(null);
+    setPanelOpen(false);
+  }
 
   const handleSave = () => {
     savePersistedDocument(getDocument());
@@ -28,9 +54,15 @@ const TopBar: React.FC<TopBarProps> = ({ onGenerateSip }) => {
     e.target.value = '';
     if (!file) return;
     const ext = file.name.split('.').pop()?.toLowerCase();
+    const lowerName = file.name.toLowerCase();
     setImporting(true);
     try {
-      if (ext === 'dwg') {
+      // Pothulapadu ESP: the .dwg is AC1032 binary and can't be parsed in the
+      // browser, so load the extraction-pipeline fixture by filename. Replace
+      // this branch with the parser API call when Vamsi's pipeline is ready.
+      if (lowerName.includes('pothulapadu')) {
+        loadPothulapaduFixture();
+      } else if (ext === 'dwg') {
         const buffer = await file.arrayBuffer();
         const result = await importDwgFile(buffer, layers, activeLayerId);
         importObjects(result.objects, result.newLayers);
@@ -112,8 +144,10 @@ const TopBar: React.FC<TopBarProps> = ({ onGenerateSip }) => {
         letterSpacing: '0.04em',
         whiteSpace: 'nowrap',
         flexShrink: 0,
-      }}>
-        BWK
+      }}
+        title={stationCode ? 'Loaded station' : undefined}
+      >
+        {stationCode ?? 'BWK'}
       </span>
     </div>
 
@@ -178,29 +212,88 @@ const TopBar: React.FC<TopBarProps> = ({ onGenerateSip }) => {
 
       <div style={{ width: 1, height: 20, background: 'var(--color-border)', flexShrink: 0 }} />
 
+      <SODCheckButton
+        checkResult={checkResult}
+        isRunning={isRunning}
+        onClick={handleRunSODCheck}
+      />
+    </div>
+  </header>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   Run SOD check button + violation-count badge
+════════════════════════════════════════════════════════════════════ */
+
+const SODCheckButton: React.FC<{
+  checkResult: SODCheckResult | null;
+  isRunning: boolean;
+  onClick: () => void;
+}> = ({ checkResult, isRunning, onClick }) => {
+  const hasResult = checkResult !== null;
+  const hasViolations = hasResult && checkResult!.counts.total > 0;
+
+  /* State-driven colors (loading keeps the default blue). */
+  let colors = { border: '#93c5fd', bg: '#eff6ff', text: '#1d4ed8' }; // default / loading
+  if (!isRunning && hasResult) {
+    colors = hasViolations
+      ? { border: '#fca5a5', bg: '#fef2f2', text: '#b91c1c' }  // violations found
+      : { border: '#86efac', bg: '#f0fdf4', text: '#15803d' }; // all passed
+  }
+
+  return (
+    <>
+      {/* Count badge — only when results exist and violations > 0 */}
+      {hasViolations && (
+        <span style={{
+          background: '#fef2f2',
+          color: '#b91c1c',
+          border: '1px solid #fca5a5',
+          borderRadius: 4,
+          fontSize: 11,
+          padding: '2px 8px',
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}>
+          {checkResult!.counts.V2} V2 · {checkResult!.counts.V1} V1
+        </span>
+      )}
+
       <button
-        onClick={onGenerateSip}
-        title="Configure section details and generate SIP"
+        onClick={onClick}
+        disabled={isRunning}
+        title="Validate the drawing against the Schedule of Dimensions"
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
-          background: '#7c3aed',
-          color: '#fff',
+          border: `1px solid ${colors.border}`,
+          background: colors.bg,
+          color: colors.text,
           borderRadius: 'var(--radius-sm)',
           padding: '6px 14px',
           fontSize: 12.5,
           fontWeight: 600,
           letterSpacing: '0.01em',
-          transition: 'opacity 0.15s',
           whiteSpace: 'nowrap',
+          cursor: isRunning ? 'default' : 'pointer',
+          transition: 'opacity 0.15s',
         }}
-        onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+        onMouseEnter={e => { if (!isRunning) e.currentTarget.style.opacity = '0.85'; }}
         onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
       >
-        <FileOutput size={13} strokeWidth={2} />
-        Generate SIP
+        {isRunning
+          ? <span style={{
+              width: 13, height: 13,
+              border: `2px solid ${colors.border}`,
+              borderTopColor: colors.text,
+              borderRadius: '50%',
+              display: 'inline-block',
+              animation: 'spin 0.9s linear infinite',
+            }} />
+          : <ShieldCheck size={13} strokeWidth={2} />}
+        {isRunning ? 'Checking…' : 'Run SOD check'}
       </button>
-    </div>
-  </header>
+    </>
   );
 };
 

@@ -18,6 +18,28 @@ export interface Vec2 {
   y: number;
 }
 
+/* ── SOD annotation ──────────────────────────────────────────────────
+   Engineering measurements a parsed ESP asset carries so the Schedule-of-
+   Dimensions validator (lib/validation/sodValidator.ts) can grade it. Optional:
+   only assets extracted from an ESP drawing carry it — hand-drawn shapes don't.
+   All measurements are in millimetres unless noted. */
+export interface SodAssetMeta {
+  /** High-level asset class the SOD rules dispatch on. */
+  assetKind: 'Track' | 'Platform' | 'Structure' | 'Gradient';
+  /** lineType / platformType / structureType from the source drawing. */
+  subtype?: string;
+  /** Source asset id from the parser (e.g. 'TRK-03'), for traceability. */
+  sourceAssetId?: string;
+  /** Centre-to-centre distance to the nearest adjacent track (mm). */
+  spacingToAdjacentTrack?: number;
+  /** Clearance from the running-track centre line to this asset (mm). */
+  clearanceFromTrackCentre?: number;
+  /** Height above rail level (mm). */
+  heightAboveRailLevel?: number;
+  /** Gradient denominator — 400 means 1:400. */
+  gradientDenominator?: number;
+}
+
 /* ── Object kinds ────────────────────────────────────────────────── */
 
 /**
@@ -58,6 +80,8 @@ export interface BaseCanvasObject {
   /** Override foundation for symbol/block instances. */
   sourceId?: string | null;
   isOverride?: boolean;
+  /** SOD engineering measurements, present on assets parsed from an ESP. */
+  sod?: SodAssetMeta;
 }
 
 /* ── Text ────────────────────────────────────────────────────────── */
