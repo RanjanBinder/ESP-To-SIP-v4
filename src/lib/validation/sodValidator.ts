@@ -37,9 +37,11 @@ export interface SODViolation {
   /** The offending asset, when a single asset is implicated. */
   assetId?: string;
   assetName?: string;
-  /** World position of the asset — used to place a dot on the canvas. */
+  /** World position + size of the asset — used to place markers on the canvas. */
   canvasX?: number;
   canvasY?: number;
+  canvasW?: number;
+  canvasH?: number;
 }
 
 export interface SODCheckResult {
@@ -217,7 +219,10 @@ export function runSODValidation(
   for (const o of sodAssets) {
     const m = o.sod!;
     const name = o.name;
-    const at = { assetId: o.id, assetName: name, canvasX: o.x, canvasY: o.y };
+    const at = {
+      assetId: o.id, assetName: name,
+      canvasX: o.x, canvasY: o.y, canvasW: o.width, canvasH: o.height,
+    };
 
     /* SOD-I-01 — adjacent running-track centres ≥ 4265 mm. */
     if (m.assetKind === 'Track' && m.spacingToAdjacentTrack != null) {

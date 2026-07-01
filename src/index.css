@@ -64,3 +64,10 @@ button:focus-visible {
 /* Spinner (used by the DXF workspace loading indicator) */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spin { animation: spin 0.9s linear infinite; }
+
+/* SOD active-violation pulse ring (used by SODCanvasOverlay) */
+@keyframes sod-pulse {
+  0%   { transform: translate(-50%, -50%) scale(0.72); opacity: 0.55; }
+  70%  { transform: translate(-50%, -50%) scale(1.35); opacity: 0;    }
+  100% { transform: translate(-50%, -50%) scale(1.35); opacity: 0;    }
+}

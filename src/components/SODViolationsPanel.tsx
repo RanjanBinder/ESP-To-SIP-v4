@@ -1,44 +1,47 @@
-import React from 'react';
-import { X, ShieldCheck, ShieldAlert, AlertTriangle } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { X, ShieldCheck, ShieldAlert, AlertTriangle, Crosshair } from 'lucide-react';
 import { useSODStore } from '../store/sodStore';
 import { useEditor } from '../store/editorStore';
 import type { SODViolation, ViolationSeverity } from '../lib/validation/sodValidator';
 
-/* Severity → visual treatment (matches the top-bar button states). */
+/* Severity → visual treatment. V2 = critical (red), V1 = major (amber). */
 const SEVERITY_STYLE: Record<ViolationSeverity, { label: string; border: string; bg: string; text: string }> = {
-  V1: { label: 'V1 · Critical', border: '#fca5a5', bg: '#fef2f2', text: '#b91c1c' },
-  V2: { label: 'V2 · Warning',  border: '#fcd34d', bg: '#fffbeb', text: '#b45309' },
+  V2: { label: 'V2 · Critical', border: '#fca5a5', bg: '#fef2f2', text: '#b91c1c' },
+  V1: { label: 'V1 · Major',    border: '#fcd34d', bg: '#fffbeb', text: '#b45309' },
 };
 
-const ViolationRow: React.FC<{ v: SODViolation }> = ({ v }) => {
+const ViolationRow: React.FC<{
+  v: SODViolation;
+  isActive: boolean;
+  onSelect: () => void;
+  onView: () => void;
+  rowRef: (el: HTMLDivElement | null) => void;
+}> = ({ v, isActive, onSelect, onView, rowRef }) => {
   const s = SEVERITY_STYLE[v.severity];
-  const { selectObject } = useEditor();
-  const clickable = Boolean(v.assetId);
 
   return (
-    <button
-      onClick={clickable ? () => selectObject(v.assetId!) : undefined}
+    <div
+      ref={rowRef}
+      onClick={onSelect}
       style={{
-        width: '100%',
-        textAlign: 'left',
         display: 'flex',
         gap: 9,
         padding: '10px 12px',
-        border: 'none',
         borderBottom: '1px solid #f3f4f6',
-        background: 'transparent',
-        cursor: clickable ? 'pointer' : 'default',
+        borderLeft: `3px solid ${isActive ? s.text : 'transparent'}`,
+        background: isActive ? s.bg : 'transparent',
+        cursor: 'pointer',
         fontFamily: 'inherit',
       }}
-      onMouseEnter={e => { if (clickable) e.currentTarget.style.background = '#fafafa'; }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+      onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#fafafa'; }}
+      onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
     >
       <span style={{
         flexShrink: 0, marginTop: 1,
         color: s.text,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        {v.severity === 'V1'
+        {v.severity === 'V2'
           ? <ShieldAlert size={15} strokeWidth={2} />
           : <AlertTriangle size={14} strokeWidth={2} />}
       </span>
@@ -72,7 +75,25 @@ const ViolationRow: React.FC<{ v: SODViolation }> = ({ v }) => {
           </span>
         )}
       </span>
-    </button>
+      {v.canvasX != null && (
+        <button
+          title="View on drawing"
+          onClick={e => { e.stopPropagation(); onView(); }}
+          style={{
+            flexShrink: 0, alignSelf: 'center',
+            display: 'flex', alignItems: 'center', gap: 4,
+            border: '1px solid #e5e7eb', borderRadius: 6,
+            background: '#fff', color: '#6b7280', cursor: 'pointer',
+            padding: '4px 7px', fontSize: 10.5, fontFamily: 'inherit',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#f3f4f6'; e.currentTarget.style.color = '#374151'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#6b7280'; }}
+        >
+          <Crosshair size={12} strokeWidth={2} />
+          View
+        </button>
+      )}
+    </div>
   );
 };
 
@@ -90,11 +111,40 @@ const KpiCard: React.FC<{ label: string; value: number; color: string; bg: strin
 );
 
 const SODViolationsPanel: React.FC = () => {
-  const { checkResult, setPanelOpen, stationName } = useSODStore();
+  const {
+    checkResult, setPanelOpen, stationName,
+    activeViolationId, setActiveViolation, requestFocus,
+  } = useSODStore();
+  const { selectObject } = useEditor();
+
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  /* Canvas → panel: when the active violation changes (e.g. a dot was clicked
+     on the canvas), scroll its row into view. */
+  useEffect(() => {
+    if (!activeViolationId) return;
+    rowRefs.current[activeViolationId]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [activeViolationId]);
 
   const passed = checkResult?.passed ?? false;
   const v1 = checkResult?.counts.V1 ?? 0;
   const v2 = checkResult?.counts.V2 ?? 0;
+
+  const handleSelect = (v: SODViolation) => {
+    setActiveViolation(activeViolationId === v.id ? null : v.id);
+    if (v.assetId) selectObject(v.assetId);
+  };
+
+  const handleView = (v: SODViolation) => {
+    setActiveViolation(v.id);
+    if (v.assetId) selectObject(v.assetId);
+    if (v.canvasX != null && v.canvasY != null) {
+      // Aim at the asset's centre so rects/bands land in view, not just a corner.
+      const cx = v.canvasX + (v.canvasW ?? 0) / 2;
+      const cy = v.canvasY + (v.canvasH ?? 0) / 2;
+      requestFocus(cx, cy, 2.5);
+    }
+  };
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
@@ -156,7 +206,14 @@ const SODViolationsPanel: React.FC = () => {
           </div>
         )}
         {checkResult && !passed && checkResult.violations.map(v => (
-          <ViolationRow key={v.id} v={v} />
+          <ViolationRow
+            key={v.id}
+            v={v}
+            isActive={activeViolationId === v.id}
+            onSelect={() => handleSelect(v)}
+            onView={() => handleView(v)}
+            rowRef={el => { rowRefs.current[v.id] = el; }}
+          />
         ))}
       </div>
     </div>

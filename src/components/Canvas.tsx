@@ -22,6 +22,7 @@ import CanvasAxis from './CanvasAxis';
 import CanvasViewport from './CanvasViewport';
 import CanvasOverlay from './CanvasOverlay';
 import CommentThreadCard from './CommentThreadCard';
+import SODCanvasOverlay from './SODCanvasOverlay';
 
 /* ── Formatting bar helpers ──────────────────────────────────────── */
 
@@ -346,12 +347,12 @@ const Canvas: React.FC = () => {
     activeLayerId,
     selectLayer,
     symbols, selectedSymbolId,
-    viewport, zoomAtPoint, panBy,
+    viewport, zoomAtPoint, panBy, setZoom, setPan,
     comments, selectedCommentId, commentFilter,
     selectComment, createComment, cancelAddingComment, addCommentReply, resolveComment, reopenComment,
   } = useEditor();
 
-  const { checkResult: sodResult } = useSODStore();
+  const { focusRequest } = useSODStore();
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const isPanningRef    = useRef(false);
@@ -523,6 +524,19 @@ const Canvas: React.FC = () => {
     el.addEventListener('wheel', handler, { passive: false });
     return () => el.removeEventListener('wheel', handler);
   }, [zoomAtPoint]);
+
+  /* ── "View on drawing": centre the viewport on a requested world point ── */
+  useEffect(() => {
+    if (!focusRequest) return;
+    const el = canvasRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const z = focusRequest.zoom;
+    setZoom(z);
+    setPan(rect.width / 2 - focusRequest.x * z, rect.height / 2 - focusRequest.y * z);
+  // Re-run only when a new focus is requested (nonce changes).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusRequest?.nonce]);
 
   /* ── Global mouse-move / mouse-up for panning + tool drags ──────── */
   useEffect(() => {
@@ -1223,35 +1237,8 @@ const Canvas: React.FC = () => {
         });
       })()}
 
-      {/* SOD violation dots (screen space) — one per violation, coloured by severity */}
-      {sodResult && sodResult.violations.map(v => {
-        if (v.canvasX == null || v.canvasY == null) return null;
-        const sx = v.canvasX * viewport.zoom + viewport.panX;
-        const sy = v.canvasY * viewport.zoom + viewport.panY;
-        const isCritical = v.severity === 'V2';
-        const color = isCritical ? '#dc2626' : '#d97706';
-        return (
-          <div
-            key={v.id}
-            title={`${v.ruleCode ?? ''} ${v.title}${v.measured != null ? ` — ${v.measured}${v.unit ?? ''}` : ''}`}
-            onClick={e => { e.stopPropagation(); if (v.assetId) selectObject(v.assetId); }}
-            style={{
-              position: 'absolute',
-              left: sx - 8, top: sy - 8,
-              width: 16, height: 16,
-              borderRadius: '50%',
-              background: color,
-              border: '2px solid #fff',
-              boxShadow: `0 0 0 2px ${color}55, 0 2px 6px rgba(0,0,0,0.25)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontSize: 8.5, fontWeight: 800,
-              cursor: 'pointer', zIndex: 34, userSelect: 'none',
-            }}
-          >
-            {v.severity}
-          </div>
-        );
-      })}
+      {/* SOD violation markers (halo, dot, callout, tooltip, gradient band) */}
+      <SODCanvasOverlay />
 
       {/* Draft comment pin (not yet submitted) */}
       {draftCommentPos && (() => {
