@@ -23,6 +23,7 @@ import CanvasViewport from './CanvasViewport';
 import CanvasOverlay from './CanvasOverlay';
 import CommentThreadCard from './CommentThreadCard';
 import SODCanvasOverlay from './SODCanvasOverlay';
+import DiffHighlightLayer from './DiffHighlightLayer';
 
 /* ── Formatting bar helpers ──────────────────────────────────────── */
 
@@ -1239,6 +1240,9 @@ const Canvas: React.FC = () => {
 
       {/* SOD violation markers (halo, dot, callout, tooltip, gradient band) */}
       <SODCanvasOverlay />
+
+      {/* Version-compare highlights (added / removed / moved / modified) */}
+      <DiffHighlightLayer />
 
       {/* Draft comment pin (not yet submitted) */}
       {draftCommentPos && (() => {

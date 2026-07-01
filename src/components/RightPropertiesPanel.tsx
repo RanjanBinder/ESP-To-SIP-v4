@@ -13,7 +13,9 @@ import TextPropertiesPanel from './TextPropertiesPanel';
 import ShapePropertiesPanel from './ShapePropertiesPanel';
 import SymbolPropertiesPanel from './SymbolPropertiesPanel';
 import SODViolationsPanel from './SODViolationsPanel';
+import ChangeListPanel from './ChangeListPanel';
 import { useSODStore } from '../store/sodStore';
+import { useCompareStore } from '../store/compareStore';
 import {
   SegmentedControl, PropertySelect, ColorValueInput, PropertyRow, PropertySection,
 } from './ui';
@@ -1004,6 +1006,7 @@ const BottomScaleStatus: React.FC = () => {
 const RightPropertiesPanel: React.FC = () => {
   const { selectedLayerId, getLayer, selectedTextObject, selectedObject } = useEditor();
   const { panelOpen: sodPanelOpen } = useSODStore();
+  const { isComparing } = useCompareStore();
   const selectedLayer = selectedLayerId ? getLayer(selectedLayerId) : null;
   const selectedShape = selectedObject && isShape(selectedObject) ? selectedObject : null;
   const selectedSymbol = selectedObject && isSymbol(selectedObject) ? selectedObject : null;
@@ -1030,8 +1033,10 @@ const RightPropertiesPanel: React.FC = () => {
       fontSize: 13,
       boxSizing: 'border-box',
     }}>
-      {/* Body — the Violations panel takes over the right panel when open */}
-      {sodPanelOpen ? (
+      {/* Body — compare takes over the panel first, then the Violations panel */}
+      {isComparing ? (
+        <ChangeListPanel />
+      ) : sodPanelOpen ? (
         <SODViolationsPanel />
       ) : (
         <>

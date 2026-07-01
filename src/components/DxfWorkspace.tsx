@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Upload, ZoomIn, Hand, MousePointer2, AlertTriangle, Loader2 } from 'lucide-react';
+import { Upload, ZoomIn, Hand, MousePointer2, AlertTriangle, Loader2, ArrowLeft } from 'lucide-react';
 import { AcApDocManager, AcEdOpenMode } from '@mlightcad/cad-simple-viewer';
 
 /**
@@ -20,7 +20,7 @@ const WORKER_URLS = {
 /** App-lifetime guard so the singleton engine is created exactly once. */
 let engineCreated = false;
 
-const DxfWorkspace: React.FC<{ active: boolean }> = ({ active }) => {
+const DxfWorkspace: React.FC<{ active: boolean; onExit?: () => void }> = ({ active, onExit }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(engineCreated);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -102,6 +102,12 @@ const DxfWorkspace: React.FC<{ active: boolean }> = ({ active }) => {
         background: '#111827', borderBottom: '1px solid #1f2937',
       }}>
         <input ref={fileInputRef} type="file" accept=".dxf,.dwg" onChange={onPick} style={{ display: 'none' }} />
+        {onExit && (
+          <>
+            <DxfBtn icon={<ArrowLeft size={14} />} label="Back to editor" onClick={onExit} />
+            <div style={{ width: 1, height: 20, background: '#374151', margin: '0 4px' }} />
+          </>
+        )}
         <DxfBtn primary icon={<Upload size={14} />} label="Open DXF / DWG" onClick={() => fileInputRef.current?.click()} />
         <div style={{ width: 1, height: 20, background: '#374151', margin: '0 4px' }} />
         <DxfBtn icon={<MousePointer2 size={14} />} label="Select" onClick={() => cmd('select')} />

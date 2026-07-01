@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { Save, History, Upload, ArrowLeft, Check, ShieldCheck } from 'lucide-react';
+import { Save, History, Upload, ArrowLeft, Check, ShieldCheck, GitCompare, Eye, BookmarkPlus } from 'lucide-react';
 import { useEditor } from '../store/editorStore';
 import { useSODStore } from '../store/sodStore';
+import { useCompareStore } from '../store/compareStore';
 import { runSODValidation } from '../lib/validation/sodValidator';
 import type { SODCheckResult } from '../lib/validation/sodValidator';
 import { readDocumentFile, savePersistedDocument } from '../lib/serialize';
@@ -9,9 +10,13 @@ import { importDwgFile } from '../lib/dwgImporter';
 import { importDxfFile } from '../lib/dxfImporter';
 import { POTHULAPADU_ASSETS, pothulapaduToCanvasObjects } from '../data/pothulapaduAssets';
 
-const TopBar: React.FC = () => {
+const TopBar: React.FC<{ onOpenDwgViewer?: () => void }> = ({ onOpenDwgViewer }) => {
   const { getDocument, loadDocument, importObjects, layers, activeLayerId, objects } = useEditor();
   const { checkResult, setCheckResult, setPanelOpen, setStation, stationCode } = useSODStore();
+  const {
+    isComparing, enableCompare, clearCompare,
+    savedVersions, baseVersionId, headVersionId, setVersionPair, saveVersion,
+  } = useCompareStore();
   const importRef = useRef<HTMLInputElement>(null);
   const [savedTick, setSavedTick] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -39,6 +44,33 @@ const TopBar: React.FC = () => {
     setStation(POTHULAPADU_ASSETS.stationCode, POTHULAPADU_ASSETS.stationName);
     setCheckResult(null);
     setPanelOpen(false);
+  }
+
+  /** Toggle compare mode. On enter, default to the two most recent saved
+   *  versions; the user can re-pick either side from the compare bar. */
+  function handleCompareToggle() {
+    if (isComparing) {
+      clearCompare();
+      return;
+    }
+    // Comparing and the SOD panel both take over the right panel — close SOD.
+    setPanelOpen(false);
+    if (savedVersions.length >= 2 && !(baseVersionId && headVersionId)) {
+      setVersionPair(
+        savedVersions[savedVersions.length - 2].id,
+        savedVersions[savedVersions.length - 1].id,
+      );
+    }
+    enableCompare();
+  }
+
+  /** Snapshot the current drawing as a named version for later comparison. */
+  function handleSaveVersion() {
+    const suggested = `Version ${savedVersions.length + 1}`;
+    const label = window.prompt('Name this version', suggested);
+    if (label === null) return;
+    const v = saveVersion(label.trim() || suggested, objects);
+    window.alert(`Saved "${v.label}" (${objects.length} objects). Pick it as the base in Compare versions.`);
   }
 
   const handleSave = () => {
@@ -181,6 +213,12 @@ const TopBar: React.FC = () => {
         onChange={handleImportFile}
         style={{ display: 'none' }}
       />
+      <TopBarBtn
+        icon={<Eye size={14} />}
+        label="DWG Viewer"
+        onClick={onOpenDwgViewer}
+        title="Open the faithful DWG/DXF viewer (renders the file as-is)"
+      />
       <TopBarBtn icon={<History size={14} />} label="History" />
       <TopBarBtn
         icon={importing
@@ -210,7 +248,38 @@ const TopBar: React.FC = () => {
         {savedTick ? 'Saved' : 'Save'}
       </button>
 
+      <TopBarBtn
+        icon={<BookmarkPlus size={14} />}
+        label="Save version"
+        onClick={handleSaveVersion}
+        title="Snapshot the current drawing as a version to compare against"
+      />
+
       <div style={{ width: 1, height: 20, background: 'var(--color-border)', flexShrink: 0 }} />
+
+      <button
+        onClick={handleCompareToggle}
+        title="Compare two SIP versions"
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          border: `1px solid ${isComparing ? '#c4b5fd' : 'var(--color-border)'}`,
+          background: isComparing ? '#f5f3ff' : 'transparent',
+          color: isComparing ? '#5b21b6' : 'var(--color-text-muted)',
+          borderRadius: 'var(--radius-sm)',
+          padding: '6px 14px',
+          fontSize: 12.5,
+          fontWeight: isComparing ? 600 : 500,
+          letterSpacing: '0.01em',
+          whiteSpace: 'nowrap',
+          cursor: 'pointer',
+          transition: 'opacity 0.15s',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+        onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+      >
+        <GitCompare size={13} strokeWidth={2} />
+        Compare versions
+      </button>
 
       <SODCheckButton
         checkResult={checkResult}
