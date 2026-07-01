@@ -1,16 +1,14 @@
 /**
  * pothulapaduAssets.ts — Pothulapadu station (South Central Railway).
  *
- * Represents what the DWG extraction pipeline (Vamsi's team) would output for
- * POTHULAPADU_ESP.dwg. The .dwg is AC1032 (AutoCAD 2018) binary and can't be
- * parsed in the browser, so this fixture bridges the gap until the parser API
- * is wired (see TopBar.handleImportFile — swap the fixture for the API call).
+ * Represents station-domain metadata for POTHULAPADU_ESP.dwg. The editor now
+ * loads the DWG geometry directly; these fixtures keep SOD validation anchored
+ * to the known station assets.
  *
  * Two shapes live here:
  *  - POTHULAPADU_ASSETS: the raw domain assets (engineering measurements, mm).
- *  - pothulapaduToCanvasObjects(): converts them into CanvasObjects the editor
- *    renders directly, each carrying its SOD measurements in `obj.sod` so
- *    runSODValidation() can grade it.
+ *  - pothulapaduToCanvasObjects(): converts them into CanvasObjects for tests
+ *    and SOD reference data, each carrying its measurements in `obj.sod`.
  *
  * Coordinates are drawing units that double as world coordinates on the canvas
  * (X 100–1400, Y 150–310), so the station lands near the top-left on load.

@@ -811,7 +811,7 @@ const CanvasSettingsMenu: React.FC<{
     <div style={{ height: 1, background: '#f0f1f3', margin: '4px 0' }} />
 
     <MenuRow label="Zoom in"           shortcut="+"  onClick={() => { setZoom(Math.min(zoom * 1.25, 8)); onClose(); }} />
-    <MenuRow label="Zoom out"          shortcut="−"  onClick={() => { setZoom(Math.max(zoom * 0.8, 0.1)); onClose(); }} />
+    <MenuRow label="Zoom out"          shortcut="−"  onClick={() => { setZoom(Math.max(zoom * 0.8, 0.005)); onClose(); }} />
     <MenuRow label="Zoom to selection" shortcut="⇧Z" onClick={onClose} />
     <MenuRow label="Zoom to 50%"                     onClick={() => { setZoom(0.5); onClose(); }} />
     <MenuRow label="Zoom to 100%"                    onClick={() => { setZoom(1);   onClose(); }} />

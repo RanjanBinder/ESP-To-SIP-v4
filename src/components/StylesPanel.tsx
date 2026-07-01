@@ -312,7 +312,6 @@ const StylesOptionsMenu: React.FC<{
       <OptionsMenuRow label="Duplicate Style" onClick={onClose} />
       <OptionsMenuRow label="Delete Style" danger onClick={() => { onDeleteStyle(); onClose(); }} />
       <div style={{ height: 1, background: '#f3f4f6', margin: '3px 0' }} />
-      <OptionsMenuRow label="Import Styles" onClick={onClose} />
       <OptionsMenuRow label="Export Styles" onClick={onClose} />
     </div>
   );

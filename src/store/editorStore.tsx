@@ -26,6 +26,8 @@ export interface ViewportState {
   panY: number;
 }
 
+const MIN_ZOOM = 0.005;
+const MAX_ZOOM = 8;
 const DEFAULT_VIEWPORT: ViewportState = { zoom: 1, panX: 0, panY: 0 };
 
 /* ── Styles ──────────────────────────────────────────────────────── */
@@ -230,10 +232,10 @@ export interface CanvasSettings {
   gridSettings: GridSettings;
 }
 
-const DEFAULT_CANVAS_SETTINGS: CanvasSettings = {
+export const DEFAULT_CANVAS_SETTINGS: CanvasSettings = {
   modelName:        'AWB ESP Draft',
   owner:            'smruti',
-  canvasName:       'Import',
+  canvasName:       'Pothulapadu DWG',
   wireframe:        false,
   gridVisible:      true,
   axisVisible:      true,
@@ -249,7 +251,7 @@ const DEFAULT_CANVAS_SETTINGS: CanvasSettings = {
    Default layer data
 ════════════════════════════════════════════════════════════════════ */
 
-const DEFAULT_LAYERS: Layer[] = [
+export const DEFAULT_LAYERS: Layer[] = [
   /* Root layers (order = index in root list) */
   { id: 'tracks',        name: 'Tracks',           color: '#3b82f6', visible: true, locked: false, opacity: 1, parentId: null,     order: 0  },
   { id: 'turnouts',      name: 'Turnouts',          color: '#f59e0b', visible: true, locked: false, opacity: 1, parentId: null,     order: 1  },
@@ -424,7 +426,7 @@ export interface EditorStore {
   /* Document load / export (save/open) */
   getDocument: () => EspDocument;
   loadDocument: (doc: EspDocument) => void;
-  /** Batch-import objects + optional new layers as a single undoable step. */
+  /** Batch-load objects + optional new layers as a single undoable step. */
   importObjects: (objects: CanvasObject[], newLayers: Layer[]) => void;
 
   /* Text-specific conveniences, built on the scene API above. */
@@ -471,7 +473,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [viewport, setViewport] = useState<ViewportState>(DEFAULT_VIEWPORT);
 
   const setZoom = useCallback((zoom: number) => {
-    setViewport(prev => ({ ...prev, zoom: Math.max(0.1, Math.min(8, zoom)) }));
+    setViewport(prev => ({ ...prev, zoom: Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom)) }));
   }, []);
 
   const setPan = useCallback((panX: number, panY: number) => {
@@ -486,7 +488,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setViewport(prev => {
       let d = delta;
       const factor = Math.pow(0.999, d);
-      const newZoom = Math.max(0.1, Math.min(8, prev.zoom * factor));
+      const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev.zoom * factor));
       const worldX = (screenX - prev.panX) / prev.zoom;
       const worldY = (screenY - prev.panY) / prev.zoom;
       return {

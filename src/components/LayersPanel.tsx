@@ -266,7 +266,7 @@ const CanvasesSection: React.FC = () => {
       {!collapsed && (
         <div style={{ display: 'flex', alignItems: 'center', height: 30, padding: '0 10px 0 28px', gap: 8, cursor: 'default' }}>
           <Monitor size={12} strokeWidth={1.5} color="#9ca3af" />
-          <span style={{ flex: 1, fontSize: 12.5, color: '#374151' }}>Import</span>
+          <span style={{ flex: 1, fontSize: 12.5, color: '#374151' }}>Pothulapadu DWG</span>
           <span style={{ fontSize: 10, fontWeight: 500, color: '#6b7280', background: '#f3f4f6', borderRadius: 4, padding: '1px 6px', letterSpacing: '0.02em' }}>
             Model
           </span>

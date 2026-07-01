@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table as TableIcon, X, Maximize2, Minimize2,
   ChevronDown, Plus, MoreHorizontal, SlidersHorizontal,
@@ -50,9 +50,7 @@ interface Props {
 const TableModal: React.FC<Props> = ({ table, onClose, onUpdateRows }) => {
   const [expanded, setExpanded]               = useState(false);
   const [activeFilter, setActiveFilter]       = useState('approval');
-  const [importOpen, setImportOpen]           = useState(false);
   const [rows, setRows]                       = useState<string[]>(table.rows);
-  const importRef                             = useRef<HTMLDivElement>(null);
 
   const displayCount = expanded
     ? Math.max(15, rows.length + 5)
@@ -80,17 +78,6 @@ const TableModal: React.FC<Props> = ({ table, onClose, onUpdateRows }) => {
     document.addEventListener('keydown', h);
     return () => document.removeEventListener('keydown', h);
   }, [onClose]);
-
-  /* Close import dropdown on outside click */
-  useEffect(() => {
-    if (!importOpen) return;
-    const h = (e: MouseEvent) => {
-      if (importRef.current && !importRef.current.contains(e.target as Node))
-        setImportOpen(false);
-    };
-    document.addEventListener('mousedown', h);
-    return () => document.removeEventListener('mousedown', h);
-  }, [importOpen]);
 
   /* ── Layout ─────────────────────────────────────────────────────── */
   const wrapStyle: React.CSSProperties = expanded ? {
@@ -152,40 +139,6 @@ const TableModal: React.FC<Props> = ({ table, onClose, onUpdateRows }) => {
           >
             Insert
           </button>
-
-          {/* Import dropdown */}
-          <div ref={importRef} style={{ position: 'relative' }}>
-            <button
-              style={actionBtn}
-              onClick={() => setImportOpen(o => !o)}
-              onMouseEnter={e => (e.currentTarget.style.background = '#e9eaec')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#f3f4f6')}
-            >
-              Import
-              <ChevronDown size={11} strokeWidth={2} />
-            </button>
-            {importOpen && (
-              <div style={{
-                position: 'absolute', top: 'calc(100% + 4px)', right: 0,
-                width: 168, background: '#fff',
-                border: '1px solid #e5e7eb', borderRadius: 8,
-                boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                zIndex: 400, padding: '4px 0',
-              }}>
-                {['Import CSV', 'Import JSON', 'Import from DXF'].map(opt => (
-                  <div
-                    key={opt}
-                    onClick={() => setImportOpen(false)}
-                    style={{ height: 32, display: 'flex', alignItems: 'center', padding: '0 12px', cursor: 'pointer', fontSize: 13, color: '#111827' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#f9fafb')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    {opt}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* More */}
           <button style={iconBtn} title="More options"

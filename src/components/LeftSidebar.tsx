@@ -146,8 +146,8 @@ const LeftSidebar: React.FC = () => {
 
             <div style={{ height: 1, background: 'var(--color-border)', margin: '3px 0' }} />
 
-            {/* Import / Export */}
-            {['Import', 'Export'].map(label => (
+            {/* Export */}
+            {['Export'].map(label => (
               <button key={label}
                 style={menuItemStyle}
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-hover)')}

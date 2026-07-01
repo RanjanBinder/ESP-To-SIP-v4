@@ -1,25 +1,20 @@
-import React, { useRef, useState } from 'react';
-import { Save, History, Upload, ArrowLeft, Check, ShieldCheck, GitCompare, Eye, BookmarkPlus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Save, History, ArrowLeft, Check, ShieldCheck, GitCompare, BookmarkPlus } from 'lucide-react';
 import { useEditor } from '../store/editorStore';
 import { useSODStore } from '../store/sodStore';
 import { useCompareStore } from '../store/compareStore';
 import { runSODValidation } from '../lib/validation/sodValidator';
 import type { SODCheckResult } from '../lib/validation/sodValidator';
-import { readDocumentFile, savePersistedDocument } from '../lib/serialize';
-import { importDwgFile } from '../lib/dwgImporter';
-import { importDxfFile } from '../lib/dxfImporter';
-import { POTHULAPADU_ASSETS, pothulapaduToCanvasObjects } from '../data/pothulapaduAssets';
+import { savePersistedDocument } from '../lib/serialize';
 
-const TopBar: React.FC<{ onOpenDwgViewer?: () => void }> = ({ onOpenDwgViewer }) => {
-  const { getDocument, loadDocument, importObjects, layers, activeLayerId, objects } = useEditor();
-  const { checkResult, setCheckResult, setPanelOpen, setStation, stationCode } = useSODStore();
+const TopBar: React.FC = () => {
+  const { getDocument, objects } = useEditor();
+  const { checkResult, setCheckResult, setPanelOpen, stationCode } = useSODStore();
   const {
     isComparing, enableCompare, clearCompare,
     savedVersions, baseVersionId, headVersionId, setVersionPair, saveVersion,
   } = useCompareStore();
-  const importRef = useRef<HTMLInputElement>(null);
   const [savedTick, setSavedTick] = useState(false);
-  const [importing, setImporting] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
 
   async function handleRunSODCheck() {
@@ -34,16 +29,6 @@ const TopBar: React.FC<{ onOpenDwgViewer?: () => void }> = ({ onOpenDwgViewer })
     } finally {
       setIsRunning(false);
     }
-  }
-
-  /** Replace the scene with the parsed Pothulapadu assets and load its
-   *  station identity. Keeps current layers/settings, resets any prior check. */
-  function loadPothulapaduFixture() {
-    const fixtureObjects = pothulapaduToCanvasObjects(POTHULAPADU_ASSETS);
-    loadDocument({ ...getDocument(), objects: fixtureObjects });
-    setStation(POTHULAPADU_ASSETS.stationCode, POTHULAPADU_ASSETS.stationName);
-    setCheckResult(null);
-    setPanelOpen(false);
   }
 
   /** Toggle compare mode. On enter, default to the two most recent saved
@@ -77,41 +62,6 @@ const TopBar: React.FC<{ onOpenDwgViewer?: () => void }> = ({ onOpenDwgViewer })
     savePersistedDocument(getDocument());
     setSavedTick(true);
     setTimeout(() => setSavedTick(false), 1600);
-  };
-
-  const handleImportPick = () => importRef.current?.click();
-
-  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
-    const ext = file.name.split('.').pop()?.toLowerCase();
-    const lowerName = file.name.toLowerCase();
-    setImporting(true);
-    try {
-      // Pothulapadu ESP: the .dwg is AC1032 binary and can't be parsed in the
-      // browser, so load the extraction-pipeline fixture by filename. Replace
-      // this branch with the parser API call when Vamsi's pipeline is ready.
-      if (lowerName.includes('pothulapadu')) {
-        loadPothulapaduFixture();
-      } else if (ext === 'dwg') {
-        const buffer = await file.arrayBuffer();
-        const result = await importDwgFile(buffer, layers, activeLayerId);
-        importObjects(result.objects, result.newLayers);
-      } else if (ext === 'dxf') {
-        const buffer = await file.arrayBuffer();
-        const result = await importDxfFile(buffer, layers, activeLayerId);
-        importObjects(result.objects, result.newLayers);
-      } else {
-        const doc = await readDocumentFile(file);
-        if (doc) loadDocument(doc);
-        else window.alert('Could not read that file — it is not a valid ESP drawing.');
-      }
-    } catch (err) {
-      window.alert(`Import failed: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setImporting(false);
-    }
   };
 
   return (
@@ -206,28 +156,7 @@ const TopBar: React.FC<{ onOpenDwgViewer?: () => void }> = ({ onOpenDwgViewer })
 
     {/* Right: actions */}
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <input
-        ref={importRef}
-        type="file"
-        accept=".dwg,.dxf,application/json,.json"
-        onChange={handleImportFile}
-        style={{ display: 'none' }}
-      />
-      <TopBarBtn
-        icon={<Eye size={14} />}
-        label="DWG Viewer"
-        onClick={onOpenDwgViewer}
-        title="Open the faithful DWG/DXF viewer (renders the file as-is)"
-      />
       <TopBarBtn icon={<History size={14} />} label="History" />
-      <TopBarBtn
-        icon={importing
-          ? <span style={{ width: 14, height: 14, border: '2px solid #d1d5db', borderTopColor: '#6b7280', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.9s linear infinite' }} />
-          : <Upload size={14} />}
-        label={importing ? 'Importing…' : 'Import'}
-        onClick={importing ? undefined : handleImportPick}
-        title="Import a DWG, DXF, or ESP JSON file"
-      />
       <button
         onClick={handleSave}
         style={{
