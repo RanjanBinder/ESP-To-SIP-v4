@@ -1003,13 +1003,85 @@ const BottomScaleStatus: React.FC = () => {
    Root panel
 ════════════════════════════════════════════════════════════════════ */
 
+type RightPanelTab = 'properties' | 'sod';
+
+const RightPanelTabs: React.FC<{
+  activeTab: RightPanelTab;
+  sodCount: number;
+  onChange: (tab: RightPanelTab) => void;
+}> = ({ activeTab, sodCount, onChange }) => {
+  const tabStyle = (active: boolean): React.CSSProperties => ({
+    flex: 1,
+    height: 40,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    border: 'none',
+    borderRadius: 0,
+    background: '#ffffff',
+    color: active ? '#111827' : '#6b7280',
+    borderBottom: `2px solid ${active ? '#2563eb' : 'transparent'}`,
+    fontSize: 12.5,
+    fontWeight: active ? 650 : 550,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  });
+
+  return (
+    <div style={{
+      height: 41,
+      display: 'flex',
+      alignItems: 'stretch',
+      borderBottom: '1px solid #e5e7eb',
+      background: '#ffffff',
+      flexShrink: 0,
+    }}>
+      <button
+        type="button"
+        onClick={() => onChange('properties')}
+        style={tabStyle(activeTab === 'properties')}
+      >
+        Properties
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange('sod')}
+        style={tabStyle(activeTab === 'sod')}
+      >
+        SOD Validation
+        {sodCount > 0 && (
+          <span style={{
+            minWidth: 18,
+            height: 18,
+            padding: '0 5px',
+            borderRadius: 9,
+            background: activeTab === 'sod' ? '#fee2e2' : '#f3f4f6',
+            color: sodCount > 0 ? '#b91c1c' : '#6b7280',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 10.5,
+            fontWeight: 750,
+            lineHeight: 1,
+          }}>
+            {sodCount}
+          </span>
+        )}
+      </button>
+    </div>
+  );
+};
+
 const RightPropertiesPanel: React.FC = () => {
   const { selectedLayerId, getLayer, selectedTextObject, selectedObject } = useEditor();
-  const { panelOpen: sodPanelOpen } = useSODStore();
+  const { checkResult, panelOpen: sodPanelOpen, setPanelOpen } = useSODStore();
   const { isComparing } = useCompareStore();
   const selectedLayer = selectedLayerId ? getLayer(selectedLayerId) : null;
   const selectedShape = selectedObject && isShape(selectedObject) ? selectedObject : null;
   const selectedSymbol = selectedObject && isSymbol(selectedObject) ? selectedObject : null;
+  const hasSodResult = checkResult !== null;
+  const activeTab: RightPanelTab = hasSodResult && sodPanelOpen ? 'sod' : 'properties';
 
   const mode: 'canvas' | 'layer' | 'text' | 'shape' | 'symbol' =
     selectedTextObject ? 'text'
@@ -1033,18 +1105,30 @@ const RightPropertiesPanel: React.FC = () => {
       fontSize: 13,
       boxSizing: 'border-box',
     }}>
-      {/* Body — compare takes over the panel first, then the Violations panel */}
+      {/* Body — compare takes over the panel; SOD becomes a tab after the first run. */}
       {isComparing ? (
         <ChangeListPanel />
-      ) : sodPanelOpen ? (
-        <SODViolationsPanel />
       ) : (
         <>
-          {mode === 'text'   && selectedTextObject && <TextPropertiesPanel obj={selectedTextObject} />}
-          {mode === 'shape'  && selectedShape       && <ShapePropertiesPanel obj={selectedShape} />}
-          {mode === 'symbol' && selectedSymbol      && <SymbolPropertiesPanel obj={selectedSymbol} />}
-          {mode === 'layer'  && selectedLayer       && <LayerPropertiesPanel layer={selectedLayer} />}
-          {mode === 'canvas' && <CanvasSettingsPanel />}
+          {hasSodResult && (
+            <RightPanelTabs
+              activeTab={activeTab}
+              sodCount={checkResult.counts.total}
+              onChange={tab => setPanelOpen(tab === 'sod')}
+            />
+          )}
+
+          {activeTab === 'sod' ? (
+            <SODViolationsPanel showHeader={false} />
+          ) : (
+            <>
+              {mode === 'text'   && selectedTextObject && <TextPropertiesPanel obj={selectedTextObject} />}
+              {mode === 'shape'  && selectedShape       && <ShapePropertiesPanel obj={selectedShape} />}
+              {mode === 'symbol' && selectedSymbol      && <SymbolPropertiesPanel obj={selectedSymbol} />}
+              {mode === 'layer'  && selectedLayer       && <LayerPropertiesPanel layer={selectedLayer} />}
+              {mode === 'canvas' && <CanvasSettingsPanel />}
+            </>
+          )}
         </>
       )}
 

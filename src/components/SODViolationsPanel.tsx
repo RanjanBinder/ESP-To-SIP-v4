@@ -4,10 +4,10 @@ import { useSODStore } from '../store/sodStore';
 import { useEditor } from '../store/editorStore';
 import type { SODViolation, ViolationSeverity } from '../lib/validation/sodValidator';
 
-/* Severity → visual treatment. V2 = critical (red), V1 = major (amber). */
+/* Severity still drives color treatment; the UI labels issues by SOD rule ID. */
 const SEVERITY_STYLE: Record<ViolationSeverity, { label: string; border: string; bg: string; text: string }> = {
-  V2: { label: 'V2 · Critical', border: '#fca5a5', bg: '#fef2f2', text: '#b91c1c' },
-  V1: { label: 'V1 · Major',    border: '#fcd34d', bg: '#fffbeb', text: '#b45309' },
+  V2: { label: 'High', border: '#fca5a5', bg: '#fef2f2', text: '#b91c1c' },
+  V1: { label: 'Review', border: '#fcd34d', bg: '#fffbeb', text: '#b45309' },
 };
 
 const ViolationRow: React.FC<{
@@ -47,23 +47,16 @@ const ViolationRow: React.FC<{
       </span>
       <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-          <span style={{ fontSize: 12.5, fontWeight: 600, color: '#111827' }}>{v.title}</span>
-          <span style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.03em',
-            color: s.text, background: s.bg, border: `1px solid ${s.border}`,
-            borderRadius: 4, padding: '1px 5px', flexShrink: 0,
-          }}>
-            {v.severity}
-          </span>
           {v.ruleCode && (
             <span style={{
-              fontSize: 10, fontWeight: 600, color: '#6b7280',
-              background: '#f3f4f6', border: '1px solid #e5e7eb',
+              fontSize: 10, fontWeight: 700, color: s.text,
+              background: s.bg, border: `1px solid ${s.border}`,
               borderRadius: 4, padding: '1px 5px', flexShrink: 0,
             }}>
               {v.ruleCode}
             </span>
           )}
+          <span style={{ fontSize: 12.5, fontWeight: 600, color: '#111827' }}>{v.title}</span>
         </span>
         <span style={{ display: 'block', fontSize: 11.5, color: '#6b7280', lineHeight: 1.5 }}>
           {v.detail}
@@ -110,7 +103,7 @@ const KpiCard: React.FC<{ label: string; value: number; color: string; bg: strin
   </div>
 );
 
-const SODViolationsPanel: React.FC = () => {
+const SODViolationsPanel: React.FC<{ showHeader?: boolean }> = ({ showHeader = true }) => {
   const {
     checkResult, setPanelOpen, stationName,
     activeViolationId, setActiveViolation, requestFocus,
@@ -127,8 +120,7 @@ const SODViolationsPanel: React.FC = () => {
   }, [activeViolationId]);
 
   const passed = checkResult?.passed ?? false;
-  const v1 = checkResult?.counts.V1 ?? 0;
-  const v2 = checkResult?.counts.V2 ?? 0;
+  const ruleCount = new Set((checkResult?.violations ?? []).map(v => v.ruleCode ?? v.ruleId)).size;
 
   const handleSelect = (v: SODViolation) => {
     setActiveViolation(activeViolationId === v.id ? null : v.id);
@@ -148,35 +140,36 @@ const SODViolationsPanel: React.FC = () => {
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
-      {/* Header / tab */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 12px', height: 40,
-        borderBottom: '1px solid #e5e7eb', background: '#fafafa', flexShrink: 0,
-      }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <span style={{ color: passed ? '#15803d' : '#b91c1c', display: 'flex' }}>
-            {passed ? <ShieldCheck size={15} strokeWidth={2} /> : <ShieldAlert size={15} strokeWidth={2} />}
+      {showHeader && (
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '0 12px', height: 40,
+          borderBottom: '1px solid #e5e7eb', background: '#fafafa', flexShrink: 0,
+        }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ color: passed ? '#15803d' : '#b91c1c', display: 'flex' }}>
+              {passed ? <ShieldCheck size={15} strokeWidth={2} /> : <ShieldAlert size={15} strokeWidth={2} />}
+            </span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Violations</span>
+            {stationName && (
+              <span style={{ fontSize: 11, color: '#9ca3af' }}>· {stationName}</span>
+            )}
           </span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Violations</span>
-          {stationName && (
-            <span style={{ fontSize: 11, color: '#9ca3af' }}>· {stationName}</span>
-          )}
-        </span>
-        <button
-          onClick={() => setPanelOpen(false)}
-          title="Close"
-          style={{
-            width: 24, height: 24, border: 'none', background: 'transparent',
-            borderRadius: 6, color: '#9ca3af', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#ececec'; e.currentTarget.style.color = '#374151'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9ca3af'; }}
-        >
-          <X size={15} strokeWidth={2} />
-        </button>
-      </div>
+          <button
+            onClick={() => setPanelOpen(false)}
+            title="Close"
+            style={{
+              width: 24, height: 24, border: 'none', background: 'transparent',
+              borderRadius: 6, color: '#9ca3af', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#ececec'; e.currentTarget.style.color = '#374151'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9ca3af'; }}
+          >
+            <X size={15} strokeWidth={2} />
+          </button>
+        </div>
+      )}
 
       {/* KPI cards */}
       {checkResult && (
@@ -186,8 +179,8 @@ const SODViolationsPanel: React.FC = () => {
         }}>
           <KpiCard label="Checks"   value={checkResult.checksRun}    color="#374151" bg="#f9fafb" border="#e5e7eb" />
           <KpiCard label="Passed"   value={checkResult.checksPassed} color="#15803d" bg="#f0fdf4" border="#86efac" />
-          <KpiCard label="Critical" value={v2}                       color="#b91c1c" bg="#fef2f2" border="#fca5a5" />
-          <KpiCard label="Major"    value={v1}                       color="#b45309" bg="#fffbeb" border="#fcd34d" />
+          <KpiCard label="Violations" value={checkResult.counts.total} color="#b91c1c" bg="#fef2f2" border="#fca5a5" />
+          <KpiCard label="Rules"    value={ruleCount}                 color="#b45309" bg="#fffbeb" border="#fcd34d" />
         </div>
       )}
 

@@ -6,6 +6,9 @@ import { useCompareStore } from '../store/compareStore';
 import { runSODValidation } from '../lib/validation/sodValidator';
 import type { SODCheckResult } from '../lib/validation/sodValidator';
 import { savePersistedDocument } from '../lib/serialize';
+import { POTHULAPADU_ASSETS, pothulapaduToCanvasObjects } from '../data/pothulapaduAssets';
+
+const DEFAULT_POTHULAPADU_SOD_OBJECTS = pothulapaduToCanvasObjects(POTHULAPADU_ASSETS);
 
 const TopBar: React.FC = () => {
   const { getDocument, objects } = useEditor();
@@ -21,7 +24,8 @@ const TopBar: React.FC = () => {
     setIsRunning(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 400)); // gives UI time to show spinner
-      const result = runSODValidation(objects, 'existing-esp');
+      const validationObjects = objects.some(obj => obj.sod) ? objects : DEFAULT_POTHULAPADU_SOD_OBJECTS;
+      const result = runSODValidation(validationObjects, stationCode ?? POTHULAPADU_ASSETS.stationCode);
       setCheckResult(result);
       setPanelOpen(true);
     } catch (err) {
@@ -254,7 +258,7 @@ const SODCheckButton: React.FC<{
           whiteSpace: 'nowrap',
           flexShrink: 0,
         }}>
-          {checkResult!.counts.V2} V2 · {checkResult!.counts.V1} V1
+          {checkResult!.counts.total} SOD issues
         </span>
       )}
 
