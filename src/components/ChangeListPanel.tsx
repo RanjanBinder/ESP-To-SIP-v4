@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { GitCompare, Crosshair } from 'lucide-react';
+import { GitCompare, Crosshair, FileText } from 'lucide-react';
 import { useCompareStore } from '../store/compareStore';
 import { useSODStore } from '../store/sodStore';
 import type { AssetChange, ChangeType } from '../lib/versionDiff/diffTypes';
+import type { SavedVersion } from '../lib/versionSnapshots';
 
 /**
  * ChangeListPanel — the right-panel change list for compare mode.
@@ -35,9 +36,14 @@ const KpiCard: React.FC<{ label: string; value: number; color: string; bg: strin
 );
 
 const ChangeListPanel: React.FC = () => {
-  const { diffResult, activeChangeId, setActiveChange } = useCompareStore();
+  const {
+    diffResult, activeChangeId, setActiveChange,
+    savedVersions, baseVersionId, headVersionId,
+  } = useCompareStore();
   const { requestFocus } = useSODStore();
   const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const baseVersion = savedVersions.find(v => v.id === baseVersionId) ?? null;
+  const headVersion = savedVersions.find(v => v.id === headVersionId) ?? null;
 
   /* Canvas → panel: scroll the active change into view when it changes. */
   useEffect(() => {
@@ -56,7 +62,7 @@ const ChangeListPanel: React.FC = () => {
         <PanelHeader subtitle={null} />
         <div style={{ padding: '32px 20px', textAlign: 'center' }}>
           <p style={{ margin: 0, fontSize: 12, color: '#9ca3af', lineHeight: 1.5 }}>
-            Pick a saved base version and upload a DWG to compare against it.
+            Pick two PDF versions to see added, removed, moved, and modified items.
           </p>
         </div>
       </div>
@@ -68,6 +74,7 @@ const ChangeListPanel: React.FC = () => {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
       <PanelHeader subtitle={`${diffResult.baseVersion} → ${diffResult.headVersion}`} />
+      <CompareSourceStrip baseVersion={baseVersion} headVersion={headVersion} />
 
       {/* KPI cards */}
       <div style={{
@@ -144,6 +151,50 @@ const ChangeListPanel: React.FC = () => {
           );
         })}
       </div>
+    </div>
+  );
+};
+
+const CompareSourceStrip: React.FC<{ baseVersion: SavedVersion | null; headVersion: SavedVersion | null }> = ({
+  baseVersion,
+  headVersion,
+}) => {
+  if (!baseVersion && !headVersion) return null;
+
+  const source = headVersion?.sourceFileName ?? baseVersion?.sourceFileName;
+  const page = headVersion?.sourcePage ?? baseVersion?.sourcePage ?? 1;
+  const pairKind = baseVersion?.isDefaultExample && headVersion?.isDefaultExample
+    ? 'default example pair'
+    : 'saved PDF pair';
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      minHeight: 42,
+      padding: '7px 12px',
+      background: '#f8fafc',
+      borderBottom: '1px solid #f0f1f3',
+      boxSizing: 'border-box',
+      flexShrink: 0,
+    }}>
+      <FileText size={14} strokeWidth={1.75} color="#475569" style={{ flexShrink: 0 }} />
+      <span style={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <span style={{
+          fontSize: 11.5,
+          color: '#111827',
+          fontWeight: 650,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}>
+          {source ?? 'PDF version snapshots'}
+        </span>
+        <span style={{ fontSize: 10.5, color: '#64748b' }}>
+          Page {page} · {pairKind}
+        </span>
+      </span>
     </div>
   );
 };

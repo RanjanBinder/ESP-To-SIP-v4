@@ -6,9 +6,9 @@ import { GridSettings, DEFAULT_GRID_SETTINGS } from '../lib/grid';
 import type {
   TextObject, DraftTextObject, TextHyperlink,
   CanvasObject, CanvasObjectType, BaseCanvasObject, Vec2,
-  RectangleObject, EllipseObject, ArcObject, LineObject, ShapeObject, StrokeStyle, SymbolObject,
+  ImageObject, RectangleObject, EllipseObject, ArcObject, LineObject, ShapeObject, StrokeStyle, SymbolObject,
 } from '../types/scene';
-import { isTextObject, isShape, isRectangle, isEllipse, isArc, isLine, isSymbol } from '../types/scene';
+import { isTextObject, isImageObject, isShape, isRectangle, isEllipse, isArc, isLine, isSymbol } from '../types/scene';
 import {
   EspDocument, DOCUMENT_VERSION, migrateDocument,
   loadPersistedDocument, savePersistedDocument,
@@ -110,9 +110,9 @@ let symbolCounter = 1;
 export type {
   TextObject, DraftTextObject, TextHyperlink,
   CanvasObject, CanvasObjectType, BaseCanvasObject, Vec2,
-  RectangleObject, EllipseObject, ArcObject, LineObject, ShapeObject, StrokeStyle, SymbolObject,
+  ImageObject, RectangleObject, EllipseObject, ArcObject, LineObject, ShapeObject, StrokeStyle, SymbolObject,
 };
-export { isTextObject, isShape, isRectangle, isEllipse, isArc, isLine, isSymbol };
+export { isTextObject, isImageObject, isShape, isRectangle, isEllipse, isArc, isLine, isSymbol };
 
 /* ── Comments ────────────────────────────────────────────────────── */
 

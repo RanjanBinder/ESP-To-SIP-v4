@@ -3,8 +3,10 @@ import { Save, History, ArrowLeft, Check, ShieldCheck, GitCompare, BookmarkPlus 
 import { useEditor } from '../store/editorStore';
 import { useSODStore } from '../store/sodStore';
 import { useCompareStore } from '../store/compareStore';
-import { runSODValidation } from '../lib/validation/sodValidator';
 import type { SODCheckResult } from '../lib/validation/sodValidator';
+import { runPdfSODValidation } from '../lib/validation/pdfSodValidator';
+import { DEFAULT_DRAWING_META } from '../lib/defaultDwgDocument';
+import { DEFAULT_PDF_COMPARE_BASE_ID, DEFAULT_PDF_COMPARE_HEAD_ID } from '../data/pothulapaduCompareVersions';
 import { savePersistedDocument } from '../lib/serialize';
 
 const TopBar: React.FC = () => {
@@ -21,7 +23,11 @@ const TopBar: React.FC = () => {
     setIsRunning(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 400)); // gives UI time to show spinner
-      const result = runSODValidation(objects, 'existing-esp');
+      const result = runPdfSODValidation(objects, {
+        fileName: DEFAULT_DRAWING_META.fileName,
+        sourceUrl: DEFAULT_DRAWING_META.sourceUrl,
+        page: 1,
+      });
       setCheckResult(result);
       setPanelOpen(true);
     } catch (err) {
@@ -41,10 +47,16 @@ const TopBar: React.FC = () => {
     // Comparing and the SOD panel both take over the right panel — close SOD.
     setPanelOpen(false);
     if (savedVersions.length >= 2 && !(baseVersionId && headVersionId)) {
-      setVersionPair(
-        savedVersions[savedVersions.length - 2].id,
-        savedVersions[savedVersions.length - 1].id,
-      );
+      const hasDefaultPair = savedVersions.some(v => v.id === DEFAULT_PDF_COMPARE_BASE_ID) &&
+        savedVersions.some(v => v.id === DEFAULT_PDF_COMPARE_HEAD_ID);
+      if (hasDefaultPair) {
+        setVersionPair(DEFAULT_PDF_COMPARE_BASE_ID, DEFAULT_PDF_COMPARE_HEAD_ID);
+      } else {
+        setVersionPair(
+          savedVersions[savedVersions.length - 2].id,
+          savedVersions[savedVersions.length - 1].id,
+        );
+      }
     }
     enableCompare();
   }
@@ -188,7 +200,7 @@ const TopBar: React.FC = () => {
 
       <button
         onClick={handleCompareToggle}
-        title="Compare two SIP versions"
+        title="Compare two PDF versions"
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
           border: `1px solid ${isComparing ? '#c4b5fd' : 'var(--color-border)'}`,
@@ -207,7 +219,7 @@ const TopBar: React.FC = () => {
         onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
       >
         <GitCompare size={13} strokeWidth={2} />
-        Compare versions
+        Compare PDFs
       </button>
 
       <SODCheckButton
@@ -261,7 +273,7 @@ const SODCheckButton: React.FC<{
       <button
         onClick={onClick}
         disabled={isRunning}
-        title="Validate the drawing against the Schedule of Dimensions"
+        title="Validate the PDF against the Schedule of Dimensions"
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
           border: `1px solid ${colors.border}`,
@@ -289,7 +301,7 @@ const SODCheckButton: React.FC<{
               animation: 'spin 0.9s linear infinite',
             }} />
           : <ShieldCheck size={13} strokeWidth={2} />}
-        {isRunning ? 'Checking…' : 'Run SOD check'}
+        {isRunning ? 'Checking...' : 'Run PDF SOD'}
       </button>
     </>
   );

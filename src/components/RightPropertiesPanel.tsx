@@ -999,17 +999,63 @@ const BottomScaleStatus: React.FC = () => {
   );
 };
 
+/* ── Properties/SOD tab strip ─────────────────────────────────────── */
+const PanelTabButton: React.FC<{
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  title?: string;
+}> = ({ active, onClick, children, title }) => {
+  const [hov, setHov] = useState(false);
+
+  return (
+    <button
+      role="tab"
+      aria-selected={active}
+      title={title}
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        height: 30,
+        minWidth: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6,
+        border: `1px solid ${active ? '#d1d5db' : 'transparent'}`,
+        borderRadius: 7,
+        background: active ? '#ffffff' : hov ? '#f3f4f6' : 'transparent',
+        boxShadow: active ? '0 1px 2px rgba(15, 23, 42, 0.08)' : 'none',
+        color: active ? '#111827' : '#6b7280',
+        fontSize: 12.5,
+        fontWeight: active ? 600 : 500,
+        fontFamily: 'inherit',
+        cursor: 'pointer',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        transition: 'background 0.1s, border-color 0.1s, box-shadow 0.1s, color 0.1s',
+      }}
+    >
+      {children}
+    </button>
+  );
+};
+
 /* ═══════════════════════════════════════════════════════════════════
    Root panel
 ════════════════════════════════════════════════════════════════════ */
 
 const RightPropertiesPanel: React.FC = () => {
   const { selectedLayerId, getLayer, selectedTextObject, selectedObject } = useEditor();
-  const { panelOpen: sodPanelOpen } = useSODStore();
+  const { checkResult, panelOpen: sodPanelOpen, setPanelOpen } = useSODStore();
   const { isComparing } = useCompareStore();
   const selectedLayer = selectedLayerId ? getLayer(selectedLayerId) : null;
   const selectedShape = selectedObject && isShape(selectedObject) ? selectedObject : null;
   const selectedSymbol = selectedObject && isSymbol(selectedObject) ? selectedObject : null;
+  const hasSODResult = checkResult !== null;
+  const showSODValidation = hasSODResult && sodPanelOpen;
+  const sodViolationCount = checkResult?.counts.total ?? 0;
 
   const mode: 'canvas' | 'layer' | 'text' | 'shape' | 'symbol' =
     selectedTextObject ? 'text'
@@ -1033,18 +1079,75 @@ const RightPropertiesPanel: React.FC = () => {
       fontSize: 13,
       boxSizing: 'border-box',
     }}>
-      {/* Body — compare takes over the panel first, then the Violations panel */}
+      {/* Body — compare takes over the panel first; SOD results become a tab. */}
       {isComparing ? (
         <ChangeListPanel />
-      ) : sodPanelOpen ? (
-        <SODViolationsPanel />
       ) : (
         <>
-          {mode === 'text'   && selectedTextObject && <TextPropertiesPanel obj={selectedTextObject} />}
-          {mode === 'shape'  && selectedShape       && <ShapePropertiesPanel obj={selectedShape} />}
-          {mode === 'symbol' && selectedSymbol      && <SymbolPropertiesPanel obj={selectedSymbol} />}
-          {mode === 'layer'  && selectedLayer       && <LayerPropertiesPanel layer={selectedLayer} />}
-          {mode === 'canvas' && <CanvasSettingsPanel />}
+          {hasSODResult && (
+            <div
+              role="tablist"
+              aria-label="Right panel sections"
+              style={{
+                height: 42,
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+                gap: 4,
+                padding: 6,
+                background: '#fafafa',
+                borderBottom: '1px solid #e5e7eb',
+                flexShrink: 0,
+                boxSizing: 'border-box',
+              }}
+            >
+              <PanelTabButton
+                active={!showSODValidation}
+                onClick={() => setPanelOpen(false)}
+                title="Show properties"
+              >
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>Properties</span>
+              </PanelTabButton>
+              <PanelTabButton
+                active={showSODValidation}
+                onClick={() => setPanelOpen(true)}
+                title="Show SOD validation"
+              >
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>SOD Validation</span>
+                {sodViolationCount > 0 && (
+                  <span style={{
+                    flexShrink: 0,
+                    minWidth: 18,
+                    height: 18,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 5px',
+                    borderRadius: 9,
+                    background: '#fef2f2',
+                    color: '#b91c1c',
+                    border: '1px solid #fecaca',
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    boxSizing: 'border-box',
+                  }}>
+                    {sodViolationCount}
+                  </span>
+                )}
+              </PanelTabButton>
+            </div>
+          )}
+
+          {showSODValidation ? (
+            <SODViolationsPanel showHeader={false} />
+          ) : (
+            <>
+              {mode === 'text'   && selectedTextObject && <TextPropertiesPanel obj={selectedTextObject} />}
+              {mode === 'shape'  && selectedShape       && <ShapePropertiesPanel obj={selectedShape} />}
+              {mode === 'symbol' && selectedSymbol      && <SymbolPropertiesPanel obj={selectedSymbol} />}
+              {mode === 'layer'  && selectedLayer       && <LayerPropertiesPanel layer={selectedLayer} />}
+              {mode === 'canvas' && <CanvasSettingsPanel />}
+            </>
+          )}
         </>
       )}
 

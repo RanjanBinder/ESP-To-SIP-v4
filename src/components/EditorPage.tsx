@@ -12,7 +12,7 @@ import TablesPanel from './TablesPanel';
 import CompareBar from './CompareBar';
 import { useEditor } from '../store/editorStore';
 import { useSODStore } from '../store/sodStore';
-import { DEFAULT_DWG_META, fitDefaultDwgToViewport, loadDefaultDwgDocument } from '../lib/defaultDwgDocument';
+import { DEFAULT_DRAWING_META, fitDefaultDrawingToViewport, loadDefaultDrawingDocument } from '../lib/defaultDwgDocument';
 
 const EditorPage: React.FC = () => {
   const { activeLeftPanel, loadDocument, setZoom, setPan } = useEditor();
@@ -25,15 +25,15 @@ const EditorPage: React.FC = () => {
     let cancelled = false;
 
     setDefaultLoad({ status: 'loading' });
-    loadDefaultDwgDocument()
+    loadDefaultDrawingDocument()
       .then(doc => {
         if (cancelled) return;
         loadDocument(doc);
-        setStation(DEFAULT_DWG_META.stationCode, DEFAULT_DWG_META.stationName);
+        setStation(DEFAULT_DRAWING_META.stationCode, DEFAULT_DRAWING_META.stationName);
         setCheckResult(null);
         setPanelOpen(false);
-        setDefaultLoad({ status: 'ready', message: `${doc.objects.length} DWG objects loaded` });
-        window.requestAnimationFrame(() => fitDefaultDwgToViewport(doc.objects, setZoom, setPan));
+        setDefaultLoad({ status: 'ready', message: 'PDF underlay loaded' });
+        window.requestAnimationFrame(() => fitDefaultDrawingToViewport(doc.objects, setZoom, setPan));
       })
       .catch(err => {
         if (cancelled) return;
@@ -77,7 +77,7 @@ const EditorPage: React.FC = () => {
           fontSize: 12.5,
           fontWeight: 600,
         }}>
-          {defaultLoad.status === 'error' ? defaultLoad.message : `Loading ${DEFAULT_DWG_META.fileName}...`}
+          {defaultLoad.status === 'error' ? defaultLoad.message : `Loading ${DEFAULT_DRAWING_META.fileName}...`}
         </div>
       )}
     </div>

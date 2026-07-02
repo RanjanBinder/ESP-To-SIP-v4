@@ -21,7 +21,7 @@ const AMBER = '#f59e0b'; // V1 (major)
 const isGradient = (v: SODViolation) => v.ruleId === 'gradient';
 
 const SODCanvasOverlay: React.FC = () => {
-  const { viewport, selectObject } = useEditor();
+  const { viewport, objects, selectObject } = useEditor();
   const { checkResult, activeViolationId, setActiveViolation } = useSODStore();
   const [hoverId, setHoverId] = useState<string | null>(null);
 
@@ -33,7 +33,8 @@ const SODCanvasOverlay: React.FC = () => {
 
   const handleSelect = (v: SODViolation) => {
     setActiveViolation(activeViolationId === v.id ? null : v.id);
-    if (v.assetId) selectObject(v.assetId);
+    const asset = v.assetId ? objects.find(o => o.id === v.assetId) : null;
+    selectObject(asset?.visible ? asset.id : null);
   };
 
   return (
@@ -43,8 +44,10 @@ const SODCanvasOverlay: React.FC = () => {
         const isV2 = v.severity === 'V2';
         const color = isV2 ? RED : AMBER;
         const active = activeViolationId === v.id;
-        const sx = toX(v.canvasX);
-        const sy = toY(v.canvasY);
+        const markerX = isGradient(v) ? v.canvasX : v.canvasX + (v.canvasW ?? 0) / 2;
+        const markerY = isGradient(v) ? v.canvasY : v.canvasY + (v.canvasH ?? 0) / 2;
+        const sx = toX(markerX);
+        const sy = toY(markerY);
 
         /* ── Gradient / chainage violation → shaded zone band ── */
         if (isGradient(v)) {

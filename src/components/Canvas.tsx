@@ -3,9 +3,9 @@ import {
   AlignLeft, AlignCenter, AlignRight,
   Bold, Italic, Underline, Link, Check, X, MessageSquare,
 } from 'lucide-react';
-import { useEditor, DraftTextObject, TextObject, isTextObject, isShape, isSymbol } from '../store/editorStore';
+import { useEditor, DraftTextObject, TextObject, isTextObject, isImageObject, isShape, isSymbol } from '../store/editorStore';
 import { useSODStore } from '../store/sodStore';
-import { Vec2, CanvasObject } from '../types/scene';
+import { Vec2, CanvasObject, ImageObject } from '../types/scene';
 import { ToolContext, ToolPointer, DragSession, ArcPreview, RubberBand } from '../types/tool';
 import { getTool } from '../lib/tools/registry';
 import { findSnapPoint } from '../lib/snapPoints';
@@ -328,6 +328,47 @@ const PlacedTextView: React.FC<{
     >
       {text.value}
     </div>
+  );
+};
+
+/* ── Locked image/PDF underlay (renders in world space) ───────────── */
+
+const ImageUnderlayView: React.FC<{
+  image: ImageObject;
+  selected: boolean;
+  hovered: boolean;
+}> = ({ image, selected, hovered }) => {
+  if (!image.visible) return null;
+
+  const transform = `rotate(${image.rotation}deg) scale(${(image.scale ?? 100) / 100})`;
+  const outline =
+    selected ? '1.5px solid #3b82f6'
+    : hovered ? '1.5px solid #93c5fd'
+    : '1.5px solid transparent';
+
+  return (
+    <img
+      data-object-id={image.locked ? undefined : image.id}
+      src={image.src}
+      alt={image.alt}
+      draggable={false}
+      style={{
+        position: 'absolute',
+        left: image.x,
+        top: image.y,
+        width: image.width,
+        height: image.height,
+        opacity: image.opacity ?? 1,
+        transform,
+        transformOrigin: 'top left',
+        outline,
+        pointerEvents: image.locked ? 'none' : 'auto',
+        userSelect: 'none',
+        objectFit: 'contain',
+        background: '#ffffff',
+        boxSizing: 'border-box',
+      }}
+    />
   );
 };
 
@@ -930,6 +971,14 @@ const Canvas: React.FC = () => {
 
       {/* World-space transform container */}
       <CanvasViewport>
+        {objects.filter(isImageObject).map(image => (
+          <ImageUnderlayView
+            key={image.id}
+            image={image}
+            selected={selectedObjectId === image.id || selectedObjectIds.includes(image.id)}
+            hovered={hoveredObjectId === image.id}
+          />
+        ))}
         {objects.filter(isShape).map(s => (
           <ShapeView
             key={s.id}

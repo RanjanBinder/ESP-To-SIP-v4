@@ -1,17 +1,29 @@
-import defaultDwgUrl from '../../assets/POTHULAPADU_ESP.dwg?url';
+import defaultPdfUrl from '../../assets/POTHULAPADU_ESP-Model.pdf?url';
+import defaultPdfPreviewUrl from '../../assets/POTHULAPADU_ESP-Model-preview.png?url';
 import { DEFAULT_CANVAS_SETTINGS, DEFAULT_LAYERS } from '../store/editorStore';
-import type { CanvasObject, LineObject } from '../types/scene';
+import type { CanvasObject, ImageObject, LineObject } from '../types/scene';
 import { DOCUMENT_VERSION, type EspDocument } from './serialize';
-import { importDwgFile } from './dwgImporter';
-import { POTHULAPADU_ASSETS } from '../data/pothulapaduAssets';
+import { POTHULAPADU_ASSETS, pothulapaduToCanvasObjects } from '../data/pothulapaduAssets';
 
-export const DEFAULT_DWG_META = {
-  fileName: 'POTHULAPADU_ESP.dwg',
+export const DEFAULT_DRAWING_META = {
+  fileName: 'POTHULAPADU_ESP-Model.pdf',
+  previewFileName: 'POTHULAPADU_ESP-Model-preview.png',
+  sourceUrl: defaultPdfUrl,
   stationCode: POTHULAPADU_ASSETS.stationCode,
   stationName: POTHULAPADU_ASSETS.stationName,
 };
 
+export const DEFAULT_DWG_META = DEFAULT_DRAWING_META;
+
 let defaultDocumentPromise: Promise<EspDocument> | null = null;
+
+const PDF_UNDERLAY = {
+  x: 14,
+  y: 63,
+  width: 1620,
+  height: 450,
+  opacity: 0.72,
+};
 
 function cloneDefaultLayers() {
   return DEFAULT_LAYERS.map(layer => ({
@@ -23,8 +35,8 @@ function cloneDefaultLayers() {
 function cloneDefaultCanvasSettings() {
   return {
     ...DEFAULT_CANVAS_SETTINGS,
-    modelName: 'Pothulapadu ESP',
-    canvasName: 'Pothulapadu DWG',
+    modelName: 'Pothulapadu ESP Model',
+    canvasName: 'Pothulapadu PDF',
     gridSettings: { ...DEFAULT_CANVAS_SETTINGS.gridSettings },
   };
 }
@@ -44,30 +56,67 @@ function cloneDocument(doc: EspDocument): EspDocument {
   };
 }
 
-async function buildDefaultDwgDocument(): Promise<EspDocument> {
-  const response = await fetch(defaultDwgUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to load ${DEFAULT_DWG_META.fileName}.`);
-  }
+function createDefaultPdfUnderlay(): ImageObject {
+  return {
+    id: 'pothulapadu-pdf-underlay',
+    type: 'image',
+    name: 'Pothulapadu ESP Model PDF',
+    layerId: 'pdf-underlay',
+    locked: true,
+    visible: true,
+    x: PDF_UNDERLAY.x,
+    y: PDF_UNDERLAY.y,
+    width: PDF_UNDERLAY.width,
+    height: PDF_UNDERLAY.height,
+    rotation: 0,
+    scale: 100,
+    src: defaultPdfPreviewUrl,
+    alt: 'Pothulapadu ESP model PDF underlay',
+    sourceFileName: DEFAULT_DRAWING_META.fileName,
+    opacity: PDF_UNDERLAY.opacity,
+  };
+}
 
+function createSodAnchors(): CanvasObject[] {
+  return pothulapaduToCanvasObjects(POTHULAPADU_ASSETS)
+    .filter(obj => obj.sod)
+    .map(obj => ({
+      ...obj,
+      locked: true,
+      visible: false,
+      sourceId: DEFAULT_DRAWING_META.fileName,
+      sod: {
+        ...obj.sod!,
+        sourceKind: 'pdf',
+        sourceDrawingRef: DEFAULT_DRAWING_META.fileName,
+        sourcePage: 1,
+      },
+    } as CanvasObject));
+}
+
+async function buildDefaultDrawingDocument(): Promise<EspDocument> {
   const defaultLayers = cloneDefaultLayers();
-  const result = await importDwgFile(await response.arrayBuffer(), defaultLayers, 'tracks');
 
   return {
     version: DOCUMENT_VERSION,
-    layers: [...defaultLayers, ...result.newLayers],
-    objects: result.objects,
+    layers: defaultLayers,
+    objects: [
+      createDefaultPdfUnderlay(),
+      ...createSodAnchors(),
+    ],
     canvasSettings: cloneDefaultCanvasSettings(),
     activeLayerId: 'tracks',
   };
 }
 
-export async function loadDefaultDwgDocument(): Promise<EspDocument> {
+export async function loadDefaultDrawingDocument(): Promise<EspDocument> {
   if (!defaultDocumentPromise) {
-    defaultDocumentPromise = buildDefaultDwgDocument();
+    defaultDocumentPromise = buildDefaultDrawingDocument();
   }
   return cloneDocument(await defaultDocumentPromise);
 }
+
+export const loadDefaultDwgDocument = loadDefaultDrawingDocument;
 
 function objectBounds(obj: CanvasObject): { minX: number; minY: number; maxX: number; maxY: number } {
   if (obj.type === 'line') {
@@ -93,7 +142,7 @@ function cssPx(name: string, fallback: number): number {
   return Number.isFinite(value) ? value : fallback;
 }
 
-export function fitDefaultDwgToViewport(
+export function fitDefaultDrawingToViewport(
   objects: CanvasObject[],
   setZoom: (zoom: number) => void,
   setPan: (panX: number, panY: number) => void,
@@ -132,3 +181,5 @@ export function fitDefaultDwgToViewport(
     (canvasHeight - drawingHeight * zoom) / 2 - minY * zoom,
   );
 }
+
+export const fitDefaultDwgToViewport = fitDefaultDrawingToViewport;

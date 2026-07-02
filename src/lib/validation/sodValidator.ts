@@ -48,6 +48,11 @@ export interface SODCheckResult {
   id: string;
   /** What was validated — e.g. 'existing-esp'. */
   source: string;
+  /** Validation source kind; PDF means non-editable anchors mapped to a PDF underlay. */
+  sourceKind?: 'canvas' | 'pdf';
+  sourceFileName?: string;
+  sourceUrl?: string;
+  sourcePage?: number;
   /** ISO timestamp the check completed. */
   ranAt: string;
   /** How many SOD-annotated assets were considered. */
@@ -60,6 +65,13 @@ export interface SODCheckResult {
   checksPassed: number;
   /** True when zero violations were found. */
   passed: boolean;
+}
+
+export interface SODValidationOptions {
+  sourceKind?: 'canvas' | 'pdf';
+  sourceFileName?: string;
+  sourceUrl?: string;
+  sourcePage?: number;
 }
 
 /* ── Geometry helpers (world units) ──────────────────────────────────── */
@@ -97,6 +109,7 @@ const SYMBOL_EXPECTED_LAYER: Record<string, string> = {
 export function runSODValidation(
   assets: CanvasObject[] | undefined | null,
   source: string = 'existing-esp',
+  options: SODValidationOptions = {},
 ): SODCheckResult {
   const list = Array.isArray(assets) ? assets : [];
   const violations: SODViolation[] = [];
@@ -309,6 +322,7 @@ export function runSODValidation(
   return {
     id: `sod-${Date.now()}`,
     source,
+    ...options,
     ranAt: new Date().toISOString(),
     assetsChecked: sodAssets.length,
     checksRun,
