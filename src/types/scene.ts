@@ -30,6 +30,12 @@ export interface SodAssetMeta {
   subtype?: string;
   /** Source asset id from the parser (e.g. 'TRK-03'), for traceability. */
   sourceAssetId?: string;
+  /** Source drawing that supplied the measurement anchor. */
+  sourceDrawingRef?: string;
+  /** Source type for non-editable validation anchors. */
+  sourceKind?: 'pdf' | 'dwg' | 'dxf';
+  /** 1-based page number when the source is a PDF. */
+  sourcePage?: number;
   /** Centre-to-centre distance to the nearest adjacent track (mm). */
   spacingToAdjacentTrack?: number;
   /** Clearance from the running-track centre line to this asset (mm). */
@@ -49,6 +55,7 @@ export interface SodAssetMeta {
  */
 export type CanvasObjectType =
   | 'text'
+  | 'image'
   | 'line'
   | 'polyline'
   | 'rectangle'
@@ -136,6 +143,16 @@ export interface DraftTextObject {
   hyperlink?: TextHyperlink;
 }
 
+/* ── Image / PDF underlay ────────────────────────────────────────── */
+
+export interface ImageObject extends BaseCanvasObject {
+  type: 'image';
+  src: string;
+  alt: string;
+  sourceFileName?: string;
+  opacity?: number;
+}
+
 /* ── Shapes ──────────────────────────────────────────────────────── */
 
 export type StrokeStyle = 'solid' | 'dashed' | 'dotted';
@@ -201,12 +218,16 @@ export interface SymbolObject extends BaseCanvasObject {
  * Discriminated union of everything on the canvas. Extend it as tools land.
  * Consumers switch on `obj.type` and rely on the guards below.
  */
-export type CanvasObject = TextObject | RectangleObject | EllipseObject | ArcObject | LineObject | SymbolObject;
+export type CanvasObject = TextObject | ImageObject | RectangleObject | EllipseObject | ArcObject | LineObject | SymbolObject;
 
 /* ── Type guards ─────────────────────────────────────────────────── */
 
 export function isTextObject(obj: CanvasObject): obj is TextObject {
   return obj.type === 'text';
+}
+
+export function isImageObject(obj: CanvasObject): obj is ImageObject {
+  return obj.type === 'image';
 }
 
 export function isRectangle(obj: CanvasObject): obj is RectangleObject {

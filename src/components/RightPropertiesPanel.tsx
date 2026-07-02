@@ -999,6 +999,49 @@ const BottomScaleStatus: React.FC = () => {
   );
 };
 
+/* ── Properties/SOD tab strip ─────────────────────────────────────── */
+const PanelTabButton: React.FC<{
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  title?: string;
+}> = ({ active, onClick, children, title }) => {
+  const [hov, setHov] = useState(false);
+
+  return (
+    <button
+      role="tab"
+      aria-selected={active}
+      title={title}
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        height: 30,
+        minWidth: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6,
+        border: `1px solid ${active ? '#d1d5db' : 'transparent'}`,
+        borderRadius: 7,
+        background: active ? '#ffffff' : hov ? '#f3f4f6' : 'transparent',
+        boxShadow: active ? '0 1px 2px rgba(15, 23, 42, 0.08)' : 'none',
+        color: active ? '#111827' : '#6b7280',
+        fontSize: 12.5,
+        fontWeight: active ? 600 : 500,
+        fontFamily: 'inherit',
+        cursor: 'pointer',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        transition: 'background 0.1s, border-color 0.1s, box-shadow 0.1s, color 0.1s',
+      }}
+    >
+      {children}
+    </button>
+  );
+};
+
 /* ═══════════════════════════════════════════════════════════════════
    Root panel
 ════════════════════════════════════════════════════════════════════ */
@@ -1010,65 +1053,56 @@ const RightPanelTabs: React.FC<{
   sodCount: number;
   onChange: (tab: RightPanelTab) => void;
 }> = ({ activeTab, sodCount, onChange }) => {
-  const tabStyle = (active: boolean): React.CSSProperties => ({
-    flex: 1,
-    height: 40,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    border: 'none',
-    borderRadius: 0,
-    background: '#ffffff',
-    color: active ? '#111827' : '#6b7280',
-    borderBottom: `2px solid ${active ? '#2563eb' : 'transparent'}`,
-    fontSize: 12.5,
-    fontWeight: active ? 650 : 550,
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-  });
-
   return (
-    <div style={{
-      height: 41,
-      display: 'flex',
-      alignItems: 'stretch',
-      borderBottom: '1px solid #e5e7eb',
-      background: '#ffffff',
-      flexShrink: 0,
-    }}>
-      <button
-        type="button"
+    <div
+      role="tablist"
+      aria-label="Right panel sections"
+      style={{
+        height: 42,
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+        gap: 4,
+        padding: 6,
+        borderBottom: '1px solid #e5e7eb',
+        background: '#fafafa',
+        flexShrink: 0,
+        boxSizing: 'border-box',
+      }}
+    >
+      <PanelTabButton
+        active={activeTab === 'properties'}
         onClick={() => onChange('properties')}
-        style={tabStyle(activeTab === 'properties')}
+        title="Show properties"
       >
-        Properties
-      </button>
-      <button
-        type="button"
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>Properties</span>
+      </PanelTabButton>
+      <PanelTabButton
+        active={activeTab === 'sod'}
         onClick={() => onChange('sod')}
-        style={tabStyle(activeTab === 'sod')}
+        title="Show SOD validation"
       >
-        SOD Validation
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>SOD Validation</span>
         {sodCount > 0 && (
           <span style={{
+            flexShrink: 0,
             minWidth: 18,
             height: 18,
-            padding: '0 5px',
-            borderRadius: 9,
-            background: activeTab === 'sod' ? '#fee2e2' : '#f3f4f6',
-            color: sodCount > 0 ? '#b91c1c' : '#6b7280',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
+            padding: '0 5px',
+            borderRadius: 9,
+            background: '#fef2f2',
+            color: '#b91c1c',
+            border: '1px solid #fecaca',
             fontSize: 10.5,
-            fontWeight: 750,
-            lineHeight: 1,
+            fontWeight: 700,
+            boxSizing: 'border-box',
           }}>
             {sodCount}
           </span>
         )}
-      </button>
+      </PanelTabButton>
     </div>
   );
 };
@@ -1080,8 +1114,8 @@ const RightPropertiesPanel: React.FC = () => {
   const selectedLayer = selectedLayerId ? getLayer(selectedLayerId) : null;
   const selectedShape = selectedObject && isShape(selectedObject) ? selectedObject : null;
   const selectedSymbol = selectedObject && isSymbol(selectedObject) ? selectedObject : null;
-  const hasSodResult = checkResult !== null;
-  const activeTab: RightPanelTab = hasSodResult && sodPanelOpen ? 'sod' : 'properties';
+  const hasSODResult = checkResult !== null;
+  const activeTab: RightPanelTab = hasSODResult && sodPanelOpen ? 'sod' : 'properties';
 
   const mode: 'canvas' | 'layer' | 'text' | 'shape' | 'symbol' =
     selectedTextObject ? 'text'
@@ -1105,12 +1139,12 @@ const RightPropertiesPanel: React.FC = () => {
       fontSize: 13,
       boxSizing: 'border-box',
     }}>
-      {/* Body — compare takes over the panel; SOD becomes a tab after the first run. */}
+      {/* Body — compare takes over the panel first; SOD results become a tab. */}
       {isComparing ? (
         <ChangeListPanel />
       ) : (
         <>
-          {hasSodResult && (
+          {hasSODResult && (
             <RightPanelTabs
               activeTab={activeTab}
               sodCount={checkResult.counts.total}

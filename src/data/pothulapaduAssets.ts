@@ -1,9 +1,9 @@
 /**
  * pothulapaduAssets.ts — Pothulapadu station (South Central Railway).
  *
- * Represents station-domain metadata for POTHULAPADU_ESP.dwg. The editor now
- * loads the DWG geometry directly; these fixtures keep SOD validation anchored
- * to the known station assets.
+ * Represents station-domain metadata for POTHULAPADU_ESP-Model.pdf. The editor
+ * loads the PDF as the visual underlay; these fixtures keep SOD validation
+ * anchored to the known station assets.
  *
  * Two shapes live here:
  *  - POTHULAPADU_ASSETS: the raw domain assets (engineering measurements, mm).
@@ -58,7 +58,7 @@ export const POTHULAPADU_ASSETS: PothulapaduDataset = {
   zone: 'SCR',
   division: 'Guntur',
   adjacentStations: ['VELDURT'],
-  drawingRef: 'POTHULAPADU_ESP.dwg',
+  drawingRef: 'POTHULAPADU_ESP-Model.pdf',
   extractedAt: new Date().toISOString(),
 
   assets: [

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { X, ShieldCheck, ShieldAlert, AlertTriangle, Crosshair } from 'lucide-react';
+import { X, ShieldCheck, ShieldAlert, AlertTriangle, Crosshair, FileText, ExternalLink } from 'lucide-react';
 import { useSODStore } from '../store/sodStore';
 import { useEditor } from '../store/editorStore';
-import type { SODViolation, ViolationSeverity } from '../lib/validation/sodValidator';
+import type { SODCheckResult, SODViolation, ViolationSeverity } from '../lib/validation/sodValidator';
 
 /* Severity still drives color treatment; the UI labels issues by SOD rule ID. */
 const SEVERITY_STYLE: Record<ViolationSeverity, { label: string; border: string; bg: string; text: string }> = {
@@ -103,12 +103,70 @@ const KpiCard: React.FC<{ label: string; value: number; color: string; bg: strin
   </div>
 );
 
+const PdfSourceStrip: React.FC<{ result: SODCheckResult }> = ({ result }) => {
+  if (result.sourceKind !== 'pdf') return null;
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      minHeight: 38,
+      padding: '7px 12px',
+      borderBottom: '1px solid #f0f1f3',
+      background: '#f8fafc',
+      flexShrink: 0,
+      boxSizing: 'border-box',
+    }}>
+      <FileText size={14} strokeWidth={1.75} color="#475569" style={{ flexShrink: 0 }} />
+      <span style={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <span style={{
+          fontSize: 11.5,
+          fontWeight: 650,
+          color: '#111827',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}>
+          {result.sourceFileName ?? 'PDF source'}
+        </span>
+        <span style={{ fontSize: 10.5, color: '#64748b' }}>
+          Page {result.sourcePage ?? 1} · {result.assetsChecked} PDF anchors
+        </span>
+      </span>
+      {result.sourceUrl && (
+        <button
+          title="Open PDF"
+          onClick={() => window.open(result.sourceUrl, '_blank', 'noopener,noreferrer')}
+          style={{
+            flexShrink: 0,
+            width: 26,
+            height: 26,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid #e2e8f0',
+            borderRadius: 6,
+            background: '#ffffff',
+            color: '#475569',
+            cursor: 'pointer',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#ffffff'; }}
+        >
+          <ExternalLink size={13} strokeWidth={1.75} />
+        </button>
+      )}
+    </div>
+  );
+};
+
 const SODViolationsPanel: React.FC<{ showHeader?: boolean }> = ({ showHeader = true }) => {
   const {
     checkResult, setPanelOpen, stationName,
     activeViolationId, setActiveViolation, requestFocus,
   } = useSODStore();
-  const { selectObject } = useEditor();
+  const { objects, selectObject } = useEditor();
 
   const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -124,12 +182,14 @@ const SODViolationsPanel: React.FC<{ showHeader?: boolean }> = ({ showHeader = t
 
   const handleSelect = (v: SODViolation) => {
     setActiveViolation(activeViolationId === v.id ? null : v.id);
-    if (v.assetId) selectObject(v.assetId);
+    const asset = v.assetId ? objects.find(o => o.id === v.assetId) : null;
+    selectObject(asset?.visible ? asset.id : null);
   };
 
   const handleView = (v: SODViolation) => {
     setActiveViolation(v.id);
-    if (v.assetId) selectObject(v.assetId);
+    const asset = v.assetId ? objects.find(o => o.id === v.assetId) : null;
+    selectObject(asset?.visible ? asset.id : null);
     if (v.canvasX != null && v.canvasY != null) {
       // Aim at the asset's centre so rects/bands land in view, not just a corner.
       const cx = v.canvasX + (v.canvasW ?? 0) / 2;
@@ -140,6 +200,7 @@ const SODViolationsPanel: React.FC<{ showHeader?: boolean }> = ({ showHeader = t
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
+      {/* Header / tab */}
       {showHeader && (
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -171,6 +232,8 @@ const SODViolationsPanel: React.FC<{ showHeader?: boolean }> = ({ showHeader = t
         </div>
       )}
 
+      {checkResult && <PdfSourceStrip result={checkResult} />}
+
       {/* KPI cards */}
       {checkResult && (
         <div style={{
@@ -187,7 +250,7 @@ const SODViolationsPanel: React.FC<{ showHeader?: boolean }> = ({ showHeader = t
       {/* Body */}
       <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
         {!checkResult && (
-          <EmptyState text="Run the SOD check to see violations here." />
+          <EmptyState text="Run PDF SOD to see violations here." />
         )}
         {checkResult && passed && (
           <div style={{ padding: '32px 20px', textAlign: 'center' }}>

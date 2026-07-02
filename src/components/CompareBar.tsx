@@ -6,9 +6,9 @@ import { useCompareStore } from '../store/compareStore';
  * CompareBar — the version-picker strip shown while compare mode is active.
  *
  * Floats just below the top bar, spanning the canvas area. Both the BASE (older)
- * and HEAD (newer) are chosen from the saved version snapshots via dropdowns;
- * the diff recomputes whenever either selection changes. A legend explains the
- * highlight colours. Create versions with the top bar's "Save version" button.
+ * and HEAD (newer) are chosen from PDF/version snapshots via dropdowns; the diff
+ * recomputes whenever either selection changes. A legend explains the highlight
+ * colours. Two Pothulapadu PDF examples are available by default.
  */
 
 const LEGEND: { color: string; label: string }[] = [
@@ -50,11 +50,11 @@ const CompareBar: React.FC = () => {
       boxSizing: 'border-box',
     }}>
       <GitCompare size={14} color="#7c3aed" strokeWidth={2} />
-      <span style={{ fontWeight: 600, color: '#5b21b6' }}>Comparing</span>
+      <span style={{ fontWeight: 600, color: '#5b21b6' }}>PDF Compare</span>
 
       {savedVersions.length < 2 ? (
         <span style={{ color: '#7c3aed', fontStyle: 'italic' }}>
-          Save at least two versions (Save version) to compare
+          Add at least two PDF versions to compare
         </span>
       ) : (
         <>
@@ -63,10 +63,14 @@ const CompareBar: React.FC = () => {
             value={baseVersionId ?? ''}
             onChange={e => setBaseVersion(e.target.value)}
             style={selectStyle}
-            title="Base version (older)"
+            title="Base PDF version (older)"
           >
-            <option value="" disabled>Select base…</option>
-            {savedVersions.map(v => <option key={v.id} value={v.id}>{v.label}</option>)}
+            <option value="" disabled>Select base PDF...</option>
+            {savedVersions.map(v => (
+              <option key={v.id} value={v.id}>
+                {v.label}{v.isDefaultExample ? ' (example)' : ''}
+              </option>
+            ))}
           </select>
 
           <span style={{ color: '#7c3aed', fontWeight: 700 }}>→</span>
@@ -76,10 +80,14 @@ const CompareBar: React.FC = () => {
             value={headVersionId ?? ''}
             onChange={e => setHeadVersion(e.target.value)}
             style={selectStyle}
-            title="Head version (newer)"
+            title="Head PDF version (newer)"
           >
-            <option value="" disabled>Select head…</option>
-            {savedVersions.map(v => <option key={v.id} value={v.id}>{v.label}</option>)}
+            <option value="" disabled>Select head PDF...</option>
+            {savedVersions.map(v => (
+              <option key={v.id} value={v.id}>
+                {v.label}{v.isDefaultExample ? ' (example)' : ''}
+              </option>
+            ))}
           </select>
         </>
       )}
@@ -106,7 +114,7 @@ const CompareBar: React.FC = () => {
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
       >
         <X size={12} strokeWidth={2} />
-        Exit compare
+        Exit
       </button>
     </div>
   );

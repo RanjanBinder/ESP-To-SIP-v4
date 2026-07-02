@@ -16,6 +16,7 @@ import { computeVersionDiff } from '../lib/versionDiff/computeDiff';
 import {
   SavedVersion, loadVersions, saveVersions, makeVersion,
 } from '../lib/versionSnapshots';
+import { DEFAULT_PDF_COMPARE_VERSIONS } from '../data/pothulapaduCompareVersions';
 
 export interface CompareStore {
   /** Is compare mode active? */
@@ -50,11 +51,19 @@ export interface CompareStore {
 
 const CompareContext = createContext<CompareStore | null>(null);
 
+function withDefaultPdfExamples(versions: SavedVersion[]): SavedVersion[] {
+  const byId = new Set(DEFAULT_PDF_COMPARE_VERSIONS.map(v => v.id));
+  return [
+    ...DEFAULT_PDF_COMPARE_VERSIONS.map(v => JSON.parse(JSON.stringify(v)) as SavedVersion),
+    ...versions.filter(v => !byId.has(v.id)),
+  ];
+}
+
 export const CompareProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isComparing, setIsComparing] = useState(false);
   const [diffResult, setDiffResultState] = useState<VersionDiffResult | null>(null);
   const [activeChangeId, setActiveChangeState] = useState<string | null>(null);
-  const [savedVersions, setSavedVersions] = useState<SavedVersion[]>(() => loadVersions());
+  const [savedVersions, setSavedVersions] = useState<SavedVersion[]>(() => withDefaultPdfExamples(loadVersions()));
   const [baseVersionId, setBaseVersionId] = useState<string | null>(null);
   const [headVersionId, setHeadVersionId] = useState<string | null>(null);
 

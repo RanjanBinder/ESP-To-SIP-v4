@@ -17,6 +17,10 @@ export interface SavedVersion {
   label: string;
   createdAt: string;   // ISO
   objects: CanvasObject[];
+  sourceKind?: 'canvas' | 'pdf';
+  sourceFileName?: string;
+  sourcePage?: number;
+  isDefaultExample?: boolean;
 }
 
 export function loadVersions(): SavedVersion[] {
