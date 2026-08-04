@@ -13,7 +13,7 @@ test('renders the editor shell and loads the default station', async () => {
   try {
     render(<App />);
     expect(screen.getByText(/ESP Editor/i)).toBeInTheDocument();
-    expect(screen.getByText(/Run PDF SOD/i)).toBeInTheDocument();
+    expect(screen.getByTitle(/Run PDF SOD/i)).toBeInTheDocument();
     expect(await screen.findByText('PTLP')).toBeInTheDocument();
   } finally {
     requestAnimationFrameSpy.mockRestore();

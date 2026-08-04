@@ -14,6 +14,7 @@ import ShapePropertiesPanel from './ShapePropertiesPanel';
 import SymbolPropertiesPanel from './SymbolPropertiesPanel';
 import SODViolationsPanel from './SODViolationsPanel';
 import ChangeListPanel from './ChangeListPanel';
+import RightPanelActions from './RightPanelActions';
 import { useSODStore } from '../store/sodStore';
 import { useCompareStore } from '../store/compareStore';
 import {
@@ -1139,6 +1140,9 @@ const RightPropertiesPanel: React.FC = () => {
       fontSize: 13,
       boxSizing: 'border-box',
     }}>
+      {/* Actions toolbar — always visible, houses Save/History/Compare/SOD */}
+      <RightPanelActions />
+
       {/* Body — compare takes over the panel first; SOD results become a tab. */}
       {isComparing ? (
         <ChangeListPanel />

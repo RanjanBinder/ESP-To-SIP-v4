@@ -178,7 +178,6 @@ const SODViolationsPanel: React.FC<{ showHeader?: boolean }> = ({ showHeader = t
   }, [activeViolationId]);
 
   const passed = checkResult?.passed ?? false;
-  const ruleCount = new Set((checkResult?.violations ?? []).map(v => v.ruleCode ?? v.ruleId)).size;
 
   const handleSelect = (v: SODViolation) => {
     setActiveViolation(activeViolationId === v.id ? null : v.id);
@@ -237,13 +236,12 @@ const SODViolationsPanel: React.FC<{ showHeader?: boolean }> = ({ showHeader = t
       {/* KPI cards */}
       {checkResult && (
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6,
+          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6,
           padding: '10px 12px', borderBottom: '1px solid #f0f1f3', flexShrink: 0,
         }}>
-          <KpiCard label="Checks"   value={checkResult.checksRun}    color="#374151" bg="#f9fafb" border="#e5e7eb" />
-          <KpiCard label="Passed"   value={checkResult.checksPassed} color="#15803d" bg="#f0fdf4" border="#86efac" />
+          <KpiCard label="All" value={checkResult.checksRun} color="#374151" bg="#f9fafb" border="#e5e7eb" />
           <KpiCard label="Violations" value={checkResult.counts.total} color="#b91c1c" bg="#fef2f2" border="#fca5a5" />
-          <KpiCard label="Rules"    value={ruleCount}                 color="#b45309" bg="#fffbeb" border="#fcd34d" />
+          <KpiCard label="Passed" value={checkResult.checksPassed} color="#15803d" bg="#f0fdf4" border="#86efac" />
         </div>
       )}
 
