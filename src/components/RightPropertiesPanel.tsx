@@ -4,7 +4,7 @@ import {
   Plus, Eye, EyeOff, Lock, Unlock, Layers,
   Crosshair, Trash2, Check, X,
 } from 'lucide-react';
-import { useEditor, Layer, flattenLayers, isDescendantOf, isShape, isSymbol } from '../store/editorStore';
+import { useEditor, Layer, flattenLayers, isDescendantOf, isShape, isSymbol, isTrack } from '../store/editorStore';
 import {
   BASE_GRID_OPTIONS, MAJOR_GRID_OPTIONS, SNAP_OPTIONS, GRID_UNIT_OPTIONS,
   BaseGridPreset, MajorGridPreset, SnapPreset, GridUnit,
@@ -12,6 +12,7 @@ import {
 import TextPropertiesPanel from './TextPropertiesPanel';
 import ShapePropertiesPanel from './ShapePropertiesPanel';
 import SymbolPropertiesPanel from './SymbolPropertiesPanel';
+import TrackPropertiesPanel from './TrackPropertiesPanel';
 import SODViolationsPanel from './SODViolationsPanel';
 import ChangeListPanel from './ChangeListPanel';
 import RightPanelActions from './RightPanelActions';
@@ -1115,11 +1116,13 @@ const RightPropertiesPanel: React.FC = () => {
   const selectedLayer = selectedLayerId ? getLayer(selectedLayerId) : null;
   const selectedShape = selectedObject && isShape(selectedObject) ? selectedObject : null;
   const selectedSymbol = selectedObject && isSymbol(selectedObject) ? selectedObject : null;
+  const selectedTrack = selectedObject && isTrack(selectedObject) ? selectedObject : null;
   const hasSODResult = checkResult !== null;
   const activeTab: RightPanelTab = hasSODResult && sodPanelOpen ? 'sod' : 'properties';
 
-  const mode: 'canvas' | 'layer' | 'text' | 'shape' | 'symbol' =
+  const mode: 'canvas' | 'layer' | 'text' | 'shape' | 'symbol' | 'track' =
     selectedTextObject ? 'text'
+    : selectedTrack     ? 'track'
     : selectedShape     ? 'shape'
     : selectedSymbol    ? 'symbol'
     : selectedLayer     ? 'layer'
@@ -1161,6 +1164,7 @@ const RightPropertiesPanel: React.FC = () => {
           ) : (
             <>
               {mode === 'text'   && selectedTextObject && <TextPropertiesPanel obj={selectedTextObject} />}
+              {mode === 'track'  && selectedTrack       && <TrackPropertiesPanel track={selectedTrack} />}
               {mode === 'shape'  && selectedShape       && <ShapePropertiesPanel obj={selectedShape} />}
               {mode === 'symbol' && selectedSymbol      && <SymbolPropertiesPanel obj={selectedSymbol} />}
               {mode === 'layer'  && selectedLayer       && <LayerPropertiesPanel layer={selectedLayer} />}

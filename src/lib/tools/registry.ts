@@ -6,6 +6,7 @@ import { symbolTool } from './symbolTool';
 import { polylineTool } from './polylineTool';
 import { copyTool } from './copyTool';
 import { arcTool } from './arcTool';
+import { trackTool } from './trackTool';
 
 /**
  * Tool registry — maps an `activeTool` id to its Tool implementation.
@@ -22,6 +23,8 @@ export const TOOLS: Record<string, Tool> = {
   polyline: polylineTool,
   arc: arcTool,
   copy: copyTool,
+  // ESP assets — the Track tool drives its own session (see lib/track/session.ts)
+  track: trackTool,
   // 'move' reuses select behaviour — drag-to-move is already in selectTool
   move: { ...selectTool, id: 'move', cursor: 'move' },
   // 'zoom' falls back to select; wheel-zoom is always active via Canvas

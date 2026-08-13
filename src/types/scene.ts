@@ -13,6 +13,8 @@
 
 /* ── Geometry primitives ─────────────────────────────────────────── */
 
+import type { TrackSegment, TrackProperties } from './track';
+
 export interface Vec2 {
   x: number;
   y: number;
@@ -62,6 +64,7 @@ export type CanvasObjectType =
   | 'ellipse'
   | 'arc'
   | 'symbol'
+  | 'track'
   | 'dimension'
   | 'group';
 
@@ -212,13 +215,36 @@ export interface SymbolObject extends BaseCanvasObject {
   label: string;
 }
 
+/* ── Track asset ─────────────────────────────────────────────────── */
+
+/**
+ * One drawn track = ONE asset, however many line/arc segments it contains
+ * (Requirements §4.2.1). Because it is a plain CanvasObject, selection, move,
+ * delete, undo/redo, copy/paste and serialization all treat it as a unit with
+ * no special cases.
+ *
+ * `geometry` is stored RELATIVE to (x, y) — the bbox anchor — so the generic
+ * move code (which patches x/y only) translates the whole alignment correctly.
+ * `lib/track/trackAsset.ts` has the world ⇄ local converters; nothing else
+ * should do that arithmetic by hand.
+ */
+export interface TrackObject extends BaseCanvasObject {
+  type: 'track';
+  geometry: TrackSegment[];
+  /** Engineering properties shown in the right-hand Properties panel. */
+  track: TrackProperties;
+  /** Style id resolved from the Styles layer (work status drives rendering). */
+  styleId: string;
+  strokeWidth: number;
+}
+
 /* ── The union ───────────────────────────────────────────────────── */
 
 /**
  * Discriminated union of everything on the canvas. Extend it as tools land.
  * Consumers switch on `obj.type` and rely on the guards below.
  */
-export type CanvasObject = TextObject | ImageObject | RectangleObject | EllipseObject | ArcObject | LineObject | SymbolObject;
+export type CanvasObject = TextObject | ImageObject | RectangleObject | EllipseObject | ArcObject | LineObject | SymbolObject | TrackObject;
 
 /* ── Type guards ─────────────────────────────────────────────────── */
 
@@ -252,4 +278,8 @@ export function isShape(obj: CanvasObject): obj is ShapeObject {
 
 export function isSymbol(obj: CanvasObject): obj is SymbolObject {
   return obj.type === 'symbol';
+}
+
+export function isTrack(obj: CanvasObject): obj is TrackObject {
+  return obj.type === 'track';
 }

@@ -249,6 +249,10 @@ file is already being edited (avoid a churn-only move commit).
   renderer, `SymbolPropertiesPanel`. Each new type touched only its own new
   files + a one-line render + one-line route. No changes to history, selection,
   serialization or the canvas dispatch loop. Next: dimensions, connectors.
+- **Phase 7 — ESP assets (in progress).** The **Track** tool (see §13) is the
+  first, and establishes the pattern for Turnout / SRJ / Platform: a pure
+  session reducer in `lib/<asset>/`, a thin store, and UI built from the shared
+  drawing-interaction layer in `components/drawing/`.
 
 Phases 0–5 (the foundation) are complete; the app remains fully working after
 each. Feature work now builds on a stable model, tool registry, history and
@@ -294,3 +298,105 @@ Deps installed with `--legacy-peer-deps` (CRA's `@types/node@16` vs Vite ≥18).
 **Verified:** `tsc` + `vite build` pass; dev server serves the app and the copied
 worker assets (200). **Not yet verified in-session:** the actual WebGL DXF render
 (needs a browser + a sample .dxf — run `npm start`, switch to *DXF / DWG*, Open a file).
+
+---
+
+## 13. Track tool (ESP asset 4)
+
+`Assets → ESP → Track` — the first ESP asset tool. Source: *ESP to SIP Editor
+Requirements V1.0 §4.2.1*. It sets the pattern the remaining ESP asset tools
+(Turnout, SRJ, Platform) should follow.
+
+### 13.1 The hard requirement
+
+**One drawn track = one asset**, however many line/arc segments it contains.
+That is why a track is a plain `TrackObject` in the `CanvasObject` union rather
+than a bag of `LineObject`s: selection, move, delete, undo/redo, copy/paste and
+serialization then treat it as a unit with **no special cases**.
+
+`TrackObject.geometry` is stored **relative to the object's `x`/`y` anchor**, so
+the generic move code (which patches `x`/`y` only) translates the whole
+alignment correctly. `lib/track/trackAsset.ts` owns the only world ⇄ local
+conversion — nothing else should add or subtract the anchor by hand.
+
+### 13.2 Why the tool is not a plain `Tool`
+
+The `Tool` contract in §5 covers click/drag interactions. Track has *phases*
+(drawing → obstruction → curve method → curve input; or reference pick →
+portion → offset), inline choices and numeric entry, so it follows the
+precedent already set by the parameter-drawing tools: `Canvas` intercepts its
+pointer events and forwards them to a session. `lib/tools/trackTool.ts` exists
+only so the registry supplies the crosshair cursor and toolbar highlight.
+
+### 13.3 Layout
+
+```
+types/track.ts              enums, TrackSegment (line|arc), TrackProperties — no logic
+lib/track/
+  geometry.ts               segments, bearings, bounds, sampling, SVG path
+  curves.ts                 the 4 curve methods + the obstruction-clearing arc
+  offset.ts                 concentric offset, arc-length trimming, side-of-path
+  snapping.ts               snap candidates by priority, Tab cycling, ortho
+  obstruction.ts            structure conflict detection
+  sceneQueries.ts           what counts as a track / turnout / SRJ / structure
+  trackAsset.ts             build the asset, world ⇄ local, completeness
+  trackStyles.ts            work status → Styles-layer entry
+  validate.ts               the on-finish check, as SODViolations
+  session.ts                the pure reducer: all flow logic lives here
+store/trackDrawStore.tsx    thin React wrapper + sticky settings + draft autosave
+components/drawing/         SHARED interaction layer (see 13.5)
+components/track/           TrackView, TrackContextToolbar, TrackDrawOverlay,
+                            useTrackFinish
+components/TrackPropertiesPanel.tsx
+```
+
+`lib/track/` is pure — no React, no store — so the whole interaction is
+unit-testable. 88 tests in `geometry.test.ts`, `offset.test.ts` and
+`session.test.ts` cover the sign conventions, the concentric-offset rule and
+every acceptance criterion in §7 of the requirements.
+
+### 13.4 Conventions worth knowing before editing
+
+- **Angles**: degrees, CCW from +X, and `point(a) = (cx + r·cos a, cy − r·sin a)`.
+  The `−sin` compensates for the screen's Y-down axis, matching `ArcObject`. A
+  left turn (upward on screen) is **CCW** — `geometry.test.ts` pins this down;
+  inverting it produces geometry that looks plausible but curves the wrong way.
+- **Units**: 1 world unit = 1 metre (`WORLD_UNITS_PER_METRE`).
+- **Offsets preserve arcs.** An arc is offset by adjusting its radius about the
+  *same centre*. Nothing samples an arc into points and re-fits a polyline —
+  that would chord the curve and fail acceptance §7.3.
+- **Escape walks a ladder**: back out of the sub-flow → abort the asset → leave
+  the tool. `canCancelPhase()` exists so phases with nothing to back out of do
+  not swallow the key and strand the user in the tool.
+- **Undo granularity**: while drawing, Backspace / Ctrl+Z step back one
+  *segment* inside the session (nothing is in the scene yet). Finishing is a
+  single `addObject`, so Ctrl+Z afterwards removes the whole track in one step.
+- **Validation is advisory.** `validateTrack` returns `SODViolation`s that merge
+  into the existing Issue Navigation panel with click-to-zoom. Never a dialog —
+  an engineer who knowingly commits a tight radius gets an issue, not a wall.
+
+### 13.5 The shared drawing-interaction layer
+
+`components/drawing/` is deliberately **Track-agnostic** — it knows nothing
+about tracks, only screen coordinates and plain data:
+
+| Component | Purpose |
+|---|---|
+| `CursorBadge` | persistent mode label at the cursor, edge-flipping |
+| `SnapMarker` / `SnapGlyphIcon` | per-snap-type glyph (shape differs, not just colour) |
+| `InlineChoiceChips` | the replacement for a modal "pick one"; keyboard-answerable |
+| `DynamicInput` | floating numeric entry near the cursor |
+| `GhostPath` | preview geometry over the real drawing |
+| `HighlightRect` | call out an object (e.g. the obstructing structure) |
+| `HintStrip` | published keyboard shortcuts while a tool is active |
+| `ProgressPip` | inline progress for work over ~200 ms |
+
+**Build the next ESP asset tool from these**, rather than growing a second set.
+
+### 13.6 Known gap
+
+`store.addObject` sets `selectedObjectId` but not `selectedObjectIds`, so a
+freshly created or pasted object is shown as selected while Delete still acts on
+the previous multi-selection. This is pre-existing and affects every object
+type, not just tracks; fixing it means aligning the two selection fields in the
+store.

@@ -7,8 +7,9 @@ import type {
   TextObject, DraftTextObject, TextHyperlink,
   CanvasObject, CanvasObjectType, BaseCanvasObject, Vec2,
   ImageObject, RectangleObject, EllipseObject, ArcObject, LineObject, ShapeObject, StrokeStyle, SymbolObject,
+  TrackObject,
 } from '../types/scene';
-import { isTextObject, isImageObject, isShape, isRectangle, isEllipse, isArc, isLine, isSymbol } from '../types/scene';
+import { isTextObject, isImageObject, isShape, isRectangle, isEllipse, isArc, isLine, isSymbol, isTrack } from '../types/scene';
 import {
   EspDocument, DOCUMENT_VERSION, migrateDocument,
   loadPersistedDocument, savePersistedDocument,
@@ -60,7 +61,9 @@ const DEFAULT_STYLES: EditorStyle[] = [
   { id: 'existing-line',    name: 'Existing Line',    category: 'shapes', meta: 'Black • Solid',  previewType: 'line', color: '#111827', strokeStyle: 'solid' },
   { id: 'proposed-work',    name: 'Proposed Work',    category: 'shapes', meta: 'Red • Solid',    previewType: 'line', color: '#ef4444', strokeStyle: 'solid' },
   { id: 'dismantling-work', name: 'Dismantling Work', category: 'shapes', meta: 'Amber • Dashed', previewType: 'line', color: '#f59e0b', strokeStyle: 'dashed' },
-  { id: 'future-work',      name: 'Future Work',      category: 'shapes', meta: 'Blue • Solid',   previewType: 'line', color: '#3b82f6', strokeStyle: 'solid' },
+  /* Future work is dashed as well as blue: work status must be distinguishable
+     without relying on colour alone (Track spec §1, §8.8). */
+  { id: 'future-work',      name: 'Future Work',      category: 'shapes', meta: 'Blue • Dashed',  previewType: 'line', color: '#3b82f6', strokeStyle: 'dashed' },
   { id: 'land-boundary',    name: 'Land Boundary',    category: 'shapes', meta: 'Green • Solid',  previewType: 'line', color: '#22c55e', strokeStyle: 'solid' },
   { id: 'reference-line',   name: 'Reference Line',   category: 'shapes', meta: 'Grey • Dashed',  previewType: 'line', color: '#6b7280', strokeStyle: 'dashed' },
   /* Annotations */
@@ -111,8 +114,9 @@ export type {
   TextObject, DraftTextObject, TextHyperlink,
   CanvasObject, CanvasObjectType, BaseCanvasObject, Vec2,
   ImageObject, RectangleObject, EllipseObject, ArcObject, LineObject, ShapeObject, StrokeStyle, SymbolObject,
+  TrackObject,
 };
-export { isTextObject, isImageObject, isShape, isRectangle, isEllipse, isArc, isLine, isSymbol };
+export { isTextObject, isImageObject, isShape, isRectangle, isEllipse, isArc, isLine, isSymbol, isTrack };
 
 /* ── Comments ────────────────────────────────────────────────────── */
 

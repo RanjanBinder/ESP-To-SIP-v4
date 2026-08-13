@@ -3,8 +3,9 @@ import {
   AlignLeft, AlignCenter, AlignRight,
   Bold, Italic, Underline, Link, Check, X, MessageSquare,
 } from 'lucide-react';
-import { useEditor, DraftTextObject, TextObject, isTextObject, isImageObject, isShape, isSymbol } from '../store/editorStore';
+import { useEditor, DraftTextObject, TextObject, isTextObject, isImageObject, isShape, isSymbol, isTrack } from '../store/editorStore';
 import { useSODStore } from '../store/sodStore';
+import { useTrackDraw } from '../store/trackDrawStore';
 import { Vec2, CanvasObject, ImageObject } from '../types/scene';
 import { ToolContext, ToolPointer, DragSession, ArcPreview, RubberBand } from '../types/tool';
 import { getTool } from '../lib/tools/registry';
@@ -24,6 +25,10 @@ import CanvasOverlay from './CanvasOverlay';
 import CommentThreadCard from './CommentThreadCard';
 import SODCanvasOverlay from './SODCanvasOverlay';
 import DiffHighlightLayer from './DiffHighlightLayer';
+import TrackView from './track/TrackView';
+import TrackDrawOverlay from './track/TrackDrawOverlay';
+import { useTrackFinish } from './track/useTrackFinish';
+import { resolveSnap, SNAP_RADIUS_PX } from '../lib/track/snapping';
 
 /* ── Formatting bar helpers ──────────────────────────────────────── */
 
@@ -396,6 +401,19 @@ const Canvas: React.FC = () => {
 
   const { focusRequest } = useSODStore();
 
+  /* ── Track tool (Assets → ESP → Track) ──────────────────────────
+     The Track tool runs its own session (lib/track/session.ts) because its
+     interaction has phases, inline choices and numeric entry that the simple
+     click/drag Tool contract cannot express — the same reason the parameter
+     drawing tools are intercepted below. The canvas only forwards pointer
+     events and keeps the keyboard out of its way. */
+  const trackDraw = useTrackDraw();
+  const finishTrack = useTrackFinish();
+  const trackDrawRef = useRef(trackDraw);
+  trackDrawRef.current = trackDraw;
+  const finishTrackRef = useRef(finishTrack);
+  finishTrackRef.current = finishTrack;
+
   const canvasRef = useRef<HTMLDivElement>(null);
   const isPanningRef    = useRef(false);
   const isSpaceRef      = useRef(false);
@@ -643,6 +661,16 @@ const Canvas: React.FC = () => {
       // Escape — close context menu first, then other cancel logic
       if (e.key === 'Escape') {
         if (ctxMenuOpenRef.current) { setCtxMenu(null); return; }
+        // Track tool: Escape walks a ladder — back out of the current sub-flow,
+        // then abort the asset, then leave the tool. Each rung is taken only if
+        // it has something to do, so Escape is never swallowed (§8.1).
+        if (activeToolRef.current === 'track') {
+          const t = trackDrawRef.current;
+          if (t.canCancelPhase) { t.cancelPhase(); return; }
+          if (t.cancel()) { t.showToast('Track cancelled'); return; }
+          setActiveTool('select');
+          return;
+        }
         if (draftRef.current) {
           cancelDraftText();
           return;
@@ -677,6 +705,12 @@ const Canvas: React.FC = () => {
 
       // All other shortcuts — skip while a text field or draft is active.
       if (isTyping(e.target) || draftRef.current) return;
+
+      // The Track tool owns Enter / Backspace / Tab / Ctrl+Z while it is active
+      // (TrackDrawOverlay handles them against the draw session, so undo steps
+      // back through segments instead of the scene). Tool shortcuts are also
+      // suppressed so typing a length never swaps the tool mid-draw.
+      if (activeToolRef.current === 'track') return;
 
       const mod = e.metaKey || e.ctrlKey;
 
@@ -793,6 +827,20 @@ const Canvas: React.FC = () => {
 
     // Dispatch to the active tool, applying object snap if a drawing tool is active.
     const rawWorld = worldFromEvent(e.clientX, e.clientY);
+
+    // Track tool: resolve the snap for this exact position first (a click can
+    // land without a preceding move), then hand the click to the session.
+    if (activeTool === 'track') {
+      const radius = SNAP_RADIUS_PX / viewportRef.current.zoom;
+      const resolved = resolveSnap(
+        rawWorld, objectsRef2.current, radius,
+        trackDrawRef.current.session.snapIndex, e.ctrlKey || e.metaKey,
+      );
+      trackDrawRef.current.pointerMove(rawWorld, resolved.candidates, e.shiftKey, e.ctrlKey || e.metaKey);
+      trackDrawRef.current.click(rawWorld, objectsRef2.current, hitFromEvent(e));
+      return;
+    }
+
     const snappedWorld = (SNAP_TOOLS.has(activeTool) && snapPointRef.current)
       ? snapPointRef.current
       : rawWorld;
@@ -819,6 +867,23 @@ const Canvas: React.FC = () => {
     setMouseWorld(rawWorld);
     setHoveredObject(hitFromEvent(e));
 
+    // Track tool: snapping is resolved in world units from a fixed pixel radius,
+    // so the feel does not change with zoom (§8.3).
+    if (activeTool === 'track') {
+      const radius = SNAP_RADIUS_PX / viewportRef.current.zoom;
+      const suppressed = e.ctrlKey || e.metaKey;
+      const resolved = resolveSnap(
+        rawWorld, objectsRef2.current, radius,
+        trackDrawRef.current.session.snapIndex, suppressed,
+      );
+      trackDrawRef.current.pointerMove(rawWorld, resolved.candidates, e.shiftKey, suppressed);
+      setSnapPoint(null);
+      snapPointRef.current = null;
+      setHoverPreview(null);
+      setHoverArcPreview(null);
+      return;
+    }
+
     // Object snap: active only for drawing tools
     let snapped: Vec2 | null = null;
     if (SNAP_TOOLS.has(activeTool)) {
@@ -836,6 +901,11 @@ const Canvas: React.FC = () => {
   }, [worldFromEvent, setHoveredObject, activeTool]);
 
   const handleDoubleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    // Double-click finishes the track asset (§3 step 4).
+    if (activeTool === 'track') {
+      finishTrackRef.current();
+      return;
+    }
     const pointer: ToolPointer = {
       world: worldFromEvent(e.clientX, e.clientY),
       hitObjectId: hitFromEvent(e),
@@ -993,6 +1063,14 @@ const Canvas: React.FC = () => {
             symbol={s}
             selected={selectedObjectId === s.id || selectedObjectIds.includes(s.id)}
             hovered={hoveredObjectId === s.id}
+          />
+        ))}
+        {objects.filter(isTrack).map(t => (
+          <TrackView
+            key={t.id}
+            track={t}
+            selected={selectedObjectId === t.id || selectedObjectIds.includes(t.id)}
+            hovered={hoveredObjectId === t.id}
           />
         ))}
         {objects
@@ -1286,6 +1364,9 @@ const Canvas: React.FC = () => {
           );
         });
       })()}
+
+      {/* Track drawing overlay — ghost preview, snap feedback, inline choices */}
+      {activeTool === 'track' && <TrackDrawOverlay />}
 
       {/* SOD violation markers (halo, dot, callout, tooltip, gradient band) */}
       <SODCanvasOverlay />

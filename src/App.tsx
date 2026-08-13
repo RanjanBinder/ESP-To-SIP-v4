@@ -3,6 +3,7 @@ import './index.css';
 import { EditorProvider } from './store/editorStore';
 import { SODProvider } from './store/sodStore';
 import { CompareProvider } from './store/compareStore';
+import { TrackDrawProvider } from './store/trackDrawStore';
 import EditorPage from './components/EditorPage';
 
 function App() {
@@ -10,7 +11,9 @@ function App() {
     <EditorProvider>
       <SODProvider>
         <CompareProvider>
-          <EditorPage />
+          <TrackDrawProvider>
+            <EditorPage />
+          </TrackDrawProvider>
         </CompareProvider>
       </SODProvider>
     </EditorProvider>

@@ -10,12 +10,13 @@ import StylesPanel from './StylesPanel';
 import CommentsPanel from './CommentsPanel';
 import TablesPanel from './TablesPanel';
 import CompareBar from './CompareBar';
+import TrackContextToolbar from './track/TrackContextToolbar';
 import { useEditor } from '../store/editorStore';
 import { useSODStore } from '../store/sodStore';
 import { DEFAULT_DRAWING_META, fitDefaultDrawingToViewport, loadDefaultDrawingDocument } from '../lib/defaultDwgDocument';
 
 const EditorPage: React.FC = () => {
-  const { activeLeftPanel, loadDocument, setZoom, setPan } = useEditor();
+  const { activeLeftPanel, activeTool, setActiveTool, loadDocument, setZoom, setPan } = useEditor();
   const { setStation, setCheckResult, setPanelOpen } = useSODStore();
   const [defaultLoad, setDefaultLoad] = useState<{ status: 'loading' | 'ready' | 'error'; message?: string }>({
     status: 'loading',
@@ -59,6 +60,8 @@ const EditorPage: React.FC = () => {
       {activeLeftPanel === 'comments' && <CommentsPanel />}
       {activeLeftPanel === 'tables'   && <TablesPanel />}
       <Canvas />
+      {/* Contextual strip for the Track tool — one line, under the header (§1) */}
+      {activeTool === 'track' && <TrackContextToolbar onExit={() => setActiveTool('select')} />}
       <BottomToolbar />
       <RightPropertiesPanel />
 
