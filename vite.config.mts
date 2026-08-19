@@ -26,9 +26,13 @@ export default defineConfig({
     react(),
     viteStaticCopy({
       targets: [
-        { src: 'node_modules/@mlightcad/data-model/dist/dxf-parser-worker.js',             dest: 'assets', rename: { stripBase: true } },
-        { src: 'node_modules/@mlightcad/cad-simple-viewer/dist/mtext-renderer-worker.js',  dest: 'assets', rename: { stripBase: true } },
-        { src: 'node_modules/@mlightcad/cad-simple-viewer/dist/libredwg-parser-worker.js', dest: 'assets', rename: { stripBase: true } },
+        // No `rename`: the default copies each file's basename into `dest`, which is
+        // what the runtime expects (/assets/<worker>.js). `rename: { stripBase: n }`
+        // is for `structured: true` and emits a `../`-prefixed path, which escaped
+        // the output dir entirely and wrote the workers outside the project.
+        { src: 'node_modules/@mlightcad/data-model/dist/dxf-parser-worker.js',             dest: 'assets' },
+        { src: 'node_modules/@mlightcad/cad-simple-viewer/dist/mtext-renderer-worker.js',  dest: 'assets' },
+        { src: 'node_modules/@mlightcad/cad-simple-viewer/dist/libredwg-parser-worker.js', dest: 'assets' },
       ],
     }),
   ],
