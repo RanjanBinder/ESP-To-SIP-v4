@@ -13,7 +13,8 @@ import TextPropertiesPanel from './TextPropertiesPanel';
 import ShapePropertiesPanel from './ShapePropertiesPanel';
 import SymbolPropertiesPanel from './SymbolPropertiesPanel';
 import TrackPropertiesPanel from './TrackPropertiesPanel';
-import SODViolationsPanel from './SODViolationsPanel';
+import ValidationPanel from './ValidationPanel';
+import GradientPropertiesSection, { SODMeasurementsSection } from './GradientPropertiesSection';
 import ChangeListPanel from './ChangeListPanel';
 import RightPanelActions from './RightPanelActions';
 import { useSODStore } from '../store/sodStore';
@@ -1081,9 +1082,9 @@ const RightPanelTabs: React.FC<{
       <PanelTabButton
         active={activeTab === 'sod'}
         onClick={() => onChange('sod')}
-        title="Show SOD validation"
+        title="Show validation"
       >
-        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>SOD Validation</span>
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>Validation</span>
         {sodCount > 0 && (
           <span style={{
             flexShrink: 0,
@@ -1117,8 +1118,7 @@ const RightPropertiesPanel: React.FC = () => {
   const selectedShape = selectedObject && isShape(selectedObject) ? selectedObject : null;
   const selectedSymbol = selectedObject && isSymbol(selectedObject) ? selectedObject : null;
   const selectedTrack = selectedObject && isTrack(selectedObject) ? selectedObject : null;
-  const hasSODResult = checkResult !== null;
-  const activeTab: RightPanelTab = hasSODResult && sodPanelOpen ? 'sod' : 'properties';
+  const activeTab: RightPanelTab = sodPanelOpen ? 'sod' : 'properties';
 
   const mode: 'canvas' | 'layer' | 'text' | 'shape' | 'symbol' | 'track' =
     selectedTextObject ? 'text'
@@ -1151,18 +1151,19 @@ const RightPropertiesPanel: React.FC = () => {
         <ChangeListPanel />
       ) : (
         <>
-          {hasSODResult && (
+          {(
             <RightPanelTabs
               activeTab={activeTab}
-              sodCount={checkResult.counts.total}
+              sodCount={checkResult?.counts.total ?? 0}
               onChange={tab => setPanelOpen(tab === 'sod')}
             />
           )}
 
-          {activeTab === 'sod' ? (
-            <SODViolationsPanel showHeader={false} />
-          ) : (
+          <div style={{ display: activeTab === 'sod' ? 'flex' : 'none', flex: 1, minHeight: 0 }}><ValidationPanel /></div>
+          {activeTab !== 'sod' && (
             <>
+              {selectedObject?.sod && <SODMeasurementsSection obj={selectedObject} />}
+              {selectedObject && (selectedObject.sod?.assetKind === 'Gradient' || (isSymbol(selectedObject) && selectedObject.symbolId === 'gradient-post')) && <GradientPropertiesSection obj={selectedObject} />}
               {mode === 'text'   && selectedTextObject && <TextPropertiesPanel obj={selectedTextObject} />}
               {mode === 'track'  && selectedTrack       && <TrackPropertiesPanel track={selectedTrack} />}
               {mode === 'shape'  && selectedShape       && <ShapePropertiesPanel obj={selectedShape} />}

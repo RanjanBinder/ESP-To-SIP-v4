@@ -16,6 +16,7 @@
  */
 
 import type { CanvasObject } from '../../types/scene';
+import type { ValidationResult } from './validationModel';
 
 export type ViolationSeverity = 'V1' | 'V2';
 
@@ -45,6 +46,8 @@ export interface SODViolation {
 }
 
 export interface SODCheckResult {
+  /** Individual engineering rule evaluations; optional for legacy callers. */
+  evaluations?: ValidationResult[];
   id: string;
   /** What was validated — e.g. 'existing-esp'. */
   source: string;
@@ -113,9 +116,8 @@ export function runSODValidation(
 ): SODCheckResult {
   const list = Array.isArray(assets) ? assets : [];
   const violations: SODViolation[] = [];
-  let seq = 0;
   const push = (v: Omit<SODViolation, 'id'>) =>
-    violations.push({ id: `sodv-${++seq}`, ...v });
+    violations.push({ id: `sod:${v.ruleCode ?? v.ruleId}:${v.assetId ?? 'layout'}${v.ruleId === 'asset-overlap' ? ':' + encodeURIComponent(v.detail) : ''}`, ...v });
 
   const symbols = list.filter(o => o.type === 'symbol') as Extract<CanvasObject, { type: 'symbol' }>[];
   const texts   = list.filter(o => o.type === 'text');
@@ -228,6 +230,7 @@ export function runSODValidation(
 
   const sodAssets = list.filter(o => o.sod);
   let checksRun = 0;
+  const evaluations: ValidationResult[] = [];
 
   for (const o of sodAssets) {
     const m = o.sod!;
@@ -239,6 +242,7 @@ export function runSODValidation(
 
     /* SOD-I-01 — adjacent running-track centres ≥ 4265 mm. */
     if (m.assetKind === 'Track' && m.spacingToAdjacentTrack != null) {
+      const before = violations.length;
       checksRun++;
       if (m.spacingToAdjacentTrack < 4265) {
         push({
@@ -248,10 +252,17 @@ export function runSODValidation(
           measured: m.spacingToAdjacentTrack, required: '≥ 4265 mm', unit: 'mm', ...at,
         });
       }
+      if (violations.length === before) evaluations.push({
+        id: `sod:SOD-I-01:${o.id}`, ruleId: 'SOD-I-01', ruleName: 'Track spacing',
+        validationType: 'sod', status: 'passed', assetIds: [o.id], assetType: m.assetKind,
+        trackId: m.trackId, trackName: m.trackName, chainage: m.chainage,
+        expectedValue: '\u2265 4265 mm', actualValue: m.spacingToAdjacentTrack, source,
+      });
     }
 
     /* SOD-II-03 — passenger platform face ≥ 1670 mm from track centre. */
     if (m.assetKind === 'Platform' && m.clearanceFromTrackCentre != null) {
+      const before = violations.length;
       checksRun++;
       if (m.clearanceFromTrackCentre < 1670) {
         push({
@@ -261,10 +272,17 @@ export function runSODValidation(
           measured: m.clearanceFromTrackCentre, required: '≥ 1670 mm', unit: 'mm', ...at,
         });
       }
+      if (violations.length === before) evaluations.push({
+        id: `sod:SOD-II-03:${o.id}`, ruleId: 'SOD-II-03', ruleName: 'Platform clearance',
+        validationType: 'sod', status: 'passed', assetIds: [o.id], assetType: m.assetKind,
+        trackId: m.trackId, trackName: m.trackName, chainage: m.chainage,
+        expectedValue: '\u2265 1670 mm', actualValue: m.clearanceFromTrackCentre, source,
+      });
     }
 
     /* SOD-II-04 — goods platform height ≤ 1065 mm above rail level. */
     if (m.assetKind === 'Platform' && m.subtype === 'goods' && m.heightAboveRailLevel != null) {
+      const before = violations.length;
       checksRun++;
       if (m.heightAboveRailLevel > 1065) {
         push({
@@ -274,10 +292,17 @@ export function runSODValidation(
           measured: m.heightAboveRailLevel, required: '≤ 1065 mm', unit: 'mm', ...at,
         });
       }
+      if (violations.length === before) evaluations.push({
+        id: `sod:SOD-II-04:${o.id}`, ruleId: 'SOD-II-04', ruleName: 'Goods platform height',
+        validationType: 'sod', status: 'passed', assetIds: [o.id], assetType: m.assetKind,
+        trackId: m.trackId, trackName: m.trackName, chainage: m.chainage,
+        expectedValue: '\u2264 1065 mm', actualValue: m.heightAboveRailLevel, source,
+      });
     }
 
     /* SOD-I-07 — permanent structure ≥ 1675 mm from track centre. */
     if (m.assetKind === 'Structure' && m.clearanceFromTrackCentre != null) {
+      const before = violations.length;
       checksRun++;
       if (m.clearanceFromTrackCentre < 1675) {
         push({
@@ -287,10 +312,17 @@ export function runSODValidation(
           measured: m.clearanceFromTrackCentre, required: '≥ 1675 mm', unit: 'mm', ...at,
         });
       }
+      if (violations.length === before) evaluations.push({
+        id: `sod:SOD-I-07:${o.id}`, ruleId: 'SOD-I-07', ruleName: 'Structure clearance',
+        validationType: 'sod', status: 'passed', assetIds: [o.id], assetType: m.assetKind,
+        trackId: m.trackId, trackName: m.trackName, chainage: m.chainage,
+        expectedValue: '\u2265 1675 mm', actualValue: m.clearanceFromTrackCentre, source,
+      });
     }
 
     /* SOD-II-10 — foot-over-bridge soffit ≥ 6250 mm above rail level. */
     if (m.assetKind === 'Structure' && m.subtype === 'fob' && m.heightAboveRailLevel != null) {
+      const before = violations.length;
       checksRun++;
       if (m.heightAboveRailLevel < 6250) {
         push({
@@ -300,10 +332,17 @@ export function runSODValidation(
           measured: m.heightAboveRailLevel, required: '≥ 6250 mm', unit: 'mm', ...at,
         });
       }
+      if (violations.length === before) evaluations.push({
+        id: `sod:SOD-II-10:${o.id}`, ruleId: 'SOD-II-10', ruleName: 'FOB height',
+        validationType: 'sod', status: 'passed', assetIds: [o.id], assetType: m.assetKind,
+        trackId: m.trackId, trackName: m.trackName, chainage: m.chainage,
+        expectedValue: '\u2265 6250 mm', actualValue: m.heightAboveRailLevel, source,
+      });
     }
 
     /* SOD-II-02 — ruling gradient no steeper than 1:400 (denominator ≥ 400). */
     if (m.assetKind === 'Gradient' && m.gradientDenominator != null) {
+      const before = violations.length;
       checksRun++;
       if (m.gradientDenominator < 400) {
         push({
@@ -313,6 +352,12 @@ export function runSODValidation(
           measured: m.gradientDenominator, required: '≤ 1:400 (denominator ≥ 400)', ...at,
         });
       }
+      if (violations.length === before) evaluations.push({
+        id: `sod:SOD-II-02:${o.id}`, ruleId: 'SOD-II-02', ruleName: 'Ruling gradient',
+        validationType: 'sod', status: 'passed', assetIds: [o.id], assetType: m.assetKind,
+        trackId: m.trackId, trackName: m.trackName, chainage: m.chainage,
+        expectedValue: 'denominator \u2265 400', actualValue: m.gradientDenominator, source,
+      });
     }
   }
 
@@ -326,6 +371,7 @@ export function runSODValidation(
     ranAt: new Date().toISOString(),
     assetsChecked: sodAssets.length,
     checksRun,
+    evaluations,
     violations,
     counts: { V1: v1, V2: v2, total: violations.length },
     checksPassed: Math.max(0, checksRun - violations.length),

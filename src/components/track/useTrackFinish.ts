@@ -57,6 +57,7 @@ export function useTrackFinish(): () => boolean {
         ranAt: new Date().toISOString(),
         assetsChecked: (base?.assetsChecked ?? 0) + 1,
         checksRun: (base?.checksRun ?? 0) + CHECKS_PER_TRACK,
+        evaluations: base?.evaluations,
         violations,
         counts: {
           V1: violations.filter(v => v.severity === 'V1').length,

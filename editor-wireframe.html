@@ -1,0 +1,1536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESP Editor — Home Ribbon Mockup</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:12px 'Segoe UI',Arial,sans-serif;color:#21334d;background:#fff}.editor{height:100vh;min-height:640px;min-width:1050px;display:grid;grid-template-rows:66px 50px 60px 1fr 28px}.global{display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #e0e4eb}.brand{display:flex;align-items:center;gap:14px;color:#657084}.brand strong{font-size:13px;font-weight:600}.global-right{display:flex;align-items:center;gap:28px;color:#6b7280;font-size:20px}.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#e4e9f1;font-size:14px;color:#203650}.tabs{display:flex;align-items:end;padding:0 16px;border-bottom:1px solid #cdd5e2;gap:0}.tab{padding:12px 15px 10px;height:33px;white-space:nowrap}.tab.active{background:#deebff;color:#1555ff;border-bottom:2px solid #2563ff}.document{margin-left:auto;align-self:center;font-size:11px;color:#7a8799;padding-right:24px}.quick{align-self:center;display:flex;gap:20px;font-size:17px;color:#677184;padding-right:8px}.ribbon{display:flex;align-items:center;background:#f0f2f6;border-bottom:1px solid #cfd6e2;padding:3px 20px;gap:12px}.ribbon-group{height:50px;display:flex;align-items:center;gap:8px;padding-right:15px;border-right:1px solid #c5cedd}.ribbon-group:last-child{border:0}.tool{min-width:52px;height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#334155;font-size:10px;border:1px solid transparent;border-radius:4px}.tool i{font-style:normal;font-size:19px}.tool.active,.ribbon-chip.active{background:#dfebff;border-color:#9dbfff;color:#1555ff}.stack{display:flex;flex-direction:column;gap:4px}.ribbon-chip{height:23px;padding:4px 8px;border:1px solid transparent;border-radius:4px;font-size:10px;min-width:104px}.disabled{color:#a5acb8}.workspace{min-height:0;display:grid;grid-template-columns:280px minmax(390px,1fr) 384px;margin:0 9px 0 16px}.layers{background:#f5f6fb;border-right:1px solid #d8deea;display:flex;flex-direction:column;min-height:0}.panel-heading{height:41px;display:flex;align-items:center;padding:0 9px;gap:13px;border-bottom:1px solid #d8deea;background:#e9ecf4}.panel-heading strong{font-size:13px;letter-spacing:.03em}.count{margin-left:auto;background:#dfebff;color:#2462e4;border-radius:20px;padding:5px 9px}.current-layer{padding:10px 8px;border-bottom:1px solid #e0e5ef;font-size:11px}.dot{color:#22a77d;margin-right:6px}.search-row{display:flex;gap:6px;padding:7px 8px}.search,.filter{border:1px solid #d9dfeb;border-radius:4px;padding:6px;font-size:11px;color:#8390a4}.search{flex:1}.filter{color:#243750}.layer-actions{padding:3px 10px 10px;display:flex;gap:14px;color:#8590a1;font-size:12px}.layer-table{overflow:auto;flex:1;padding-right:6px;scrollbar-color:#dce1ed #f5f6fb;scrollbar-width:thin}table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px}thead{background:#e9ecf4;position:sticky;top:0;color:#79879d;font-size:10px}th{text-align:left;font-weight:600}td,th{height:30px;border-top:1px solid #d8deea}td:first-child,th:first-child{padding-left:5px;width:26px}td:nth-child(2),th:nth-child(2){width:23px}td:nth-child(3),th:nth-child(3){width:28px}td:nth-last-child(-n+3),th:nth-last-child(-n+3){width:25px;text-align:center}td.name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.box{display:inline-block;width:12px;height:12px;border:1px solid #929ba8;border-radius:2px;background:white;vertical-align:middle}.swatch{display:inline-block;width:19px;height:21px;border:1px solid #98a6bf;border-radius:3px;padding:3px;vertical-align:middle}.swatch:after{content:'';display:block;width:100%;height:100%;background:#111;border-radius:1px}.swatch.light:after{background:#b9cbff}.check{color:#139b79}.layer-footer{padding:9px 8px;border-top:1px solid #d8deea;color:#8190a4;font-size:10px}.canvas{background:#fff;position:relative;min-width:0}.canvas-note{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#c4cbd5;text-align:center;font-size:11px;letter-spacing:.08em}.canvas-note span{display:block;font-size:10px;letter-spacing:0;margin-top:8px;color:#d1d6de}.validation{border-left:1px solid #d8deea;background:#fff;display:flex;flex-direction:column;min-height:0}.panel-tabs{height:60px;background:#e9ecf4;display:flex;align-items:center;gap:16px;padding:8px 17px;border-bottom:1px solid #d8deea}.switch{display:flex;border:1px solid #d5ddec;background:#f1f4f9;border-radius:12px;padding:4px;flex:1}.switch span{flex:1;text-align:center;padding:9px 5px;font-size:12px;color:#7a8ba5}.switch .active{background:white;border-radius:8px;color:#1555ff;font-weight:600}.close{color:#7a8799;font-size:17px}.validation-tabs{display:flex;min-height:40px;border-bottom:1px solid #d8deea;background:#f5f6fb;padding:0 12px}.validation-tabs span{flex:1;display:grid;place-items:center;color:#71819a}.validation-tabs .active{color:#1656ff;border-bottom:2px solid #1656ff}.validation-content{padding:20px;overflow:auto;scrollbar-width:thin}.summary-title{margin-bottom:12px;display:flex;gap:8px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}.metric{border:2px solid #e3e6ed;border-radius:12px;text-align:center;padding:7px 0 9px}.metric strong{display:block;font-size:18px;color:#15308d}.metric span{display:block;font-size:9px;margin-top:4px;color:#1647d7;letter-spacing:.04em}.metric.passed{border-color:#4de9b7;background:#eefff7}.metric.passed strong,.metric.passed span{color:#00aa80}.metric.violations strong,.metric.violations span{color:#f0002c}.metric.na strong,.metric.na span{color:#f28100}.rule{border:2px solid #51e7b4;border-radius:12px;margin-bottom:12px;padding:14px 14px 13px 22px;position:relative;display:flex;gap:14px;overflow:hidden;min-height:124px}.rule:before{content:'';position:absolute;top:0;bottom:0;left:0;width:5px;background:#09ba86}.rule-icon{border:1px solid #99edcd;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;color:#00b887;background:#effcf6;flex-shrink:0}.rule-body{flex:1;min-width:0}.rule-header{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:10px}.rule-id{font-size:10px;font-weight:600;letter-spacing:.03em;color:#95a1b4}.passed-label{font-size:8px;color:#00a879;background:#ecfff6;border:1px solid #a0f0d0;border-radius:3px;padding:3px 5px}.rule-title{font-size:12px;margin-bottom:10px}.measurement{font-size:12px;color:#78879e;margin:5px 0}.measurement b{color:#244465;font-weight:500}.status{display:flex;align-items:center;gap:12px;border-top:1px solid #ccd4e2;background:#f0f2f6;margin:0 9px 7px 16px;padding:0 12px;font:10px Consolas,monospace;color:#285184;height:28px}.status span+span{border-left:1px solid #c6cedd;padding-left:12px}.status .mockup{margin-left:auto;color:#8c96a7;border:0;font:10px 'Segoe UI',sans-serif}
+/* Compact CAD workspace: reserve vertical space for the model, keep controls dense. */
+:root {
+  --ui-font: 'Segoe UI', Arial, sans-serif;
+  --mono-font: Consolas, 'Courier New', monospace;
+  --line: #dce1e9;
+  --accent: #225de5;
+}
+body { font: 11px var(--ui-font); }
+.editor {
+  height: 100dvh;
+  min-height: 420px;
+  min-width: 900px;
+  grid-template-rows: 36px 30px 46px minmax(0, 1fr) 24px;
+}
+.global { padding: 0 12px; background: #fafbfc; }
+.brand { gap: 8px; }
+.brand strong { font-size: 12px; }
+.brand > span { font-size: 16px !important; }
+.global-right { gap: 18px; font-size: 16px; }
+.avatar { width: 26px; height: 26px; font-size: 11px; }
+.tabs { padding: 0 8px; align-items: stretch; }
+.tab { height: 30px; padding: 8px 13px 6px; font-size: 11px; }
+.document { font-size: 10px; padding-right: 15px; white-space: nowrap; }
+.quick { gap: 14px; font-size: 14px; }
+.ribbon { padding: 2px 8px; gap: 6px; }
+.ribbon-group { height: 40px; gap: 4px; padding-right: 9px; }
+.tool { height: 40px; min-width: 42px; gap: 1px; font-size: 10px; }
+.tool i { font-size: 16px; }
+.stack { gap: 1px; }
+.ribbon-chip { height: 19px; min-width: 92px; padding: 2px 6px; line-height: 13px; }
+.workspace {
+  margin: 0;
+  grid-template-columns: 240px minmax(320px, 1fr) 300px;
+}
+.layers { background: #f8f9fc; }
+.panel-heading { height: 32px; min-height: 32px; padding: 0 8px; gap: 10px; }
+.panel-heading strong { font-size: 11px; letter-spacing: .04em; }
+.count { padding: 3px 7px; font-size: 10px; }
+.current-layer { padding: 7px 8px; font-size: 10px; }
+.search-row { gap: 4px; padding: 5px 7px; }
+.search, .filter { padding: 4px 5px; font-size: 10px; }
+.layer-actions { padding: 2px 8px 6px; gap: 12px; font-size: 10px; }
+.layer-table { padding-right: 3px; }
+table { font-size: 10px; }
+td, th { height: 25px; }
+td:first-child, th:first-child { width: 21px; }
+td:nth-child(2), th:nth-child(2) { width: 19px; }
+td:nth-child(3), th:nth-child(3) { width: 23px; }
+td:nth-last-child(-n+3), th:nth-last-child(-n+3) { width: 20px; }
+.swatch { width: 16px; height: 17px; padding: 2px; }
+.box { width: 10px; height: 10px; }
+.layer-footer { padding: 6px 8px; font-size: 9px; }
+.canvas { overflow: hidden; }
+.canvas-note { font-size: 10px; letter-spacing: .12em; }
+.canvas-note span { font-size: 9px; margin-top: 5px; }
+.view-label {
+  position: absolute; top: 10px; left: 12px;
+  color: #7c8899; font: 10px var(--mono-font);
+}
+.view-label span { color: #adb6c2; }
+.crosshair {
+  position: absolute; left: 57%; top: 43%; width: 26px; height: 26px;
+}
+.crosshair::before, .crosshair::after {
+  content: ''; position: absolute; background: #758195;
+}
+.crosshair::before { top: 12px; left: 0; width: 26px; height: 1px; }
+.crosshair::after { top: 0; left: 12px; width: 1px; height: 26px; }
+.origin {
+  position: absolute; bottom: 42px; left: 15px;
+  width: 42px; height: 42px; color: #8895a5; font: 9px var(--mono-font);
+}
+.origin::before {
+  content: ''; position: absolute; left: 8px; bottom: 8px;
+  width: 25px; height: 25px; border-left: 1px solid #8c9bad; border-bottom: 1px solid #8c9bad;
+}
+.origin .y { position: absolute; top: 0; left: 5px; }
+.origin .x { position: absolute; bottom: 4px; right: 0; }
+.command-line {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 27px;
+  display: flex; align-items: center; gap: 9px; padding: 0 10px;
+  border-top: 1px solid var(--line); background: #fafbfc;
+  color: #8290a2; font: 10px var(--mono-font);
+}
+.command-line strong { font-weight: 400; color: #384f6b; }
+.command-line .hint { margin-left: auto; font: 9px var(--ui-font); color: #a1aaba; }
+.panel-tabs { height: 40px; min-height: 40px; padding: 4px 8px; gap: 9px; }
+.switch { border-radius: 6px; padding: 2px; }
+.switch span { padding: 6px 3px; font-size: 11px; }
+.switch .active { border-radius: 4px; }
+.close { font-size: 15px; }
+.validation-tabs { min-height: 30px; padding: 0 8px; font-size: 10px; }
+.validation-content { padding: 10px; }
+.summary-title { font-size: 11px; margin-bottom: 8px; }
+.summary { gap: 4px; margin-bottom: 10px; }
+.metric { border-width: 1px; border-radius: 5px; padding: 6px 0; }
+.metric strong { font-size: 16px; font-weight: 600; }
+.metric span { font-size: 8px; margin-top: 3px; letter-spacing: 0; }
+.rule {
+  border-width: 1px; border-radius: 5px; margin-bottom: 7px;
+  padding: 10px 8px 8px 12px; min-height: 91px; gap: 8px;
+}
+.rule::before { width: 3px; }
+.rule-icon { width: 20px; height: 20px; font-size: 11px; }
+.rule-header { gap: 3px; margin-bottom: 7px; }
+.rule-id { font-size: 8px; letter-spacing: 0; }
+.passed-label { font-size: 7px; padding: 2px 4px; }
+.rule-title { font-size: 11px; line-height: 15px; margin-bottom: 6px; }
+.measurement { font: 10px var(--mono-font); margin: 3px 0; }
+.status { margin: 0; height: 24px; padding: 0 9px; gap: 9px; font-size: 9px; }
+.status span+span { padding-left: 9px; }
+.status .mockup { font-size: 9px; }
+@media (max-width: 1150px) {
+  .workspace { grid-template-columns: 215px minmax(320px, 1fr) 275px; }
+  .document { max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
+  .quick { gap: 10px; }
+  .tab { padding-left: 10px; padding-right: 10px; }
+  .validation-content { padding: 8px; }
+  .rule { gap: 6px; }
+}
+/* Railway ESP Home ribbon: everyday tools, grouped by design task. */
+.editor { grid-template-rows: 36px 30px 78px minmax(0, 1fr) 24px; }
+.ribbon {
+  align-items: stretch; gap: 0; padding: 4px 8px 2px;
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: thin;
+  background: #f5f7fa;
+}
+.home-group {
+  flex: 0 0 auto; padding: 0 8px; border-right: 1px solid #d7deea;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.home-group:first-child { padding-left: 0; }
+.home-group:last-child { border-right: 0; }
+.home-tools { display: grid; grid-template-columns: repeat(2, max-content); gap: 2px 4px; }
+.home-tools.three { grid-template-columns: repeat(3, max-content); }
+.home-tool {
+  height: 23px; display: flex; align-items: center; gap: 5px;
+  padding: 3px 5px; border: 1px solid transparent; border-radius: 3px;
+  color: #34465e; font-size: 10px; white-space: nowrap;
+}
+.home-tool.active { color: #1a58db; background: #e3edff; border-color: #a7c4ff; }
+.home-tool.primary { color: #1755d4; font-weight: 600; }
+.home-tool svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.group-caption { text-align: center; color: #8692a3; font-size: 9px; line-height: 17px; letter-spacing: .02em; }
+.tool-arrow { color: #9ba6b5; font-size: 9px; margin-left: 2px; }
+.icon-library { position: absolute; width: 0; height: 0; overflow: hidden; }
+.ribbon[hidden] { display: none; }
+.validation-ribbon .home-group { padding-left: 12px; padding-right: 12px; }
+.validation-ribbon .group-caption { text-align: left; }
+.scope-field { min-width: 138px; justify-content: space-between; border-color: #d5ddea; background: #fff; }
+.run-validation {
+  display: flex; align-items: center; gap: 8px; height: 47px;
+  padding: 0 15px; border: 1px solid #1e55cf; border-radius: 4px;
+  background: #225de5; color: white; font: 600 11px var(--ui-font);
+}
+.run-validation svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.run-validation small { display: block; font-size: 9px; font-weight: 400; opacity: .8; margin-top: 3px; }
+.validation-ready { margin-left: auto; min-width: 145px; padding: 7px 12px; color: #7f8ca0; font-size: 10px; line-height: 17px; }
+.validation-ready strong { display: block; color: #3b5678; font-weight: 500; }
+/* Excel-style desktop chrome and command ribbon. */
+:root { --accent: #217346; }
+.editor { grid-template-rows: 36px 30px 94px minmax(0, 1fr) 24px; }
+.global { background: #217346; border-bottom: 0; color: #fff; gap: 18px; }
+.brand, .global-right { color: white; }
+.brand strong { font-weight: 600; }
+.global-right { gap: 16px; font-size: 13px; }
+.avatar { background: #e6f2eb; color: #185a35; }
+.quick-access { display: flex; gap: 14px; color: #e4f1e9; font-size: 15px; }
+.workbook-title { margin-left: 10px; font-size: 11px; color: #e4f1e9; }
+.office-search { margin-left: auto; width: 240px; padding: 5px 10px; background: #ffffff24; border: 1px solid #ffffff28; border-radius: 4px; font-size: 10px; color: #e6f2eb; }
+.tabs { background: #f3f3f3; border-bottom: 1px solid #d3d3d3; }
+.tab { font-size: 11px; height: 30px; padding: 8px 15px 6px; }
+.tab.file { color: #217346; font-weight: 600; }
+.tab.active { background: #fff; color: #217346; border-bottom: 2px solid #217346; font-weight: 600; }
+.document { color: #7c847e; }
+.ribbon { background: #fff; padding: 5px 8px 2px; border-bottom: 1px solid #c9c9c9; }
+.home-group { border-color: #dedede; padding: 0 12px; }
+.validation-ribbon .home-group { padding: 0 14px; }
+.home-tools { grid-template-rows: repeat(3, 22px); grid-auto-flow: column; grid-template-columns: none; gap: 0 7px; }
+.home-tools.three { grid-template-columns: none; }
+.home-tool { height: 22px; border-radius: 2px; font-size: 11px; padding: 2px 5px; color: #3e4742; }
+.home-tool svg { color: #527862; }
+.home-tool.active { color: #185a35; background: #e9f2ec; border-color: #b5cebd; }
+.home-tool.primary { color: #217346; }
+.group-caption, .validation-ribbon .group-caption { text-align: center; line-height: 17px; font-size: 10px; color: #777; position: relative; }
+.group-caption::after { content: '⌟'; position: absolute; right: 0; font-size: 11px; color: #999; }
+.scope-field { min-width: 151px; background: #fff; border-color: #c8ceca; }
+.run-validation {
+  height: 66px; padding: 5px 15px; min-width: 100px;
+  flex-direction: column; justify-content: center; gap: 3px;
+  background: #edf5ef; color: #185a35; border-color: #b5cebd;
+  border-radius: 2px; font-size: 11px; text-align: center;
+}
+.run-validation svg { width: 29px; height: 29px; stroke: #217346; }
+.run-validation small { font-size: 8px; margin-top: 2px; }
+.validation-ready { padding-top: 13px; font-size: 10px; }
+.validation-ready strong { color: #217346; }
+.panel-heading, .panel-tabs { background: #f0f2f0; }
+.layers, .validation-tabs { background: #f8faf8; }
+.count { background: #e4f0e8; color: #217346; }
+thead { background: #eef2ef; }
+.switch { background: #e9efea; border-color: #d1ded4; }
+.switch .active { color: #217346; }
+.validation-tabs .active { color: #217346; border-color: #217346; }
+.metric strong, .metric span { color: #217346; }
+.status { background: #f2f4f2; color: #526458; }
+@media (max-width: 1150px) {
+  .tab { padding-left: 10px; padding-right: 10px; }
+  .office-search { width: 175px; }
+  .workbook-title { max-width: 225px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .validation-ribbon .home-group { padding-left: 10px; padding-right: 10px; }
+}
+.workspace { --left-width: 240px; --right-width: 300px; grid-template-columns: var(--left-width) minmax(320px, 1fr) var(--right-width); }
+.workspace.left-closed { --left-width: 0px; }
+.workspace.right-closed { --right-width: 0px; }
+.workspace.left-closed .layers, .workspace.right-closed .validation { display: none; }
+button { font-family: inherit; cursor: pointer; }
+button.tab { border: 0; background: transparent; color: inherit; }
+button.tab.active { background: white; color: #217346; border-bottom: 2px solid #217346; }
+.panel-toggle { padding: 4px 8px; background: #ffffff15; border: 1px solid #ffffff55; border-radius: 3px; color: white; font-size: 10px; }
+.panel-toggle[aria-expanded="false"] { background: transparent; color: #d0e6d7; }
+.panel-close { border: 0; background: transparent; color: #718477; padding: 3px 5px; font-size: 16px; line-height: 16px; }
+button:focus-visible { outline: 2px solid #4f9f72; outline-offset: 2px; }
+@media (max-width: 1150px) { .workspace { --left-width: 215px; --right-width: 275px; } .workspace.left-closed { --left-width: 0px; } .workspace.right-closed { --right-width: 0px; } .office-search { width: 150px; } .global-right { gap: 8px; } }
+.tabs { overflow-x: auto; scrollbar-width: thin; }
+.tabs .tab { flex-shrink: 0; padding-left: 12px; padding-right: 12px; }
+.tabs .document { white-space: nowrap; }
+button.home-tool { background: transparent; text-align: left; font-family: inherit; }
+button.home-tool:hover { background: #edf4ef; border-color: #c4d8ca; }
+button.home-tool.active { background: #e9f2ec; border-color: #b5cebd; }
+button.home-tool.selected-command { background: #dcecdf; border-color: #7eaa8b; color: #185a35; }
+.home-group.tool-group { min-width: max-content; }
+.home-group.tool-group .home-tools { grid-template-columns: repeat(2, max-content); grid-auto-flow: row; }
+.command-line { overflow: hidden; white-space: nowrap; }
+.command-line > span:not(.hint) { overflow: hidden; text-overflow: ellipsis; }
+.command-line .hint { flex-shrink: 0; }
+/* CAD layer manager: compact state columns with properties for the selected layer. */
+.workspace { --left-width: 310px; }
+.workspace.left-closed { --left-width: 0px; }
+.layers .panel-heading { height: 34px; min-height: 34px; }
+.layer-manager-tools { display: flex; gap: 4px; padding: 6px 7px; border-bottom: 1px solid #dce1e9; }
+.layer-action { border: 1px solid #ccd5ce; background: #fff; color: #34513e; border-radius: 3px; padding: 4px 6px; font-size: 10px; }
+.layer-action:disabled { color: #a7afa9; background: #f3f5f3; cursor: default; }
+.layer-action[aria-pressed="true"] { background: #e1efe5; border-color: #84ab90; }
+.layers .search-row input { width: 0; min-width: 0; font-family: inherit; background: white; color: #34465e; }
+.layers .search-row select { max-width: 105px; background: white; font-family: inherit; }
+.cad-layer-table { font-size: 10px; }
+.cad-layer-table th, .cad-layer-table td { height: 27px; border-top: 0; border-bottom: 1px solid #e3e8e4; }
+.cad-layer-table th { height: 25px; }
+.cad-layer-table th:nth-child(n), .cad-layer-table td:nth-child(n) { width: 23px; text-align: center; padding: 0; }
+.cad-layer-table th.layer-name, .cad-layer-table td.layer-name { width: auto; text-align: left; padding: 0 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.cad-layer-table tbody tr { cursor: pointer; }
+.cad-layer-table tbody tr:hover { background: #eef4f0; }
+.cad-layer-table tr.layer-selected { background: #e1eee5; }
+.cad-layer-table tr.layer-current .layer-name { font-weight: 600; color: #1c673c; }
+.cad-layer-table input[type="checkbox"], .cad-layer-table input[type="radio"] { width: 11px; height: 11px; accent-color: #217346; vertical-align: middle; margin: 0; cursor: pointer; }
+.layer-state { width: 22px; height: 23px; border: 0; background: transparent; color: #365d44; padding: 3px; }
+.layer-state svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.layer-state.off { color: #a6afa9; }
+.layer-colour { width: 14px; height: 14px; border: 1px solid #8b9b91; padding: 0; border-radius: 2px; vertical-align: middle; }
+.layer-details { border-top: 1px solid #cfd9d2; padding: 8px; background: #f4f7f5; }
+.layer-details h3 { margin: 0 0 6px; font-size: 10px; font-weight: 600; display: flex; justify-content: space-between; }
+.layer-property { display: grid; grid-template-columns: 80px minmax(0,1fr); gap: 8px; align-items: center; margin-bottom: 5px; font-size: 10px; color: #6f8075; }
+.layer-property input, .layer-property select { min-width: 0; width: 100%; height: 23px; border: 1px solid #cdd7d0; background: white; color: #324d3b; border-radius: 3px; padding: 2px 5px; font: 10px var(--ui-font); }
+.layer-property input[type="color"] { width: 32px; padding: 2px; }
+.colour-value { display: flex; align-items: center; gap: 7px; font: 10px var(--mono-font); }
+.layer-property small { color: #87948c; font-size: 9px; }
+.layer-feedback { padding: 5px 8px; min-height: 24px; border-top: 1px solid #dce4df; font-size: 9px; color: #547360; background: #edf4ef; }
+@media (max-width: 1150px) { .workspace { --left-width: 280px; } .workspace.left-closed { --left-width: 0px; } }
+.sod-mode { min-width: 105px; height: 66px; background: #edf5ef; border: 1px solid #b5cebd; border-radius: 3px; display: grid; place-content: center; gap: 5px; text-align: center; color: #217346; font-size: 11px; }
+.sod-mode b { font-size: 20px; font-weight: 500; }
+.sod-config { display: grid; gap: 3px; font-size: 10px; }
+.sod-config label { display: flex; align-items: center; gap: 7px; white-space: nowrap; height: 20px; }
+.sod-config input { accent-color: #217346; width: 11px; height: 11px; margin: 0; }
+.sod-config select { border: 1px solid #cbd6ce; background: white; border-radius: 2px; padding: 2px 5px; font: 10px var(--ui-font); max-width: 150px; }
+.sod-status { padding: 8px 10px; border-bottom: 1px solid #dbe3dd; background: #f3f7f4; font-size: 10px; color: #607666; line-height: 16px; }
+.sod-status strong { display: block; font-size: 12px; color: #245e39; }
+.sod-result-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin: 8px 0; }
+.sod-result-filters input { grid-column: 1 / -1; min-width: 0; }
+.sod-result-filters input, .sod-result-filters select { width: 100%; padding: 5px; border: 1px solid #d0dad3; border-radius: 3px; font: 10px var(--ui-font); background: #fff; }
+.sod-empty { padding: 30px 8px; text-align: center; color: #8a978e; font-size: 11px; line-height: 19px; }
+.sod-card { width: 100%; text-align: left; margin: 0 0 6px; padding: 9px; background: white; border: 1px solid #e0e5e1; border-left: 3px solid #bf433d; border-radius: 4px; font: 10px var(--ui-font); color: #3a4e40; }
+.sod-card.passed { border-left-color: #25925c; }
+.sod-card.warning { border-left-color: #d8992a; }
+.sod-card.selected { background: #f2f7f3; border-color: #78a185; }
+.sod-card strong { display: block; margin: 5px 0; font-size: 11px; line-height: 15px; }
+.sod-card .result-status { color: #a13b34; font-size: 9px; text-transform: uppercase; }
+.sod-card.passed .result-status { color: #217346; }
+.sod-card.warning .result-status { color: #a87824; }
+.sod-detail { border-top: 1px solid #d7e1da; padding: 10px; background: #f7faf8; font-size: 10px; line-height: 17px; }
+.sod-detail strong { display: block; margin-bottom: 4px; }
+.sod-detail .layer-action { margin-top: 7px; }
+.sod-detail[hidden] { display: none; }
+.validation-workflow-body { display:flex; flex-direction:column; flex:1; min-height:0; }
+.validation-workflow-body[hidden] { display:none; }
+.validation-workflow-content { flex:1; min-height:0; }
+.validation-summary-five { grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; }
+.validation-summary-five button { background:white; cursor:pointer; }
+.validation-summary-five button.passed { background:#eefff7; }
+.validation-summary-five button[aria-pressed="true"] { outline:1px solid #217346; outline-offset:1px; }
+.validation-summary-five .metric.condonation strong,.validation-summary-five .metric.condonation span { color:#8059a5; }
+.validation-summary-five .metric span { line-height:11px; font-size:8px; }
+.validation-profile-text { font-size:10px; line-height:16px; white-space:nowrap; }
+.category-grid { grid-template-columns:repeat(2,max-content); grid-template-rows:repeat(3,20px); grid-auto-flow:column; column-gap:12px; }
+#validation-ribbon .sod-config { align-content:start; }
+#validation-ribbon .sod-config small { font-size:8px; color:#7e8c83; }
+#validation-ribbon .run-validation { height:43px; padding:3px 9px; flex-direction:row; min-width:138px; }
+#validation-ribbon .run-validation svg { width:19px; height:19px; }
+#validation-ribbon button:disabled { opacity:.45; cursor:default; }
+.validation-finalization { padding:8px; border-top:1px solid #dbe3dd; display:flex; flex-wrap:wrap; gap:5px; background:#f7faf8; }
+.validation-finalization small { width:100%; color:#7a857e; font-size:9px; line-height:13px; }
+.validation-result-meta { color:#728279; font-size:9px; line-height:15px; }
+.validation-result-values { margin:7px 0; display:grid; grid-template-columns:55px minmax(0,1fr); gap:3px 5px; font-size:9px; }
+.validation-result-values dt { color:#829088; }.validation-result-values dd { margin:0; overflow-wrap:anywhere; }
+.validation-result-actions { display:flex; flex-wrap:wrap; gap:4px; }
+.validation-result-actions button { font-size:9px; padding:3px 5px; }
+article.sod-card { cursor:default; }
+article.sod-card p { font-size:9px; color:#67766c; line-height:14px; margin:6px 0; }
+.sod-card.condonation { border-left-color:#8c64ac; }.sod-card.condonation .result-status { color:#8156a3; }
+.sod-card.not_applicable { border-left-color:#a1a9a4; }.sod-card.not_applicable .result-status { color:#7e8d84; }
+.validation-dialog { border:1px solid #c9d6cd; border-radius:7px; width:min(580px,90vw); max-height:80vh; padding:0; color:#354d3d; font:12px var(--ui-font); box-shadow:0 18px 50px #12321e30; }
+.validation-dialog::backdrop { background:#1d30224a; }
+.validation-dialog header { position:sticky; top:0; display:flex; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #dbe3dd; background:#f3f7f4; }
+.validation-dialog > div { padding:16px; }
+.validation-profile-details { display:grid; grid-template-columns:100px 1fr; gap:8px; }.validation-profile-details dd { margin:0; }
+.validation-history-row { display:block; text-align:left; width:100%; margin-bottom:6px; padding:10px; border:1px solid #d9e3dc; border-radius:4px; background:white; color:inherit; }
+.validation-history-row span { display:block; font-size:10px; margin-top:5px; color:#7d8a82; }
+.validation-dialog form label { display:grid; grid-template-columns:100px 1fr; gap:8px; align-items:center; margin-bottom:10px; }
+.validation-dialog input,.validation-dialog textarea,.validation-dialog select { min-width:0; border:1px solid #cbd8cf; padding:7px; border-radius:3px; font:11px var(--ui-font); }
+.validation-dialog textarea { min-height:70px; }
+.validation-focus-overlay { position:absolute; inset:0; z-index:3; background:#ffffffd9; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+.validation-focus-label { position:absolute; top:40%; font:10px var(--mono-font); text-align:center; color:#246744; line-height:17px; }
+.validation-focus-shape { border:2px solid #e19723; background:#edb24320; box-shadow:0 0 0 7px #ecc76a20; }
+.validation-focus-overlay button { pointer-events:auto; position:absolute; top:12px; right:12px; border:1px solid #cbd8cf; background:white; color:#567b61; border-radius:3px; }
+.validation-result-tabs { display:flex; flex-shrink:0; gap:0; padding:0 8px; background:#f4f7f5; border-bottom:1px solid #d8e2db; }
+.validation-result-tabs button { flex:1; border:0; border-bottom:2px solid transparent; background:transparent; color:#75857a; padding:9px 6px 7px; font:11px var(--ui-font); }
+.validation-result-tabs button[aria-selected="true"] { color:#217346; border-bottom-color:#217346; font-weight:600; background:#fff; }
+.validation-result-tabs button:disabled { opacity:.45; cursor:default; }
+#validation-status { padding:7px 10px; font-size:10px; line-height:15px; }
+#validation-status[hidden] { display:none; }
+.change-view { display:flex; flex-direction:column; flex:1; min-height:0; }
+.change-view[hidden] { display:none; }
+.change-settings { padding:9px; border-bottom:1px solid #d8e2db; background:#f5f8f6; }
+.change-settings label { display:flex; align-items:center; gap:6px; font-size:10px; margin-bottom:6px; }
+.change-settings select { min-width:0; flex:1; padding:4px; font:10px var(--ui-font); border:1px solid #ccd8d0; border-radius:3px; background:white; }
+.change-settings small { display:block; color:#7b897f; line-height:14px; font-size:9px; }
+.change-actions { display:flex; gap:5px; flex-wrap:wrap; margin:7px 0; }
+.change-counts { display:flex; gap:5px; padding:8px; }
+.change-counts button { flex:1; border:1px solid #d7e0da; border-radius:4px; padding:6px 3px; font:9px var(--ui-font); background:white; }
+.change-counts strong { display:block; font-size:16px; margin-bottom:3px; }
+.change-counts button[aria-pressed="true"] { outline:1px solid #217346; }
+.change-list { flex:1; overflow:auto; padding:0 8px 8px; }
+.change-card { display:block; width:100%; text-align:left; border:1px solid #dbe3de; border-left:3px solid #cf8a25; border-radius:4px; background:white; padding:9px; margin-bottom:6px; font:10px var(--ui-font); color:#536a5b; }
+.change-card.added { border-left-color:#219560; }.change-card.removed { border-left-color:#ca5253; }
+.change-card strong { display:block; margin:4px 0; font-size:11px; color:#34523f; }
+.change-card.selected { background:#edf5ef; border-color:#6e997d; }
+.change-fields { margin:7px 0 0; font:9px var(--mono-font); line-height:15px; overflow-wrap:anywhere; }
+.change-drawing-overlay { position:absolute; inset:0; z-index:4; background:#ffffffed; }
+.change-drawing-overlay svg { width:100%; height:100%; }
+.change-drawing-overlay .legend { position:absolute; top:10px; left:10px; font-size:10px; background:#fffffff0; padding:6px; border:1px solid #dce5df; border-radius:3px; }
+.change-drawing-overlay .legend span { margin-right:9px; }
+.change-drawing-overlay .close-change-drawing { position:absolute; top:10px; right:10px; border:1px solid #d1dbd5; background:white; color:#476853; border-radius:3px; }
+#validation-result-tabpanel[hidden],.validation-finalization[hidden] { display:none; }
+.gradient-switch { display:flex; gap:4px; padding:7px 8px; border-bottom:1px solid #dce4df; background:#f7faf8; }
+.gradient-switch[hidden],.gradient-view[hidden] { display:none; }
+.gradient-switch button { flex:1; }
+.gradient-switch button[aria-pressed="true"] { background:#e1efe5; border-color:#7eaa8b; }
+.gradient-view { display:flex; flex-direction:column; flex:1; min-height:0; overflow:auto; }
+.gradient-intro { padding:8px 10px; font-size:10px; line-height:16px; color:#62776b; }
+.gradient-intro strong { display:block; color:#245c3a; font-size:12px; }
+.gradient-tracks { width:100%; table-layout:fixed; font-size:10px; }
+.gradient-tracks th:nth-child(n),.gradient-tracks td:nth-child(n) { width:43px; height:30px; padding:3px; text-align:center; }
+.gradient-tracks th:first-child,.gradient-tracks td:first-child { width:auto; text-align:left; padding-left:9px; }
+.gradient-tracks button { border:0; background:transparent; font:10px var(--ui-font); color:#315d41; text-align:left; padding:3px 0; }
+.gradient-tracks tr.active { background:#e6f1e9; }
+.gradient-tracks .problem { color:#b8403f; font-weight:600; }.gradient-tracks .missing { color:#b07820; font-weight:600; }
+.gradient-toolbar { display:flex; gap:5px; flex-wrap:wrap; padding:8px; align-items:center; font-size:10px; }
+.gradient-toolbar select { min-width:0; border:1px solid #cfdbd3; background:white; padding:4px; font:10px var(--ui-font); border-radius:3px; }
+.gradient-sequence { display:flex; overflow-x:auto; flex-shrink:0; padding:8px; min-height:52px; align-items:center; border-top:1px solid #e2e8e4; border-bottom:1px solid #e2e8e4; }
+.gradient-node { font:9px var(--mono-font); color:#718177; flex-shrink:0; }
+.gradient-edge { flex-shrink:0; border:1px solid #c1d9ca; background:#edf6f0; color:#3f8054; min-width:30px; margin:0 3px; border-radius:4px; padding:5px 3px; font-size:10px; }
+.gradient-edge.mismatch { background:#fff0ef; border-color:#e5a6a1; color:#b1413a; }.gradient-edge.missing { background:#fff7e8; border-color:#e4c179; color:#a8751b; }
+.gradient-edge.selected { outline:2px solid #627ccc; outline-offset:1px; }
+.gradient-comparisons { padding:6px 8px; max-height:210px; overflow:auto; flex-shrink:0; }
+.gradient-pair { width:100%; text-align:left; display:grid; grid-template-columns:1fr auto; gap:4px; margin-bottom:5px; padding:7px; border:1px solid #dbe4de; border-radius:4px; background:white; font:10px var(--ui-font); color:#3d5947; }
+.gradient-pair.selected { background:#eff2ff; border-color:#9ba9d3; }
+.gradient-pair small { grid-column:1/-1; color:#7d8d82; font-size:9px; }
+.gradient-pair .pair-values { grid-column:1/-1; font:10px var(--mono-font); }
+.gradient-detail { padding:10px; margin-top:auto; border-top:1px solid #d9e3dc; background:#f4f8f5; font-size:10px; line-height:17px; }
+.gradient-detail strong { display:block; font-size:11px; }
+.gradient-detail .gradient-actions { display:flex; gap:4px; flex-wrap:wrap; margin-top:7px; }
+.gradient-notice { padding:0 9px 6px; font-size:10px; color:#a57524; }
+.gradient-drawing { position:absolute; inset:0; z-index:5; background:#fafcfbf2; }
+.gradient-drawing svg { width:100%; height:100%; }
+.gradient-drawing button { position:absolute; top:10px; right:10px; padding:4px 7px; background:white; border:1px solid #c9d8ce; border-radius:3px; color:#587160; }
+.sip-catalogue { display:flex; flex-direction:column; flex:1; min-height:0; }
+.sip-catalogue[hidden],.sip-rule-navigation[hidden] { display:none; }
+.sip-catalogue-head { padding:11px 10px 8px; border-bottom:1px solid #dbe4de; }
+.sip-catalogue-head h3 { margin:0 0 4px; font-size:12px; color:#2b5139; }
+.sip-catalogue-head p { margin:0; font-size:9px; color:#809087; line-height:14px; }
+.sip-rule-counts { display:flex; gap:5px; padding:8px; }
+.sip-rule-counts > div { flex:1; border:1px solid #dce5df; border-radius:4px; padding:6px 4px; text-align:center; }
+.sip-rule-counts strong { display:block; font-size:16px; color:#355e43; }.sip-rule-counts span { font-size:9px; color:#7d8b81; }
+.sip-rule-search { margin:0 8px 7px; padding:6px 7px; border:1px solid #d1dcd5; border-radius:3px; font:10px var(--ui-font); }
+.sip-rule-filters { display:flex; gap:4px; padding:0 8px 8px; }
+.sip-rule-filters button { flex:1; }
+.sip-rule-filters button[aria-pressed="true"] { background:#e3f0e7; border-color:#87ac92; }
+.sip-category-list { overflow:auto; flex:1; min-height:0; }
+.sip-category { border-top:1px solid #e0e7e2; }
+.sip-category-heading { width:100%; display:flex; gap:6px; align-items:center; padding:10px 9px; border:0; background:#f5f8f6; color:#526b5c; font:600 10px var(--ui-font); text-align:left; }
+.sip-category-heading span:last-child { margin-left:auto; color:#8c9b91; font-weight:400; }
+.sip-rule-row { display:flex; gap:7px; align-items:flex-start; width:100%; border:0; border-bottom:1px solid #e9eeeb; padding:10px; background:white; text-align:left; color:#334e3d; }
+.sip-rule-row:hover { background:#f0f6f2; }
+.sip-rule-row .rule-state { width:17px; height:17px; border-radius:50%; display:grid; place-items:center; background:#fff0e5; color:#b17b27; font-size:11px; flex-shrink:0; }
+.sip-rule-row .rule-state.passed { color:#2c8c59; background:#ecf6ef; }.sip-rule-row .rule-state.pending { color:#98a59c; background:#f1f4f2; }
+.sip-rule-row strong { display:block; font:600 11px var(--ui-font); margin-bottom:4px; }
+.sip-rule-row small { display:block; color:#809087; font:9px var(--ui-font); line-height:14px; }
+.sip-rule-description { display:block; font-size:11px; line-height:16px; margin-bottom:3px; }
+.sip-rule-row .rule-arrow { margin-left:auto; color:#80988a; padding-top:6px; }
+.sip-catalogue-footer { padding:8px; border-top:1px solid #dce5df; display:flex; align-items:center; justify-content:space-between; gap:7px; font-size:9px; color:#8a978e; }
+.sip-rule-navigation { padding:8px 10px 10px; border-bottom:1px solid #d9e4dd; background:#f7faf8; }
+.sip-rule-navigation > button { border:0; background:transparent; color:#357347; padding:0 0 7px; font:10px var(--ui-font); }
+.sip-rule-navigation small { display:block; color:#87968c; font-size:9px; line-height:14px; }
+.sip-rule-navigation strong { display:block; font-size:12px; margin-top:4px; color:#2e513b; }
+.sip-rule-navigation .rule-view-kind { margin-top:5px; font-size:9px; color:#6c8272; }
+.sip-catalogue .sod-empty { padding-top:20px; }
+.editor > .global { grid-row:1; }.editor > .tabs { grid-row:2; }.editor > .ribbon { grid-row:3; }.editor > .workspace { grid-row:4; }.editor > .status { grid-row:5; }
+.editor.ribbon-collapsed { grid-template-rows:36px 30px 0 minmax(0,1fr) 24px; }
+.editor.ribbon-collapsed > .ribbon { display:none; }
+.editor { position:relative; }
+.editor.ribbon-collapsed.ribbon-peek > .ribbon:not([hidden]) { display:flex; position:absolute; grid-area:1 / 1 / -1 / -1; top:66px; left:0; right:0; height:94px; box-sizing:border-box; z-index:200; box-shadow:0 5px 9px #152d3426; }
+.ribbon-display-menu { position:absolute; top:66px; right:6px; z-index:400; width:245px; padding:5px; background:white; border:1px solid #cbd7cf; border-radius:4px; box-shadow:0 5px 18px #152d3433; }
+.ribbon-display-menu button { display:block; width:100%; padding:10px; text-align:left; background:white; border:0; color:#234333; cursor:pointer; }
+.ribbon-display-menu button:hover,.ribbon-display-menu button:focus-visible { background:#e8f3ec; }
+.ribbon-display-menu small { display:block; margin:4px 0 0 20px; color:#63746b; }
+.ribbon-pin { position:absolute; right:5px; top:139px; z-index:210; border:1px solid #cbd7cf; background:white; border-radius:3px; color:#466d52; font:10px var(--ui-font); cursor:pointer; }
+.ribbon-collapse { align-self:center; flex-shrink:0; border:1px solid #cbd7cf; background:white; border-radius:3px; color:#466d52; padding:3px 8px; font:10px var(--ui-font); margin:0 5px; }
+.workspace { position:relative; }
+.panel-reopen { position:absolute; top:10px; z-index:20; width:23px; height:34px; background:#f4f8f5; border:1px solid #c8d8cd; color:#457251; border-radius:0 4px 4px 0; display:none; }
+.panel-reopen.left { left:0; }.panel-reopen.right { right:0; border-radius:4px 0 0 4px; }
+.workspace.left-closed .panel-reopen.left,.workspace.right-closed .panel-reopen.right { display:block; }
+.workspace-menu { position:relative; font-size:10px; }
+.workspace-menu summary { list-style:none; cursor:pointer; }
+.workspace-menu summary::-webkit-details-marker { display:none; }
+.workspace-menu-content { position:absolute; top:30px; right:0; width:215px; padding:8px; z-index:500; background:white; color:#385440; border:1px solid #cbd8d0; border-radius:5px; box-shadow:0 8px 25px #16332325; }
+.workspace-menu-content label { display:flex; align-items:center; gap:7px; padding:7px 5px; font-size:11px; }
+.workspace-menu-content input { accent-color:#217346; }
+.workspace-menu-content button { display:block; width:100%; text-align:left; background:white; color:inherit; border:0; border-top:1px solid #e3eae5; padding:9px 5px; font-size:11px; }
+.workspace-menu-content small { color:#8a998f; float:right; }
+.canvas.workspace-grid { background-image:radial-gradient(#c6d2ca .7px,transparent .7px); background-size:20px 20px; }
+.canvas.axis-hidden .origin,.canvas.command-hidden .command-line { display:none; }
+.office-search { position:relative; padding:0; }
+.office-search input { width:100%; border:0; background:transparent; color:white; outline:none; padding:5px 9px; font:10px var(--ui-font); }
+.office-search input::placeholder { color:#dceee2; }
+.command-search-results { position:absolute; top:29px; right:0; width:320px; max-height:320px; overflow:auto; background:white; color:#365a41; border:1px solid #cbd8d0; border-radius:4px; box-shadow:0 8px 24px #17331f25; z-index:501; }
+.command-search-results[hidden] { display:none; }
+.command-search-results button { display:flex; justify-content:space-between; gap:12px; width:100%; border:0; border-bottom:1px solid #e9efeb; padding:9px 10px; background:white; color:inherit; font:11px var(--ui-font); text-align:left; }
+.command-search-results button:hover,.command-search-results button:focus { background:#edf5ef; }
+.command-search-results small { color:#87998c; font-size:9px; }
+.command-search-results p { padding:10px; font-size:11px; }
+@media (max-width:1150px) { .global { gap:10px; }.workbook-title { max-width:155px; }.global-right { gap:5px; }.office-search { width:160px; } }
+</style>
+</head>
+<body>
+<!-- Mockup: ribbon tabs and side-panel toggles work; CAD commands are decorative. -->
+<svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+  <symbol id="i-select" viewBox="0 0 20 20"><path d="M4 2v14l4-4 3 6 3-2-3-5 6-1Z"/></symbol>
+  <symbol id="i-pan" viewBox="0 0 20 20"><path d="M6 10V5a1 1 0 0 1 2 0v4-6a1 1 0 0 1 2 0v6-5a1 1 0 0 1 2 0v6-3a1 1 0 0 1 2 0v6l-3 5H7l-4-6a1 1 0 0 1 2-1Z"/></symbol>
+  <symbol id="i-fit" viewBox="0 0 20 20"><path d="M7 3H3v4m10-4h4v4M3 13v4h4m10-4v4h-4"/><rect x="6" y="6" width="8" height="8"/></symbol>
+  <symbol id="i-measure" viewBox="0 0 20 20"><path d="M3 7v6m14-6v6M3 10h14M6 8l-3 2 3 2m8-4 3 2-3 2"/></symbol>
+  <symbol id="i-track" viewBox="0 0 20 20"><path d="M2 7h16M2 13h16M4 5v10m4-10v10m4-10v10m4-10v10"/></symbol>
+  <symbol id="i-turnout" viewBox="0 0 20 20"><path d="M2 15h16M2 11h16M6 11l8-8h4M10 15l8-8"/></symbol>
+  <symbol id="i-curve" viewBox="0 0 20 20"><path d="M3 17C3 6 7 3 17 3M7 17C7 9 9 7 17 7"/></symbol>
+  <symbol id="i-buffer" viewBox="0 0 20 20"><path d="M2 7h12M2 13h12m0-10v14m-3-12 3 2m-3 8 3-2"/></symbol>
+  <symbol id="i-platform" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="9"/><path d="M2 16h16M5 4v9m10-9v9"/></symbol>
+  <symbol id="i-crossing" viewBox="0 0 20 20"><path d="M2 7h16M2 13h16M7 2v16m6-16v16M3 3l3 3m8 8 3 3"/></symbol>
+  <symbol id="i-gradient" viewBox="0 0 20 20"><path d="m2 14 7-7 9 7M9 3v13m-3 0h6"/></symbol>
+  <symbol id="i-building" viewBox="0 0 20 20"><path d="m2 8 8-5 8 5M4 7v10h12V7M8 17v-6h4v6"/></symbol>
+  <symbol id="i-move" viewBox="0 0 20 20"><path d="M10 2v16M2 10h16M7 5l3-3 3 3M7 15l3 3 3-3M5 7l-3 3 3 3m10-6 3 3-3 3"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 20 20"><rect x="7" y="7" width="10" height="10"/><path d="M13 7V3H3v10h4"/></symbol>
+  <symbol id="i-trim" viewBox="0 0 20 20"><path d="M3 3v14M7 10h10M10 4l-3 3m0-3 3 3M10 14l-3 3m0-3 3 3"/></symbol>
+  <symbol id="i-rotate" viewBox="0 0 20 20"><path d="M16 7a7 7 0 1 0 1 6M16 2v5h-5"/></symbol>
+  <symbol id="i-text" viewBox="0 0 20 20"><path d="M3 6V3h14v3M10 3v14m-3 0h6"/></symbol>
+  <symbol id="i-chainage" viewBox="0 0 20 20"><path d="M2 14h16M6 3v11m8-11v11M4 5h4m4 0h4M6 17v1m8-1v1"/></symbol>
+  <symbol id="i-check" viewBox="0 0 20 20"><path d="m10 2 7 3v5c0 4-7 8-7 8S3 14 3 10V5ZM6 10l3 3 5-6"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 20 20"><path d="m2 6 8-4 8 4-8 4ZM2 10l8 4 8-4M2 14l8 4 8-4"/></symbol>
+  <symbol id="i-snap" viewBox="0 0 20 20"><path d="M4 3v9a6 6 0 0 0 12 0V3h-4v9a2 2 0 0 1-4 0V3ZM4 7h4m4 0h4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 20 20"><path d="M4 2h8l4 4v12H4ZM12 2v5h4M7 11h6m-6 3h6"/></symbol>
+</defs></svg>
+<div class="editor">
+<header class="global">
+  <div class="brand"><span style="font-size:20px">◧</span><strong>ESP Editor</strong></div>
+  <div class="quick-access" aria-label="Quick access toolbar"><span title="Save">▣</span><span title="Undo">↶</span><span title="Redo">↷</span></div>
+  <span class="workbook-title">Pothulapadu ESP · Draft v0.1</span>
+  <div class="office-search"><input id="command-search" type="search" placeholder="Search commands · Ctrl+K" aria-label="Search tools and commands" aria-expanded="false" aria-controls="command-search-results" autocomplete="off"><div class="command-search-results" id="command-search-results" hidden></div></div>
+  <div class="global-right"><button class="panel-toggle" data-panel="left" aria-controls="layers-panel" aria-expanded="true">Layers</button><button class="panel-toggle" data-panel="right" aria-controls="validation-panel" aria-expanded="true">Properties / Validation</button><details class="workspace-menu" id="workspace-menu"><summary class="panel-toggle">Workspace ▾</summary><div class="workspace-menu-content"><label><input type="checkbox" data-layout-option="ribbon">Show ribbon <small>Ctrl+F1</small></label><label><input type="checkbox" data-layout-option="left">Layers panel</label><label><input type="checkbox" data-layout-option="right">Properties / Validation</label><label><input type="checkbox" data-layout-option="command">Command line</label><label><input type="checkbox" data-layout-option="grid">Canvas grid</label><label><input type="checkbox" data-layout-option="axis">Drawing axis</label><button id="workspace-focus">Focus drawing</button><button id="workspace-reset">Reset layout</button></div></details><span class="avatar">SA</span></div>
+</header>
+<div class="tabs" aria-label="Ribbon menu">
+  <button class="tab file" data-ribbon="file" aria-controls="file-ribbon" aria-pressed="false">File</button>
+  <button class="tab active" data-ribbon="home" aria-controls="home-ribbon" aria-pressed="true">Home</button>
+  <button class="tab" data-ribbon="esp" aria-controls="esp-ribbon" aria-pressed="false">ESP</button>
+  <button class="tab" data-ribbon="sip" aria-controls="sip-ribbon" aria-pressed="false">SIP</button>
+  <button class="tab" data-ribbon="shapes" aria-controls="shapes-ribbon" aria-pressed="false">Shapes</button>
+  <button class="tab" data-ribbon="editing" aria-controls="editing-ribbon" aria-pressed="false">Editing</button>
+  <button class="tab" data-ribbon="annotations" aria-controls="annotations-ribbon" aria-pressed="false">Annotations</button>
+  <button class="tab" data-ribbon="layout" aria-controls="layout-ribbon" aria-pressed="false">Layout</button>
+  <button class="tab" data-ribbon="validation" aria-controls="validation-ribbon" aria-pressed="false">Validation</button>
+  <button class="tab" data-ribbon="view" aria-controls="view-ribbon" aria-pressed="false">View</button>
+  <button class="tab" data-ribbon="utilities" aria-controls="utilities-ribbon" aria-pressed="false">Utilities</button>
+  <span class="document">Saved locally</span>
+  <button class="ribbon-collapse" id="ribbon-collapse" aria-expanded="false" aria-haspopup="menu" aria-controls="ribbon-display-menu" title="Ribbon display options">Ribbon display ▾</button>
+</div>
+<div class="ribbon" id="home-ribbon" aria-label="Home tools">
+  <div class="home-group"><div class="home-tools">
+    <span class="home-tool active" title="Select railway objects"><svg><use href="#i-select"/></svg>Select</span>
+    <span class="home-tool"><svg><use href="#i-pan"/></svg>Pan</span>
+    <span class="home-tool"><svg><use href="#i-fit"/></svg>Fit extents</span>
+    <span class="home-tool"><svg><use href="#i-measure"/></svg>Measure</span>
+  </div><div class="group-caption">Navigate</div></div>
+  <div class="home-group"><div class="home-tools">
+    <span class="home-tool primary"><svg><use href="#i-track"/></svg>Track <span class="tool-arrow">⌄</span></span>
+    <span class="home-tool"><svg><use href="#i-turnout"/></svg>Turnout <span class="tool-arrow">⌄</span></span>
+    <span class="home-tool"><svg><use href="#i-curve"/></svg>Curve</span>
+    <span class="home-tool"><svg><use href="#i-track"/></svg>Parallel track</span>
+  </div><div class="group-caption">Track geometry</div></div>
+  <div class="home-group"><div class="home-tools three">
+    <span class="home-tool"><svg><use href="#i-platform"/></svg>Platform</span>
+    <span class="home-tool"><svg><use href="#i-turnout"/></svg>Trap point</span>
+    <span class="home-tool"><svg><use href="#i-buffer"/></svg>Buffer stop</span>
+    <span class="home-tool"><svg><use href="#i-crossing"/></svg>LC / FOB <span class="tool-arrow">⌄</span></span>
+    <span class="home-tool"><svg><use href="#i-gradient"/></svg>Gradient</span>
+    <span class="home-tool"><svg><use href="#i-building"/></svg>Structures <span class="tool-arrow">⌄</span></span>
+  </div><div class="group-caption">Railway assets</div></div>
+  <div class="home-group"><div class="home-tools three">
+    <span class="home-tool"><svg><use href="#i-move"/></svg>Move</span>
+    <span class="home-tool"><svg><use href="#i-copy"/></svg>Copy</span>
+    <span class="home-tool"><svg><use href="#i-rotate"/></svg>Rotate</span>
+    <span class="home-tool"><svg><use href="#i-trim"/></svg>Trim</span>
+    <span class="home-tool"><svg><use href="#i-track"/></svg>Offset</span>
+    <span class="home-tool"><svg><use href="#i-trim"/></svg>Extend</span>
+  </div><div class="group-caption">Modify</div></div>
+  <div class="home-group"><div class="home-tools">
+    <span class="home-tool"><svg><use href="#i-measure"/></svg>Dimension</span>
+    <span class="home-tool"><svg><use href="#i-chainage"/></svg>Chainage</span>
+    <span class="home-tool"><svg><use href="#i-text"/></svg>Text / leader</span>
+    <span class="home-tool"><svg><use href="#i-file"/></svg>Track label</span>
+  </div><div class="group-caption">Annotate</div></div>
+  <div class="home-group"><div class="home-tools">
+    <span class="home-tool active"><svg><use href="#i-snap"/></svg>Object snap <span class="tool-arrow">⌄</span></span>
+    <span class="home-tool"><svg><use href="#i-fit"/></svg>Ortho</span>
+    <span class="home-tool"><svg><use href="#i-layers"/></svg>Layers</span>
+    <span class="home-tool"><svg><use href="#i-file"/></svg>Properties</span>
+  </div><div class="group-caption">Drawing aids</div></div>
+  <div class="home-group"><div class="home-tools">
+    <span class="home-tool primary"><svg><use href="#i-check"/></svg>Check SOD</span>
+    <span class="home-tool"><svg><use href="#i-turnout"/></svg>Connectivity</span>
+    <span class="home-tool"><svg><use href="#i-copy"/></svg>Compare</span>
+    <span class="home-tool"><svg><use href="#i-file"/></svg>Plot / export <span class="tool-arrow">⌄</span></span>
+  </div><div class="group-caption">Review &amp; deliver</div></div>
+</div>
+<div class="ribbon validation-ribbon" id="validation-ribbon" aria-label="Validation tools" hidden>
+  <div class="home-group"><div class="home-tools" style="grid-template-columns: max-content">
+    <span class="home-tool scope-field">Entire drawing <span class="tool-arrow">⌄</span></span>
+    <span class="home-tool">Selection / layers <span class="tool-arrow">⌄</span></span>
+    <span class="home-tool"><svg><use href="#i-file"/></svg>Rule profile: ESP <span class="tool-arrow">⌄</span></span>
+  </div><div class="group-caption">Validation scope</div></div>
+  <div class="home-group"><div class="home-tools">
+    <span class="home-tool active"><svg><use href="#i-check"/></svg>✓ SOD checks</span>
+    <span class="home-tool active"><svg><use href="#i-check"/></svg>✓ SIP checks</span>
+    <span class="home-tool active"><svg><use href="#i-turnout"/></svg>✓ Connectivity</span>
+    <span class="home-tool"><svg><use href="#i-file"/></svg>Rule settings</span>
+  </div><div class="group-caption">Check sets</div></div>
+  <div class="home-group"><div class="run-validation"><svg><use href="#i-check"/></svg><span>Run Validation<small>Selected check sets</small></span></div><div class="group-caption">Run checks</div></div>
+  <div class="home-group"><div class="home-tools">
+    <span class="home-tool primary"><svg><use href="#i-check"/></svg>Results panel</span>
+    <span class="home-tool"><svg><use href="#i-fit"/></svg>Locate issue</span>
+    <span class="home-tool"><svg><use href="#i-select"/></svg>Highlight issues</span>
+    <span class="home-tool"><svg><use href="#i-layers"/></svg>Filter results <span class="tool-arrow">⌄</span></span>
+  </div><div class="group-caption">Inspect results</div></div>
+  <div class="home-group"><div class="home-tools" style="grid-template-columns: max-content">
+    <span class="home-tool"><svg><use href="#i-file"/></svg>Export report <span class="tool-arrow">⌄</span></span>
+    <span class="home-tool"><svg><use href="#i-copy"/></svg>Validation history</span>
+    <span class="home-tool"><svg><use href="#i-file"/></svg>Print summary</span>
+  </div><div class="group-caption">Reports</div></div>
+  <div class="validation-ready"><strong>● Ready to validate</strong>Scope: entire drawing<br>Results shown are sample data</div>
+</div>
+<div class="workspace">
+<aside class="layers" id="layers-panel" aria-label="Layers panel"><div class="panel-heading"><strong>LAYERS</strong><span class="count">25</span><span>⊙</span><span>↔</span><button class="panel-close" data-panel="left" aria-label="Close layers panel">«</button></div><div class="current-layer"><span class="dot">●</span>Current layer &nbsp; <b>0</b></div><div class="search-row"><span class="search">⌕ &nbsp; Search layers...</span><span class="filter">All layers⌄</span></div><div class="layer-actions"><span class="disabled">⊙ &nbsp; Isolate</span><span>↶</span><span>⊙</span></div>
+<div class="layer-table"><table aria-label="Drawing layers"><thead><tr><th>□</th><th>✓</th><th>□</th><th>Name ↑</th><th>On</th><th>☼</th><th>♙</th></tr></thead><tbody>
+<tr><td><span class="box"></span></td><td class="check">✓</td><td><span class="swatch"></span></td><td class="name">0</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td class="name">0.EXG.Bridge Details</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td class="name">0.Exg.Gradient</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td class="name">0.EXG.TEXT</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td class="name">COMPACT_INDICATION</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch light"></span></td><td class="name">Curve Details</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>Defpoints</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-BRIDGE</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-CENTRAL LINE</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-CHAINAGE</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-DEADEND</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-DISMANTLED</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-DISTANCE</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-FOB</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-GRADIENT</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-PLATFORM</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-RLY BOUND</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-SIGNALS</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-STATION</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-TEXT</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-TRACK</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-TURNOUT</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>ESP-WATER</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>REFERENCE</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+<tr><td>□</td><td>○</td><td><span class="swatch"></span></td><td>VIEWPORT</td><td>⊙</td><td>☼</td><td>♙</td></tr>
+</tbody></table></div><div class="layer-footer">25 of 25 layers · 25 visible</div></aside>
+<main class="canvas" aria-label="Empty editor canvas">
+  <div class="view-label">[Top] <span>[2D Wireframe]</span></div>
+  <div class="canvas-note">MODEL SPACE<span>Drawing viewport</span></div>
+  <div class="crosshair" aria-hidden="true"></div>
+  <div class="origin" aria-hidden="true"><span class="y">Y</span><span class="x">X</span></div>
+  <div class="command-line"><strong>Command:</strong><span>Type a command</span><span class="hint">Esc to cancel</span></div>
+</main>
+<aside class="validation" id="validation-panel" aria-label="Validation panel"><div class="panel-tabs"><div class="switch"><span>ⓘ Properties</span><span class="active">♧ Validation</span></div><button class="panel-close" data-panel="right" aria-label="Close properties and validation panel">×</button></div><div class="validation-tabs"><span class="active">ALL</span><span>SOD</span><span>SIP</span></div><div class="validation-content">
+<div class="summary-title">♧ &nbsp; Rules Summary</div><div class="summary"><div class="metric"><strong>1266</strong><span>ALL</span></div><div class="metric passed"><strong>1189</strong><span>PASSED</span></div><div class="metric violations"><strong>63</strong><span>VIOLATIONS</span></div><div class="metric na"><strong>14</strong><span>N/A</span></div></div>
+<div class="rule"><span class="rule-icon">✓</span><div class="rule-body"><div class="rule-header"><span class="rule-id">RULE ID: GEN-GRAD-001</span><span class="passed-label">PASSED</span></div><div class="rule-title">Adjacent Gradient Boundary Continuity</div><div class="measurement">Measured: &nbsp;<b>0</b></div><div class="measurement">Required: &nbsp;<b>0</b></div></div></div>
+<div class="rule"><span class="rule-icon">✓</span><div class="rule-body"><div class="rule-header"><span class="rule-id">RULE ID: GEN-GRAD-001</span><span class="passed-label">PASSED</span></div><div class="rule-title">Adjacent Gradient Boundary Continuity</div><div class="measurement">Measured: &nbsp;<b>0</b></div><div class="measurement">Required: &nbsp;<b>0</b></div></div></div>
+<div class="rule"><span class="rule-icon">✓</span><div class="rule-body"><div class="rule-header"><span class="rule-id">RULE ID: GEN-GRAD-001</span><span class="passed-label">PASSED</span></div><div class="rule-title">Adjacent Gradient Boundary Continuity</div><div class="measurement">Measured: &nbsp;<b>0</b></div><div class="measurement">Required: &nbsp;<b>0</b></div></div></div>
+<div class="rule"><span class="rule-icon">✓</span><div class="rule-body"><div class="rule-header"><span class="rule-id">RULE ID: GEN-GRAD-001</span><span class="passed-label">PASSED</span></div><div class="rule-title">Adjacent Gradient Boundary Continuity</div><div class="measurement">Measured: &nbsp;<b>0</b></div><div class="measurement">Required: &nbsp;<b>0</b></div></div></div>
+<div class="rule"><span class="rule-icon">✓</span><div class="rule-body"><div class="rule-header"><span class="rule-id">RULE ID: GEN-GRAD-001</span><span class="passed-label">PASSED</span></div><div class="rule-title">Adjacent Gradient Boundary Continuity</div><div class="measurement">Measured: &nbsp;<b>0</b></div><div class="measurement">Required: &nbsp;<b>0</b></div></div></div>
+</div></aside>
+</div>
+<footer class="status"><span>×</span><span>X: -999,056.05 &nbsp; Y: 386,844.54</span><span>Zoom: 0%</span><span>Entities: 23675</span><span>Selected: 0</span><span class="mockup">UI mockup · Sample data</span></footer>
+</div>
+<script>
+  // UI navigation and command selection work; no CAD operations or real checks run.
+  const menuGroups = {
+    file: [
+      ['Drawing', 'New ESP|New SIP|Open drawing|Recent files|Save|Save as', 'file'],
+      ['Import', 'Import DXF|Import DWG|PDF underlay|Image underlay|Import blocks|Import asset data', 'file'],
+      ['Deliver', 'Export DXF|Export PDF|Print / plot|Drawing package|Revision snapshot|Document properties', 'file']
+    ],
+    esp: [
+      ['Track geometry', 'Main line|Loop line|Siding|Parallel track|Curve|Transition curve', 'track'],
+      ['Points & crossings', 'Turnout|Crossover|Scissors crossover|Trap point|Diamond crossing|Buffer stop', 'turnout'],
+      ['Station assets', 'Passenger platform|Goods platform|Station building|Foot overbridge|Level crossing|Bridge / culvert', 'platform'],
+      ['Engineering data', 'Gradient post|Gradient section|Chainage marker|Track centre spacing|Clearance envelope|Railway boundary', 'gradient'],
+      ['ESP schedule', 'Track schedule|Turnout schedule|Curve table|Gradient table|Asset properties|Block library', 'file']
+    ],
+    sip: [
+      ['Signals', 'Home signal|Starter signal|Advanced starter|Distant signal|Shunt signal|Signal aspects', 'check'],
+      ['Signal equipment', 'Calling-on signal|Route indicator|Stop board|Signal number|Signal direction|Equipment properties', 'file'],
+      ['Train detection', 'Track circuit|Axle counter|Detection section|Insulated joint|Section boundary|Detection labels', 'track'],
+      ['Point equipment', 'Point machine|Point number|Point detection|Facing point lock|Derailer|Equipment connection', 'turnout'],
+      ['Routes & interlocking', 'Define route|Route direction|Overlap|Fouling mark|Route table|Interlocking notes', 'turnout'],
+      ['SIP schedule', 'Signal schedule|Point schedule|Detection schedule|Cable route|Equipment legend|Block library', 'file']
+    ],
+    shapes: [
+      ['Draw', 'Line|Polyline|Arc|Circle|Rectangle|Polygon', 'curve'],
+      ['Construct', 'Spline|Hatch|Boundary|Construction line|Centre line|Reference point', 'track'],
+      ['Appearance', 'Line type|Line weight|Colour|Fill|Match properties|Drawing units', 'layers']
+    ],
+    editing: [
+      ['Clipboard', 'Cut|Copy|Paste|Paste in place|Duplicate|Delete', 'copy'],
+      ['Transform', 'Move|Rotate|Mirror|Scale|Align|Stretch', 'move'],
+      ['Geometry', 'Offset|Trim|Extend|Break|Join|Fillet', 'trim'],
+      ['Organise', 'Group|Ungroup|Create block|Explode block|Rectangular array|Polar array', 'layers'],
+      ['Selection', 'Select all|Window select|Crossing select|Select similar|Selection filter|Clear selection', 'select']
+    ],
+    annotations: [
+      ['Text', 'Single-line text|Multiline text|Leader|Multileader|Text style|Find text', 'text'],
+      ['Dimensions', 'Linear dimension|Aligned dimension|Angular dimension|Radius dimension|Dimension style|Track spacing', 'measure'],
+      ['Railway labels', 'Chainage|Track name|Point number|Signal number|Gradient label|Curve label', 'chainage'],
+      ['Tables & review', 'Insert table|Asset schedule|Legend|Revision cloud|Comment|Revision note', 'file']
+    ],
+    layout: [
+      ['Sheets', 'New sheet|Sheet manager|Title block|Drawing number|Revision register|Sheet size', 'file'],
+      ['Viewports', 'Create viewport|Viewport scale|Lock viewport|Model / paper space|Fit drawing|View alignment', 'fit'],
+      ['Plot', 'Page setup|Plot area|Plot scale|Pen settings|Print preview|Export PDF', 'file']
+    ],
+    view: [
+      ['Workspace', 'Collapse ribbon|Focus drawing|Reset layout', 'layers'],
+      ['Navigate', 'Pan|Zoom in|Zoom out|Fit extents|Zoom selection|Previous view', 'fit'],
+      ['Display', '2D wireframe|Grid|Axis / UCS|Line weights|Underlay opacity|Background colour', 'layers'],
+      ['Panels', 'Layers panel|Properties / Validation panel|Command line|Block library|Comments panel|Drawing history', 'layers'],
+      ['Drawing aids', 'Object snap|Ortho|Polar tracking|Snap spacing|Units|Named views', 'snap']
+    ],
+    utilities: [
+      ['Measure', 'Distance|Angle|Area|Track length|Track spacing|Coordinates', 'measure'],
+      ['Drawing maintenance', 'Audit drawing|Purge unused|Duplicate objects|Repair references|Layer mapping|Manage underlays', 'file'],
+      ['Data & versions', 'Asset register|Import CSV|Export schedule|Compare revisions|Save snapshot|Drawing settings', 'copy']
+    ]
+  };
+  const iconNamespace = 'http://www.w3.org/2000/svg';
+  Object.entries(menuGroups).forEach(([name, groups]) => {
+    const ribbon = document.createElement('div');
+    ribbon.className = 'ribbon';
+    ribbon.id = `${name}-ribbon`;
+    ribbon.hidden = true;
+    ribbon.setAttribute('aria-label', `${name.toUpperCase()} tools`);
+    groups.forEach(([caption, commands, icon]) => {
+      const group = document.createElement('div');
+      group.className = 'home-group tool-group';
+      const tools = document.createElement('div');
+      tools.className = 'home-tools';
+      commands.split('|').forEach(command => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'home-tool';
+        button.dataset.command = command;
+        button.title = `${command} — mockup tool`;
+        const svg = document.createElementNS(iconNamespace, 'svg');
+        svg.setAttribute('aria-hidden', 'true');
+        const use = document.createElementNS(iconNamespace, 'use');
+        use.setAttribute('href', `#i-${icon}`);
+        svg.appendChild(use);
+        button.append(svg, document.createTextNode(command));
+        tools.appendChild(button);
+      });
+      const label = document.createElement('div');
+      label.className = 'group-caption';
+      label.textContent = caption;
+      group.append(tools, label);
+      ribbon.appendChild(group);
+    });
+    document.querySelector('.workspace').before(ribbon);
+  });
+  // Give the existing Home and Validation tools the same command-selection UI.
+  document.querySelectorAll('span.home-tool, div.run-validation').forEach(control => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = control.className;
+    button.innerHTML = control.innerHTML;
+    button.dataset.command = control.textContent.trim().replace(/\s+/g, ' ');
+    button.title = `${button.dataset.command} — mockup tool`;
+    control.replaceWith(button);
+  });
+  document.querySelectorAll('[data-command]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-command]').forEach(tool => {
+        tool.classList.remove('selected-command');
+        tool.setAttribute('aria-pressed', 'false');
+      });
+      button.classList.add('selected-command');
+      button.setAttribute('aria-pressed', 'true');
+      document.querySelector('.command-line > span:not(.hint)').textContent = `${button.dataset.command} selected — mockup only`;
+      handleWorkspaceCommand(button.dataset.command);
+    });
+  });
+  document.querySelector('.command-line').setAttribute('aria-live', 'polite');
+  const layerPanel = document.getElementById('layers-panel');
+  const sampleNames = Array.from(layerPanel.querySelectorAll('tbody tr')).map(row => row.cells[3].textContent.trim());
+  const layerColours = ['#252525', '#8b5cf6', '#e0923a', '#5274b9', '#68768a', '#a9c1ff'];
+  let layerSerial = sampleNames.length;
+  const layerState = {
+    layers: sampleNames.map((name, index) => ({
+      id: `layer-${index}`, name, colour: layerColours[index % layerColours.length],
+      visible: true, frozen: false, locked: false, lineType: 'Continuous',
+      weight: 'Default', transparency: 0, plot: true
+    })),
+    current: 'layer-0', selected: new Set(['layer-0']), search: '', filter: 'all', isolation: null
+  };
+  const escapeLayerText = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[character]));
+  const layerIcons = {
+    visible: '<path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z"/><circle cx="10" cy="10" r="2"/>',
+    frozen: '<path d="M10 2v16M3 6l14 8M3 14l14-8M7 3l3 3 3-3M7 17l3-3 3 3"/>',
+    thawed: '<circle cx="10" cy="10" r="3"/><path d="M10 1v2m0 14v2M1 10h2m14 0h2M4 4l2 2m8 8 2 2M4 16l2-2m8-8 2-2"/>',
+    locked: '<rect x="4" y="9" width="12" height="9" rx="1"/><path d="M6 9V6a4 4 0 0 1 8 0v3M10 12v3"/>',
+    unlocked: '<rect x="4" y="9" width="12" height="9" rx="1"/><path d="M6 9V6a4 4 0 0 1 8 0M10 12v3"/>'
+  };
+  layerPanel.innerHTML = `
+    <div class="panel-heading"><strong>LAYERS</strong><span class="count" id="cad-layer-count"></span><button class="panel-close" data-panel="left" aria-label="Close layers panel">«</button></div>
+    <div class="current-layer"><span class="dot">●</span>Current: <b id="cad-current-layer"></b></div>
+    <div class="layer-manager-tools">
+      <button class="layer-action" data-layer-action="new" title="Create a new layer">+ New</button>
+      <button class="layer-action" data-layer-action="duplicate" title="Duplicate the selected layer and its properties">Duplicate</button>
+      <button class="layer-action" data-layer-action="delete" title="Delete selected layers; the current layer and layer 0 are protected">Delete</button>
+    </div>
+    <div class="search-row"><input class="search" id="cad-layer-search" type="search" placeholder="Search layers…" aria-label="Search layers"><select class="filter" id="cad-layer-filter" aria-label="Filter layers"><option value="all">All layers</option><option value="esp">ESP layers</option><option value="sip">SIP layers</option><option value="visible">Visible</option><option value="hidden">Off</option><option value="frozen">Frozen</option><option value="locked">Locked</option><option value="selected">Selected</option></select></div>
+    <div class="layer-manager-tools">
+      <button class="layer-action" data-layer-action="isolate" aria-pressed="false" title="Show only the selected layers and the current layer">Isolate</button>
+      <button class="layer-action" data-layer-action="restore" title="Restore visibility before isolation">Restore</button>
+      <button class="layer-action" data-layer-action="all-on" title="Turn on every layer">All on</button>
+      <button class="layer-action" data-layer-action="thaw" title="Thaw every layer">Thaw all</button>
+      <button class="layer-action" data-layer-action="unlock" title="Unlock every layer">Unlock all</button>
+    </div>
+    <div class="layer-table"><table class="cad-layer-table" aria-label="CAD layer properties"><thead><tr>
+      <th title="Select displayed layers"><input id="cad-select-all" type="checkbox" aria-label="Select displayed layers"></th>
+      <th title="Current drawing layer">Cur</th><th title="Layer colour">Clr</th><th class="layer-name">Name ↑</th><th title="Visibility on / off">On</th><th title="Freeze / thaw">Frz</th><th title="Lock / unlock">Lck</th>
+    </tr></thead><tbody id="cad-layer-rows"></tbody></table></div>
+    <div class="layer-details" id="cad-layer-details"></div>
+    <div class="layer-feedback" id="cad-layer-feedback" aria-live="polite">Sample layer settings only · No drawing geometry is changed.</div>
+    <div class="layer-footer" id="cad-layer-footer"></div>`;
+  // Additional signalling layers make the ESP and SIP filters useful in this mockup.
+  ['SIP-SIGNALS', 'SIP-TRACK-CIRCUITS', 'SIP-AXLE-COUNTERS', 'SIP-POINT-MACHINES', 'SIP-ROUTES', 'SIP-CABLES'].forEach(name => {
+    layerState.layers.push({id: `layer-${layerSerial++}`, name, colour: '#217346', visible: true, frozen: false, locked: false, lineType: 'Continuous', weight: 'Default', transparency: 0, plot: true});
+  });
+  function displayedLayers() {
+    return layerState.layers.filter(layer => {
+      if (!layer.name.toLowerCase().includes(layerState.search.toLowerCase())) return false;
+      switch (layerState.filter) {
+        case 'esp': return layer.name.startsWith('ESP-');
+        case 'sip': return layer.name.startsWith('SIP-');
+        case 'visible': return layer.visible && !layer.frozen;
+        case 'hidden': return !layer.visible;
+        case 'frozen': return layer.frozen;
+        case 'locked': return layer.locked;
+        case 'selected': return layerState.selected.has(layer.id);
+        default: return true;
+      }
+    }).sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true}));
+  }
+  function layerMessage(message) { document.getElementById('cad-layer-feedback').textContent = message; }
+  function stateControl(layer, property, icon, label, inactive) {
+    return `<button class="layer-state${inactive ? ' off' : ''}" data-layer-id="${layer.id}" data-layer-property="${property}" aria-label="${label}: ${escapeLayerText(layer.name)}" title="${label}" aria-pressed="${layer[property]}"><svg viewBox="0 0 20 20" aria-hidden="true">${layerIcons[icon]}</svg></button>`;
+  }
+  function renderLayerManager() {
+    const visible = displayedLayers();
+    const current = layerState.layers.find(layer => layer.id === layerState.current);
+    document.getElementById('cad-current-layer').textContent = current.name;
+    document.getElementById('cad-layer-count').textContent = layerState.layers.length;
+    document.getElementById('cad-layer-rows').innerHTML = visible.map(layer => `<tr data-row-layer="${layer.id}" class="${layerState.selected.has(layer.id) ? 'layer-selected' : ''} ${layer.id === layerState.current ? 'layer-current' : ''}">
+      <td><input type="checkbox" data-select-layer="${layer.id}" aria-label="Select ${escapeLayerText(layer.name)}" ${layerState.selected.has(layer.id) ? 'checked' : ''}></td>
+      <td><input type="radio" name="current-layer" data-current-layer="${layer.id}" aria-label="Set ${escapeLayerText(layer.name)} as current layer" ${layer.id === layerState.current ? 'checked' : ''}></td>
+      <td><button class="layer-colour" data-edit-layer="${layer.id}" style="background:${layer.colour}" aria-label="Edit colour for ${escapeLayerText(layer.name)}" title="${layer.colour}"></button></td>
+      <td class="layer-name" title="${escapeLayerText(layer.name)}">${escapeLayerText(layer.name)}</td>
+      <td>${stateControl(layer, 'visible', 'visible', layer.visible ? 'Turn layer off' : 'Turn layer on', !layer.visible)}</td>
+      <td>${stateControl(layer, 'frozen', layer.frozen ? 'frozen' : 'thawed', layer.frozen ? 'Thaw layer' : 'Freeze layer', false)}</td>
+      <td>${stateControl(layer, 'locked', layer.locked ? 'locked' : 'unlocked', layer.locked ? 'Unlock layer' : 'Lock layer', !layer.locked)}</td>
+    </tr>`).join('') || '<tr><td colspan="7" style="height:60px;color:#88968d">No matching layers</td></tr>';
+    const all = document.getElementById('cad-select-all');
+    all.checked = visible.length > 0 && visible.every(layer => layerState.selected.has(layer.id));
+    all.indeterminate = !all.checked && visible.some(layer => layerState.selected.has(layer.id));
+    const selected = layerState.layers.filter(layer => layerState.selected.has(layer.id));
+    const layer = selected.length === 1 ? selected[0] : null;
+    const optionList = (options, value) => options.map(option => `<option ${option === value ? 'selected' : ''}>${escapeLayerText(option)}</option>`).join('');
+    document.getElementById('cad-layer-details').innerHTML = layer ? `
+      <h3>Layer properties <span>${layer.id === layerState.current ? 'Current layer' : '1 selected'}</span></h3>
+      <label class="layer-property">Name <input data-detail="name" value="${escapeLayerText(layer.name)}" ${layer.name === '0' ? 'disabled' : ''} maxlength="80"></label>
+      <label class="layer-property">Colour <span class="colour-value"><input data-detail="colour" type="color" value="${layer.colour}">${layer.colour.toUpperCase()}</span></label>
+      <label class="layer-property">Line type <select data-detail="lineType">${optionList(['Continuous','Dashed','Hidden','Center','Phantom'], layer.lineType)}</select></label>
+      <label class="layer-property">Line weight <select data-detail="weight">${optionList(['Default','0.13 mm','0.18 mm','0.25 mm','0.35 mm','0.50 mm','0.70 mm'], layer.weight)}</select></label>
+      <label class="layer-property">Transparency <input data-detail="transparency" type="number" min="0" max="90" step="5" value="${layer.transparency}" title="0 = opaque, 90 = mostly transparent"></label>
+      <label class="layer-property">Plot <select data-detail="plot"><option value="true" ${layer.plot ? 'selected' : ''}>Include in plot</option><option value="false" ${!layer.plot ? 'selected' : ''}>Do not plot</option></select></label>` : `<h3>Layer properties <span>${selected.length} selected</span></h3><div style="font-size:10px;color:#839087;padding:8px 0">Select one layer to edit its properties.</div>`;
+    layerPanel.querySelector('[data-layer-action="delete"]').disabled = !selected.some(item => item.name !== '0' && item.id !== layerState.current);
+    layerPanel.querySelector('[data-layer-action="duplicate"]').disabled = !layer;
+    layerPanel.querySelector('[data-layer-action="isolate"]').disabled = selected.length === 0;
+    layerPanel.querySelector('[data-layer-action="isolate"]').setAttribute('aria-pressed', String(!!layerState.isolation));
+    layerPanel.querySelector('[data-layer-action="restore"]').disabled = !layerState.isolation;
+    document.getElementById('cad-layer-footer').textContent = `${visible.length} of ${layerState.layers.length} layers · ${selected.length} selected · ${layerState.layers.filter(item => item.visible && !item.frozen).length} visible`;
+  }
+  document.getElementById('cad-layer-search').addEventListener('input', event => { layerState.search = event.target.value; renderLayerManager(); });
+  document.getElementById('cad-layer-filter').addEventListener('change', event => { layerState.filter = event.target.value; renderLayerManager(); });
+  layerPanel.addEventListener('change', event => {
+    const control = event.target;
+    if (control.dataset.selectLayer) {
+      control.checked ? layerState.selected.add(control.dataset.selectLayer) : layerState.selected.delete(control.dataset.selectLayer);
+    } else if (control.id === 'cad-select-all') {
+      displayedLayers().forEach(layer => control.checked ? layerState.selected.add(layer.id) : layerState.selected.delete(layer.id));
+    } else if (control.dataset.currentLayer) {
+      const layer = layerState.layers.find(item => item.id === control.dataset.currentLayer);
+      layerState.current = layer.id; layer.visible = true; layer.frozen = false;
+      layerMessage(`Current layer: ${layer.name}`);
+    } else if (control.dataset.detail) {
+      const layer = layerState.layers.find(item => layerState.selected.has(item.id));
+      if (!layer) return;
+      const property = control.dataset.detail;
+      let value = control.value;
+      if (property === 'name') {
+        value = value.trim();
+        if (!value || /[<>/\\":;?*|=]/.test(value) || layerState.layers.some(item => item.id !== layer.id && item.name.toLowerCase() === value.toLowerCase())) {
+          layerMessage('Use a unique layer name without CAD reserved characters.'); renderLayerManager(); return;
+        }
+      }
+      if (property === 'transparency') value = Math.max(0, Math.min(90, Number(value) || 0));
+      if (property === 'plot') value = value === 'true';
+      layer[property] = value;
+      layerMessage(`Updated ${layer.name}: ${property}. Sample data only.`);
+    } else return;
+    renderLayerManager();
+  });
+  layerPanel.addEventListener('click', event => {
+    const button = event.target.closest('button');
+    if (button?.dataset.layerProperty) {
+      const layer = layerState.layers.find(item => item.id === button.dataset.layerId);
+      const property = button.dataset.layerProperty;
+      if (layer.id === layerState.current && (property === 'frozen' || property === 'visible')) {
+        layerMessage('Keep the current layer on and thawed. Set another layer current first.'); return;
+      }
+      layer[property] = !layer[property];
+      layerMessage(`${layer.name}: ${property} ${layer[property] ? 'on' : 'off'}.`);
+    } else if (button?.dataset.editLayer) {
+      layerState.selected = new Set([button.dataset.editLayer]); renderLayerManager();
+      layerPanel.querySelector('[data-detail="colour"]').focus(); return;
+    } else if (button?.dataset.layerAction) {
+      const action = button.dataset.layerAction;
+      const selected = layerState.layers.filter(layer => layerState.selected.has(layer.id));
+      if (action === 'new' || action === 'duplicate') {
+        const source = action === 'duplicate' ? selected[0] : layerState.layers.find(layer => layer.id === layerState.current);
+        if (!source) return;
+        let suffix = 1, name;
+        do { name = action === 'duplicate' ? `${source.name}-COPY-${suffix++}` : `Layer ${suffix++}`; }
+        while (layerState.layers.some(layer => layer.name.toLowerCase() === name.toLowerCase()));
+        const layer = {...source, id: `layer-${layerSerial++}`, name, visible: true, frozen: false, locked: false};
+        layerState.layers.push(layer); layerState.selected = new Set([layer.id]);
+        layerState.filter = 'all'; layerState.search = '';
+        document.getElementById('cad-layer-search').value = '';
+        document.getElementById('cad-layer-filter').value = 'all';
+        layerMessage(`Created ${name}. Edit its name and properties below.`);
+        renderLayerManager(); layerPanel.querySelector('[data-detail="name"]').focus(); return;
+      } else if (action === 'delete') {
+        layerState.layers = layerState.layers.filter(layer => !layerState.selected.has(layer.id) || layer.name === '0' || layer.id === layerState.current);
+        layerState.selected = new Set(layerState.layers.filter(layer => layerState.selected.has(layer.id)).map(layer => layer.id));
+        layerMessage('Deleted selected sample layers. Layer 0 and the current layer are protected.');
+      } else if (action === 'isolate') {
+        if (!selected.length) return;
+        if (!layerState.isolation) layerState.isolation = new Map(layerState.layers.map(layer => [layer.id, {visible: layer.visible, frozen: layer.frozen}]));
+        layerState.layers.forEach(layer => { layer.visible = layerState.selected.has(layer.id) || layer.id === layerState.current; if (layer.visible) layer.frozen = false; });
+        layerMessage('Selected layers isolated; current layer stays visible. Restore returns previous states.');
+      } else if (action === 'restore') {
+        if (!layerState.isolation) return;
+        layerState.layers.forEach(layer => { const state = layerState.isolation.get(layer.id); if (state && layer.id !== layerState.current) Object.assign(layer, state); });
+        layerState.isolation = null; layerMessage('Previous visibility and freeze states restored.');
+      } else {
+        const property = {'all-on':'visible', thaw:'frozen', unlock:'locked'}[action];
+        if (!property) return;
+        layerState.layers.forEach(layer => { layer[property] = action === 'all-on'; });
+        layerMessage(`${button.textContent}: applied to all sample layers.`);
+      }
+    } else {
+      if (event.target.closest('input, select, button')) return;
+      const row = event.target.closest('[data-row-layer]');
+      if (!row) return;
+      const id = row.dataset.rowLayer;
+      if (event.ctrlKey || event.metaKey) layerState.selected.has(id) ? layerState.selected.delete(id) : layerState.selected.add(id);
+      else layerState.selected = new Set([id]);
+    }
+    renderLayerManager();
+  });
+  renderLayerManager();
+  const workspace = document.querySelector('.workspace');
+  const editorShell = document.querySelector('.editor');
+  const canvasShell = document.querySelector('.canvas');
+  const workspaceDefaults = {ribbon:true,left:true,right:true,command:true,grid:false,axis:true,activeRibbon:'home',focusRestore:null};
+  let workspacePreferences = {};
+  try { workspacePreferences = JSON.parse(localStorage.getItem('esp-mockup-workspace-v1') || '{}'); } catch {}
+  const workspaceState = {...workspaceDefaults,...workspacePreferences};
+  let ribbonPeek = false;
+  const ribbonMenu = document.createElement('div');
+  ribbonMenu.id = 'ribbon-display-menu'; ribbonMenu.className = 'ribbon-display-menu'; ribbonMenu.hidden = true; ribbonMenu.setAttribute('role','menu');
+  ribbonMenu.innerHTML = '<button role="menuitemradio" data-ribbon-mode="tabs">Show tabs only<small>Click a tab to show commands temporarily.</small></button><button role="menuitemradio" data-ribbon-mode="always">Always show ribbon<small>Keep tabs and commands visible.</small></button>';
+  const ribbonPin = document.createElement('button'); ribbonPin.className = 'ribbon-pin'; ribbonPin.id = 'ribbon-pin';
+  editorShell.append(ribbonMenu,ribbonPin);
+  function closeRibbonMenu() { ribbonMenu.hidden = true; document.getElementById('ribbon-collapse').setAttribute('aria-expanded','false'); }
+  function setRibbonPinned(pinned) { workspaceState.ribbon = pinned; ribbonPeek = false; closeRibbonMenu(); syncWorkspace(); }
+  function dismissRibbonPeek() { if (!ribbonPeek) return; ribbonPeek = false; syncWorkspace(); }
+  ribbonPin.onclick = () => setRibbonPinned(!workspaceState.ribbon);
+  ribbonMenu.querySelectorAll('[data-ribbon-mode]').forEach(button => button.onclick = () => { setRibbonPinned(button.dataset.ribbonMode === 'always'); document.getElementById('ribbon-collapse').focus(); });
+  for (const key of ['ribbon','left','right','command','grid','axis']) if (typeof workspaceState[key] !== 'boolean') workspaceState[key] = workspaceDefaults[key];
+  for (const [side,label] of [['left','Layers'],['right','Properties / Validation']]) {
+    const reopen = document.createElement('button'); reopen.className = `panel-reopen ${side}`; reopen.dataset.panel = side;
+    reopen.textContent = side === 'left' ? '›' : '‹'; reopen.setAttribute('aria-label',`Open ${label} panel`); reopen.title = `Open ${label}`;
+    workspace.appendChild(reopen);
+  }
+  function saveWorkspace() { try { localStorage.setItem('esp-mockup-workspace-v1',JSON.stringify(workspaceState)); } catch {} }
+  function syncWorkspace() {
+    editorShell.classList.toggle('ribbon-collapsed',!workspaceState.ribbon);
+    editorShell.classList.toggle('ribbon-peek',!workspaceState.ribbon && ribbonPeek);
+    ribbonPin.hidden = !workspaceState.ribbon && !ribbonPeek;
+    ribbonPin.textContent = workspaceState.ribbon ? '⌃' : 'Pin ribbon';
+    ribbonPin.title = workspaceState.ribbon ? 'Collapse ribbon (Ctrl+F1)' : 'Always show ribbon';
+    ribbonPin.setAttribute('aria-label',ribbonPin.title);
+    ribbonMenu.querySelectorAll('[data-ribbon-mode]').forEach(button => button.setAttribute('aria-checked',String((button.dataset.ribbonMode === 'always') === workspaceState.ribbon)));
+    document.querySelectorAll('[data-ribbon]').forEach(tab => tab.setAttribute('aria-expanded',String(tab.dataset.ribbon === workspaceState.activeRibbon && (workspaceState.ribbon || ribbonPeek))));
+    for (const side of ['left','right']) {
+      workspace.classList.toggle(`${side}-closed`,!workspaceState[side]);
+      document.getElementById(side === 'left' ? 'layers-panel' : 'validation-panel').setAttribute('aria-hidden',String(!workspaceState[side]));
+      document.querySelector(`.panel-toggle[data-panel="${side}"]`).setAttribute('aria-expanded',String(workspaceState[side]));
+    }
+    canvasShell.classList.toggle('workspace-grid',workspaceState.grid);
+    canvasShell.classList.toggle('axis-hidden',!workspaceState.axis);
+    canvasShell.classList.toggle('command-hidden',!workspaceState.command);
+    document.querySelectorAll('[data-layout-option]').forEach(input => input.checked = workspaceState[input.dataset.layoutOption]);
+    const ribbonToggle = document.getElementById('ribbon-collapse');
+    ribbonToggle.setAttribute('aria-expanded',String(!ribbonMenu.hidden));
+    document.getElementById('workspace-focus').textContent = workspaceState.focusRestore ? 'Restore workspace' : 'Focus drawing';
+    const commandStates = {'Layers':workspaceState.left,'Layers panel':workspaceState.left,'Properties':workspaceState.right,'Properties / Validation panel':workspaceState.right,'Command line':workspaceState.command,'Grid':workspaceState.grid,'Axis / UCS':workspaceState.axis,'Collapse ribbon':!workspaceState.ribbon,'Focus drawing':!!workspaceState.focusRestore};
+    document.querySelectorAll('[data-command]').forEach(button => { if (button.dataset.command in commandStates) { const enabled = commandStates[button.dataset.command]; button.setAttribute('aria-pressed',String(enabled)); button.classList.toggle('active',enabled); } });
+    saveWorkspace();
+  }
+  function activateRibbon(name, expand = true) {
+    if (!document.getElementById(`${name}-ribbon`)) name = 'home';
+    workspaceState.activeRibbon = name; if (expand && !workspaceState.ribbon) ribbonPeek = true;
+    document.querySelectorAll('[data-ribbon]').forEach(tab => {
+      const active = tab.dataset.ribbon === name;
+      tab.classList.toggle('active',active); tab.setAttribute('aria-pressed',String(active));
+      document.getElementById(`${tab.dataset.ribbon}-ribbon`).hidden = !active;
+    });
+    syncWorkspace();
+  }
+  function toggleDrawingFocus() {
+    ribbonPeek = false;
+    if (workspaceState.focusRestore) { Object.assign(workspaceState,workspaceState.focusRestore); workspaceState.focusRestore = null; }
+    else { workspaceState.focusRestore = {ribbon:workspaceState.ribbon,left:workspaceState.left,right:workspaceState.right,command:workspaceState.command}; workspaceState.ribbon = false; workspaceState.left = false; workspaceState.right = false; workspaceState.command = false; }
+    syncWorkspace();
+  }
+  function resetWorkspace() { Object.assign(workspaceState,workspaceDefaults); activateRibbon('home'); }
+  function handleWorkspaceCommand(command) {
+    const toggle = {'Layers':'left','Layers panel':'left','Properties':'right','Properties / Validation panel':'right','Command line':'command','Grid':'grid','Axis / UCS':'axis','Collapse ribbon':'ribbon'}[command];
+    if (toggle) { workspaceState[toggle] = !workspaceState[toggle]; if (toggle === 'ribbon') ribbonPeek = false; }
+    if (command === 'Focus drawing') toggleDrawingFocus();
+    if (command === 'Reset layout') resetWorkspace();
+    syncWorkspace();
+  }
+  document.querySelectorAll('[data-panel]').forEach(button => {
+    button.addEventListener('click', () => {
+      const side = button.dataset.panel;
+      workspaceState[side] = !workspaceState[side]; syncWorkspace();
+    });
+  });
+  document.querySelectorAll('[data-ribbon]').forEach(button => {
+    button.addEventListener('click',() => activateRibbon(button.dataset.ribbon));
+    button.addEventListener('dblclick',() => setRibbonPinned(!workspaceState.ribbon));
+    button.addEventListener('contextmenu',event => { event.preventDefault(); ribbonMenu.hidden = false; syncWorkspace(); ribbonMenu.querySelector('button').focus(); });
+  });
+  document.getElementById('ribbon-collapse').onclick = () => { ribbonMenu.hidden = !ribbonMenu.hidden; syncWorkspace(); if (!ribbonMenu.hidden) ribbonMenu.querySelector('button').focus(); };
+  ribbonMenu.onkeydown = event => { if (['ArrowDown','ArrowUp','Home','End'].includes(event.key)) { event.preventDefault(); const buttons = [...ribbonMenu.querySelectorAll('button')]; buttons[event.key === 'Home' ? 0 : event.key === 'End' ? 1 : (buttons.indexOf(document.activeElement) + 1) % 2].focus(); } };
+  document.querySelectorAll('[data-layout-option]').forEach(input => input.onchange = () => { workspaceState[input.dataset.layoutOption] = input.checked; if (input.dataset.layoutOption === 'ribbon') ribbonPeek = false; syncWorkspace(); });
+  document.getElementById('workspace-focus').onclick = () => { toggleDrawingFocus(); document.getElementById('workspace-menu').open = false; };
+  document.getElementById('workspace-reset').onclick = () => { resetWorkspace(); document.getElementById('workspace-menu').open = false; };
+  const commandSearch = document.getElementById('command-search');
+  const commandSearchResults = document.getElementById('command-search-results');
+  function closeCommandSearch() { commandSearchResults.hidden = true; commandSearch.setAttribute('aria-expanded','false'); }
+  commandSearch.oninput = () => {
+    const query = commandSearch.value.trim().toLowerCase(); commandSearchResults.replaceChildren();
+    if (!query) { closeCommandSearch(); return; }
+    const entries = [...document.querySelectorAll('[data-command]')].map(button => ({name:button.dataset.command,ribbon:button.closest('.ribbon').id.replace('-ribbon',''),element:button}));
+    const seen = new Set();
+    const matches = entries.filter(entry => { const key = `${entry.ribbon}:${entry.name}`; if (seen.has(key) || !entry.name.toLowerCase().includes(query)) return false; seen.add(key); return true; }).slice(0,20);
+    for (const entry of matches) {
+      const button = document.createElement('button'); const label = document.createElement('span'); label.textContent = entry.name;
+      const location = document.createElement('small'); location.textContent = entry.ribbon.toUpperCase(); button.append(label,location);
+      button.onclick = () => { activateRibbon(entry.ribbon); entry.element.click(); if (workspaceState.ribbon) entry.element.focus(); else document.querySelector(`[data-ribbon="${entry.ribbon}"]`).focus(); closeCommandSearch(); };
+      commandSearchResults.appendChild(button);
+    }
+    if (!matches.length) { const empty = document.createElement('p'); empty.textContent = 'No matching commands.'; commandSearchResults.appendChild(empty); }
+    commandSearchResults.hidden = false; commandSearch.setAttribute('aria-expanded','true');
+  };
+  commandSearch.onkeydown = event => { if (event.key === 'ArrowDown') { event.preventDefault(); commandSearchResults.querySelector('button')?.focus(); } if (event.key === 'Enter') { event.preventDefault(); commandSearchResults.querySelector('button')?.click(); } if (event.key === 'Escape') closeCommandSearch(); };
+  document.addEventListener('click',event => { if (!event.target.closest('.office-search')) closeCommandSearch(); if (!event.target.closest('#workspace-menu')) document.getElementById('workspace-menu').open = false; });
+  document.addEventListener('click',event => {
+    if (!event.target.closest('#ribbon-display-menu,#ribbon-collapse')) closeRibbonMenu();
+    if (event.target.closest('[data-ribbon],#ribbon-display-menu,#ribbon-collapse,#ribbon-pin')) return;
+    if (!event.target.closest('.ribbon') || event.target.closest('[data-command],#validation-run,#validation-changes')) dismissRibbonPeek();
+  });
+  document.addEventListener('keydown',event => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'F1') { event.preventDefault(); setRibbonPinned(!workspaceState.ribbon); }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); commandSearch.focus(); commandSearch.select(); }
+    if (event.key === 'Escape' && !document.querySelector('dialog[open]')) { const ribbonWasOpen = ribbonPeek || !ribbonMenu.hidden; closeRibbonMenu(); dismissRibbonPeek(); closeCommandSearch(); document.getElementById('workspace-menu').open = false; if (ribbonWasOpen) document.querySelector(`[data-ribbon="${workspaceState.activeRibbon}"]`).focus(); else if (workspaceState.focusRestore) toggleDrawingFocus(); }
+  });
+  // Interactive validation workflow for the HTML mockup; fixture data is not a compliance engine.
+  const vf = id => document.getElementById(id);
+  const ve = escapeLayerText;
+  const categoriesByType = {
+    sod: [['spacing','Track Centre Spacing'],['platform','Platform Clearances and Height'],['structure','Structure and FOB Clearances'],['gradient','Ruling Gradient'],['geometry','Track Geometry'],['properties','Required Asset Properties']],
+    esp: [['drawing','Drawing Details'],['keyplan','Key Plan'],['assets','Tracks and Assets'],['phases','Work Phases'],['dimensions','Dimensions'],['notes','Notes and Tables']],
+    sip: [['track_gradient','Track & Gradients'],['signals','Signals'],['circuits','Track Circuits'],['routes','Routes and Overlaps'],['lc','LC Gate Protection'],['tables','SIP Tables'],['standards','Drawing Standards']]
+  };
+  const typeNames = {all:'All Validations',sod:'SOD Rules',esp:'ESP Checklist',sip:'SIP Checklist'};
+  const profile = {standard:'IRSOD BG 2022',checklist:'Project Checklist 1.0',zone:'SCR',division:'Not specified',ruleVersion:'1.0',source:'Illustrative project profile; confirm before use'};
+  const fixtureAssets = [
+    {id:'TRK-01',name:'Main Line (Up)',x:130,y:90,width:180,height:14},
+    {id:'PLT-01',name:'Platform 1',x:340,y:160,width:120,height:35},
+    {id:'STR-01',name:'Station building',x:580,y:250,width:70,height:55},
+    {id:'GRD-01',name:'Gradient section 1',x:240,y:340,width:150,height:20},
+    {id:'TRK-02',name:'Main Line (Down)',x:430,y:410,width:170,height:14},
+    {id:'TRK-04',name:'Siding 1',x:690,y:490,width:130,height:14}
+  ];
+  const fixtureRules = [
+    ['sod','spacing','SOD-I-01','Track centre spacing','violation','critical','TRK-01','Project minimum','Below project minimum',false],
+    ['sod','platform','SOD-II-03','Platform face clearance','warning','minor','PLT-01','Project offset','Review source measurement',true],
+    ['sod','structure','SOD-I-07','Structure clearance','passed','info','STR-01','Configured minimum','Within configured limit',false],
+    ['sod','gradient','SOD-II-02','Ruling gradient','passed','info','GRD-01','Configured ruling gradient','Within configured limit',false],
+    ['sod','geometry','TRK-G','Track geometry','passed','info','TRK-02','Valid geometry','Valid geometry',false],
+    ['sod','properties','TRK-P','Required track properties','violation','major','TRK-04','All required properties','Missing engineering property',false],
+    ['esp','drawing','ESP-01','Drawing identification','passed','info','STR-01','Drawing number and revision','Present',false],
+    ['esp','keyplan','ESP-02','Key plan coverage','warning','minor','STR-01','Complete key plan','Review extent',false],
+    ['esp','assets','ESP-03','Asset identification','passed','info','TRK-01','Unique asset labels','Unique labels',false],
+    ['esp','phases','ESP-04','Work phase assignment','condonation','major','TRK-04','Approved phase assignment','Exception requires review',true],
+    ['esp','dimensions','ESP-05','Dimension coverage','warning','minor','PLT-01','Required dimensions','Incomplete dimension coverage',false],
+    ['esp','notes','ESP-06','Notes and tables','not_applicable','info','STR-01','Applicable project notes','Not applicable in this example',false],
+    ['sip','signals','SIP-01','Signal identification','violation','critical','TRK-01','Unique signal identity','Missing identity',false],
+    ['sip','circuits','SIP-02','Detection section labels','warning','minor','TRK-02','Complete labels','Review section label',false],
+    ['sip','routes','SIP-03','Route overlap definition','condonation','major','TRK-04','Approved overlap','Exception requires approval',true],
+    ['sip','lc','SIP-04','LC gate protection','passed','info','STR-01','Protection identified','Identified',false],
+    ['sip','tables','SIP-05','SIP table completeness','warning','minor','PLT-01','Complete entries','Review table entry',false],
+    ['sip','standards','SIP-06','Drawing standards','passed','info','GRD-01','Project drawing standard','Conforms',false]
+  ];
+  const editorType = new URLSearchParams(location.search).get('editor') === 'sip' ? 'sip' : 'esp';
+  const historyKey = `esp-sip-validation-mockup-v2:${editorType}`;
+  const v = {editor:editorType, documentId:'pothulapadu', revision:0, approvedRevision:0, selectedAssets:[], changedAssets:[], assets:fixtureAssets, type:'all', resultType:editorType === 'sip' ? 'sip' : 'sod', scope:'entire', checked:new Set(), running:false, progress:0, state:'not_run', run:null, history:[], notice:'', selectedResult:null};
+  try { v.history = JSON.parse(localStorage.getItem(historyKey) || '[]').filter(run => run.documentId === v.documentId); } catch { v.history = []; }
+  function persistHistory() { try { localStorage.setItem(historyKey, JSON.stringify(v.history)); } catch { v.notice = 'History is retained for this session; browser storage is unavailable.'; } }
+  const applicableTypes = () => v.editor === 'esp' ? ['sod','esp','sip'] : ['sip'];
+  const activeTypes = () => v.type === 'all' ? applicableTypes() : [v.type];
+  const activeCategories = () => activeTypes().flatMap(type => categoriesByType[type].map(([id,label]) => ({id:`${type}:${id}`,label,type})));
+  function resetCategories() { v.checked = new Set(activeCategories().map(category => category.id)); }
+  resetCategories();
+  const ribbon = vf('validation-ribbon');
+  const panel = vf('validation-panel');
+  panel.querySelector('.validation-tabs')?.remove();
+  panel.querySelector('.validation-content')?.remove();
+  const body = document.createElement('div');
+  body.className = 'validation-workflow-body';
+  body.innerHTML = `<div class="validation-result-tabs" role="tablist" aria-label="Validation result types">${[['sod','SOD'],['esp','ESP'],['sip','SIP'],['changes','Changes']].map(([id,label]) => `<button id="validation-tab-${id}" role="tab" data-result-type="${id}" aria-controls="${id === 'changes' ? 'change-view' : 'validation-result-tabpanel'}" aria-selected="false" ${id === 'changes' || id === 'sip' || applicableTypes().includes(id) ? '' : 'disabled title="Available in ESP Editor."'}>${label}</button>`).join('')}</div>
+    <div class="sod-status" id="validation-status" aria-live="polite" hidden></div>
+    <div class="validation-content validation-workflow-content" id="validation-result-tabpanel" role="tabpanel">
+      <div class="summary validation-summary-five" id="validation-summary"></div>
+      <div class="sod-result-filters"><input id="validation-search" type="search" placeholder="Search rule, asset name or ID…" aria-label="Search validation results">
+        <select id="validation-status-filter" aria-label="Status filter"><option value="all">All statuses</option><option value="passed">Passed</option><option value="warning">Warning</option><option value="violation">Violation</option><option value="condonation">Condonation Required</option><option value="not_applicable">Not Applicable</option></select>
+        <select id="validation-category-filter" aria-label="Category filter"><option value="all">All categories</option></select>
+        <select id="validation-severity-filter" aria-label="Severity filter"><option value="all">All severities</option><option value="critical">Critical</option><option value="major">Major</option><option value="minor">Minor</option><option value="info">Info</option></select>
+        <button class="layer-action" id="validation-clear-filters">Clear Filters</button></div>
+      <div id="validation-results"></div>
+    </div>
+    <div class="sod-detail" id="validation-detail" hidden></div>
+    <div class="validation-finalization"><button class="layer-action" id="validation-save-draft">Save Draft</button><button class="layer-action" id="validation-submit">Final Submission</button><small id="validation-finalization-note"></small></div>`;
+  panel.appendChild(body);
+  const sipRuleNavigation = document.createElement('div');
+  sipRuleNavigation.className = 'sip-rule-navigation'; sipRuleNavigation.hidden = true;
+  vf('validation-result-tabpanel').before(sipRuleNavigation);
+  const sipCatalogue = document.createElement('section'); sipCatalogue.id = 'sip-checklist-panel'; sipCatalogue.className = 'sip-catalogue'; sipCatalogue.hidden = true;
+  sipCatalogue.setAttribute('role','tabpanel'); sipCatalogue.setAttribute('aria-labelledby','validation-tab-sip');
+  sipCatalogue.setAttribute('aria-label','SIP checklist rules');
+  sipCatalogue.innerHTML = `<div class="sip-catalogue-head"><h3>SIP Checklist</h3></div><div class="sip-rule-counts" id="sip-rule-counts"></div><input class="sip-rule-search" id="sip-rule-search" type="search" placeholder="Find rule ID or description…" aria-label="Search SIP checklist rules"><div class="sip-rule-filters"><button class="layer-action" data-sip-filter="all" aria-pressed="true">All Rules</button><button class="layer-action" data-sip-filter="issues" aria-pressed="false">Failed</button><button class="layer-action" data-sip-filter="pending" aria-pressed="false">Not Run</button></div><div class="sip-category-list" id="sip-category-list"></div><div class="sip-catalogue-footer"><span>Illustrative checklist data</span><button class="layer-action" id="sip-run-checklist">Run Checklist</button></div>`;
+  body.appendChild(sipCatalogue);
+  const sipBrowser = {ruleId:null,search:'',filter:'all',expanded:new Set(['track_gradient']),scrollTop:0};
+  const sipRuleRegistry = [
+    {id:'GEN-GRAD-001',category:'track_gradient',name:'Gradient Continuity',description:'Right gradient equals the next point’s left gradient.',view:'track-sequence'},
+    ...fixtureRules.filter(rule => rule[0] === 'sip').map(rule => ({id:rule[2],category:rule[1],name:rule[3],description:rule[7],view:'asset-findings'}))
+  ];
+  function sipRuleSummary(rule) {
+    if (rule.view === 'track-sequence') {
+      const all = gradientTracks.flatMap(track => track.comparisons);
+      const findings = all.filter(pair => pair.status !== 'passed').length;
+      return {findings,failed:all.some(pair => pair.status === 'mismatch'),pending:false,dirty:gradientTracks.some(track => track.dirty),text:`${gradientTracks.length} tracks · ${all.length} comparisons · ${findings} findings`,status:findings ? 'issues' : 'passed'};
+    }
+    const results = (v.run?.results || []).filter(result => result.type === 'sip' && result.ruleId === rule.id);
+    const findings = results.filter(result => ['violation','warning','condonation'].includes(result.status)).length;
+    return {findings,failed:results.some(result => ['violation','condonation'].includes(result.status)),pending:!results.length,dirty:results.length && isOutdated(),text:results.length ? `${results.length} ${results.length === 1 ? 'check' : 'checks'} · ${findings} ${findings === 1 ? 'finding' : 'findings'}` : 'Not run · Select the rule to view its requirement',status:!results.length ? 'pending' : findings ? 'issues' : 'passed'};
+  }
+  function renderSipCatalogue() {
+    const summaries = sipRuleRegistry.map(rule => ({rule,...sipRuleSummary(rule)}));
+    vf('sip-rule-counts').innerHTML = `<div><strong>${summaries.length}</strong><span>Rules</span></div><div><strong>${summaries.filter(item => item.failed).length}</strong><span>Failed</span></div><div><strong>${summaries.filter(item => item.pending).length}</strong><span>Not run</span></div>`;
+    const filtered = summaries.filter(item => `${item.rule.id} ${item.rule.name} ${item.rule.description} ${item.rule.zone || ''}`.toLowerCase().includes(sipBrowser.search.toLowerCase()) && (sipBrowser.filter === 'all' || (sipBrowser.filter === 'issues' ? item.failed : item.pending)));
+    vf('sip-category-list').innerHTML = filtered.map(item => `<button class="sip-rule-row" data-sip-rule="${ve(item.rule.id)}"><span class="rule-state ${item.status}" aria-hidden="true">${item.status === 'pending' ? '○' : item.status === 'passed' ? '✓' : '!'}</span><span><strong>${ve(item.rule.id)}</strong><span class="sip-rule-description">${ve(item.rule.name)}</span><small>${ve(item.rule.description)}</small>${item.rule.zone ? `<small>Zone: ${ve(item.rule.zone)}</small>` : ''}<small>${item.pending ? 'Not Run' : item.failed ? 'Failed' : item.findings ? 'Warning' : 'Passed'}${item.dirty ? ' · Outdated' : ''} · ${ve(item.text)}</small></span><span class="rule-arrow">›</span></button>`).join('') || '<div class="sod-empty">No rules match this search and filter.</div>';
+    sipCatalogue.querySelectorAll('[data-sip-filter]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.sipFilter === sipBrowser.filter)));
+    vf('sip-run-checklist').disabled = v.running;
+  }
+  function openSipRule(id) {
+    sipBrowser.scrollTop = vf('sip-category-list').scrollTop; sipBrowser.ruleId = id;
+    gradientState.open = sipRuleRegistry.find(rule => rule.id === id)?.view === 'track-sequence';
+    gradientState.showDrawing = gradientState.open;
+    vf('validation-search').value = ''; ['validation-status-filter','validation-category-filter','validation-severity-filter'].forEach(key => vf(key).value = 'all');
+    renderResults();
+  }
+  function backToSipChecklist() { sipBrowser.ruleId = null; gradientState.open = false; renderResults(); vf('sip-category-list').scrollTop = sipBrowser.scrollTop; }
+  sipCatalogue.addEventListener('click',event => {
+    const rule = event.target.closest('[data-sip-rule]'), category = event.target.closest('[data-sip-category]'), filter = event.target.closest('[data-sip-filter]');
+    if (rule) openSipRule(rule.dataset.sipRule);
+    if (category) { const id = category.dataset.sipCategory; sipBrowser.expanded.has(id) ? sipBrowser.expanded.delete(id) : sipBrowser.expanded.add(id); renderSipCatalogue(); }
+    if (filter) { sipBrowser.filter = filter.dataset.sipFilter; renderSipCatalogue(); }
+  });
+  vf('sip-rule-search').oninput = event => { sipBrowser.search = event.target.value; renderSipCatalogue(); };
+  vf('sip-run-checklist').onclick = () => { v.type = 'sip'; resetCategories(); renderRibbon(); runValidation(); };
+  const gradientView = document.createElement('section');
+  gradientView.id = 'gradient-review-panel'; gradientView.setAttribute('role','tabpanel'); gradientView.setAttribute('aria-labelledby','validation-tab-sip');
+  gradientView.className = 'gradient-view'; gradientView.hidden = true; gradientView.setAttribute('aria-label','Gradient continuity by track');
+  body.appendChild(gradientView);
+  const gradientTracks = [{id:'TRK-01',name:'Up Main',count:40},{id:'TRK-02',name:'Down Main',count:35},{id:'TRK-04',name:'Loop Line',count:25}].map(track => ({...track,dirty:false,points:Array.from({length:track.count},(_,index) => ({id:`G${String(index + 1).padStart(2,'0')}`,chainage:1200 + index * 250,left:'+1:100',right:'+1:100'}))}));
+  gradientTracks[0].points[2].right = '+1:150';
+  gradientTracks[0].points[17].right = 'Level';
+  gradientTracks[2].points[4].right = '-1:100';
+  gradientTracks[2].points[9].right = '';
+  const gradientState = {open:false,trackId:'TRK-01',pairId:null,issuesOnly:true,showDrawing:false};
+  function gradientNumber(value) {
+    if (/^level$/i.test(value.trim())) return 0;
+    const match = /^([+-]?\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)$/.exec(value.trim());
+    return match && Number(match[2]) > 0 ? Number(match[1]) / Number(match[2]) : null;
+  }
+  function evaluateGradientTrack(track) {
+    const points = [...track.points].sort((a,b) => a.chainage - b.chainage);
+    track.comparisons = points.slice(0,-1).map((point,index) => {
+      const next = points[index + 1], right = gradientNumber(point.right), left = gradientNumber(next.left);
+      return {id:`${point.id}-${next.id}`,from:{...point},to:{...next},status:right == null || left == null ? 'missing' : Math.abs(right-left) < 1e-12 ? 'passed' : 'mismatch'};
+    });
+    track.dirty = false;
+  }
+  gradientTracks.forEach(evaluateGradientTrack);
+  function activeGradientTrack() { return gradientTracks.find(track => track.id === gradientState.trackId); }
+  function gradientIssues(track) { return track.comparisons.filter(pair => pair.status !== 'passed'); }
+  function selectedGradientPair() { return activeGradientTrack().comparisons.find(pair => pair.id === gradientState.pairId); }
+  function chooseGradientTrack(id) {
+    gradientState.trackId = id;
+    const track = activeGradientTrack(); gradientState.pairId = (gradientIssues(track)[0] || track.comparisons[0])?.id;
+    renderGradient(); drawGradientComparison();
+  }
+  function renderGradient() {
+    const track = activeGradientTrack();
+    if (!gradientState.pairId) gradientState.pairId = (gradientIssues(track)[0] || track.comparisons[0])?.id;
+    const pair = selectedGradientPair(), issues = gradientIssues(track);
+    const visible = gradientState.issuesOnly ? issues : track.comparisons;
+    const issueIndex = issues.findIndex(item => item.id === pair?.id);
+    gradientView.innerHTML = `<div class="gradient-intro">Current right = next left · Ordered by chainage<br><small>Illustrative data · 100 gradient points across 3 tracks</small></div>
+      <table class="gradient-tracks" aria-label="Track gradient summary"><thead><tr><th>Track</th><th title="Adjacent comparisons">Checks</th><th>Mism.</th><th>Missing</th></tr></thead><tbody>${gradientTracks.map(item => `<tr class="${item.id === track.id ? 'active' : ''}"><td><button data-gradient-track="${item.id}">${item.name}${item.dirty ? ' *' : ''}</button></td><td>${item.comparisons.length}</td><td class="${item.comparisons.some(pair => pair.status === 'mismatch') ? 'problem' : ''}">${item.comparisons.filter(pair => pair.status === 'mismatch').length}</td><td class="${item.comparisons.some(pair => pair.status === 'missing') ? 'missing' : ''}">${item.comparisons.filter(pair => pair.status === 'missing').length}</td></tr>`).join('')}</tbody></table>
+      <div class="gradient-toolbar"><select id="gradient-track-select" aria-label="Choose gradient track">${gradientTracks.map(item => `<option value="${item.id}" ${item.id === track.id ? 'selected' : ''}>${item.name}</option>`).join('')}</select><select id="gradient-display" aria-label="Comparison display"><option value="issues" ${gradientState.issuesOnly ? 'selected' : ''}>Issues only</option><option value="all" ${!gradientState.issuesOnly ? 'selected' : ''}>All comparisons</option></select><button class="layer-action" id="gradient-recheck">Recheck Track</button></div>
+      <div class="gradient-notice" role="status">${track.dirty ? 'Values changed. Results are outdated — recheck this track.' : `${track.comparisons.length - issues.length} passed · ${issues.length} issues`}</div>
+      <div class="gradient-sequence" aria-label="Gradient point sequence">${track.comparisons.map((item,index) => `${index === 0 ? `<span class="gradient-node">${item.from.id}</span>` : ''}<button class="gradient-edge ${item.status} ${pair?.id === item.id ? 'selected' : ''}" data-gradient-pair="${item.id}" aria-label="${item.from.id} to ${item.to.id}: ${item.status}" title="${item.from.id} right ${item.from.right || 'Missing'} → ${item.to.id} left ${item.to.left || 'Missing'}">${item.status === 'passed' ? '✓' : item.status === 'missing' ? '?' : '×'}</button><span class="gradient-node">${item.to.id}</span>`).join('')}</div>
+      <div class="gradient-comparisons">${visible.map(item => `<button class="gradient-pair ${pair?.id === item.id ? 'selected' : ''}" data-gradient-pair="${item.id}"><strong>${item.from.id} → ${item.to.id}</strong><span>${item.status === 'missing' ? 'Missing data' : item.status === 'mismatch' ? 'Mismatch' : 'Passed'}</span><small>Ch ${item.from.chainage.toLocaleString()}–${item.to.chainage.toLocaleString()} m</small><span class="pair-values">Right: ${ve(item.from.right || 'Missing')} &nbsp; | &nbsp; Left: ${ve(item.to.left || 'Missing')}</span></button>`).join('') || '<div class="sod-empty">All adjacent gradient values match.<br>Switch to All comparisons to inspect them.</div>'}</div>
+      <div class="gradient-detail">${pair ? `<strong>${pair.from.id} → ${pair.to.id} ${issueIndex >= 0 ? `· Issue ${issueIndex + 1} of ${issues.length}` : '· Passed comparison'}</strong><div>Expected: matching signed gradient values</div><div>${pair.from.id} right: <b>${ve(pair.from.right || 'Missing')}</b><br>${pair.to.id} left: <b>${ve(pair.to.left || 'Missing')}</b></div><div class="gradient-actions"><button class="layer-action" id="gradient-prev" ${issues.length ? '' : 'disabled'}>← Previous issue</button><button class="layer-action" id="gradient-next" ${issues.length ? '' : 'disabled'}>Next issue →</button><button class="layer-action" id="gradient-locate">View on Drawing</button><button class="layer-action" id="gradient-properties">Open Properties</button></div>` : 'No adjacent gradient points to compare.'}</div>`;
+    vf('gradient-track-select').onchange = event => chooseGradientTrack(event.target.value);
+    vf('gradient-display').onchange = event => { gradientState.issuesOnly = event.target.value === 'issues'; renderGradient(); };
+    vf('gradient-recheck').onclick = () => { evaluateGradientTrack(track); gradientState.pairId = (gradientIssues(track)[0] || track.comparisons[0])?.id; renderGradient(); drawGradientComparison(); };
+    if (pair) {
+      vf('gradient-locate').onclick = () => { gradientState.showDrawing = true; drawGradientComparison(); };
+      vf('gradient-properties').onclick = editGradientPair;
+      const moveIssue = direction => { if (!issues.length) return; gradientState.pairId = issues[(issueIndex < 0 ? (direction > 0 ? 0 : issues.length - 1) : (issueIndex + direction + issues.length) % issues.length)].id; gradientState.showDrawing = true; renderGradient(); drawGradientComparison(); gradientView.querySelector('.gradient-edge.selected')?.scrollIntoView({block:'nearest',inline:'center'}); };
+      vf('gradient-prev').onclick = () => moveIssue(-1); vf('gradient-next').onclick = () => moveIssue(1);
+    }
+  }
+  function drawGradientComparison() {
+    document.querySelector('.gradient-drawing')?.remove();
+    if (!gradientState.open || !gradientState.showDrawing || v.resultType !== 'sip') return;
+    const pair = selectedGradientPair(), track = activeGradientTrack(); if (!pair) return;
+    document.querySelector('.validation-focus-overlay')?.remove();
+    const overlay = document.createElement('div'); overlay.className = 'gradient-drawing'; overlay.dataset.track = track.id; overlay.dataset.pair = pair.id;
+    const colour = pair.status === 'passed' ? '#25845b' : pair.status === 'missing' ? '#be8a2b' : '#c3524c';
+    overlay.innerHTML = `<button aria-label="Close gradient drawing highlight">×</button><svg viewBox="0 0 800 460" role="img" aria-label="${track.name}: ${pair.from.id} right compared with ${pair.to.id} left"><text x="40" y="45" fill="#345d45" font-family="Segoe UI,Arial" font-size="18">${track.name} · Gradient Continuity</text><text x="40" y="70" fill="#809187" font-size="12" font-family="Segoe UI,Arial">Illustrative drawing · Both gradient points and the connecting section highlighted</text><path d="M60 270H740" stroke="#c1cec6" stroke-width="3"/><path d="M180 270H620" stroke="${colour}" stroke-width="14" opacity=".22"/><path d="M180 270H620" stroke="${colour}" stroke-width="3" stroke-dasharray="${pair.status === 'passed' ? '0' : '8 4'}"/>${[pair.from,pair.to].map((point,index) => `<g data-gradient-point="${track.id}:${point.id}"><path d="M${index ? 620 : 180} 210v70" stroke="${colour}" stroke-width="3"/><circle cx="${index ? 620 : 180}" cy="270" r="8" fill="white" stroke="${colour}" stroke-width="3"/><text x="${index ? 620 : 180}" y="175" text-anchor="middle" fill="#40584a" font-size="16" font-family="Segoe UI,Arial">${point.id} · ${index ? 'Left' : 'Right'}</text><text x="${index ? 620 : 180}" y="200" text-anchor="middle" fill="${colour}" font-size="20" font-family="Consolas,monospace">${ve(index ? point.left || 'Missing' : point.right || 'Missing')}</text><text x="${index ? 620 : 180}" y="310" text-anchor="middle" fill="#7c8f82" font-size="13" font-family="Segoe UI,Arial">Ch ${point.chainage.toLocaleString()} m</text></g>`).join('')}<text x="400" y="355" text-anchor="middle" fill="${colour}" font-family="Segoe UI,Arial" font-size="15">${track.dirty ? 'Results outdated — recheck track' : pair.status === 'passed' ? 'Matching gradient values' : pair.status === 'missing' ? 'Missing / invalid gradient value' : 'Right and next left do not match'}</text></svg>`;
+    overlay.querySelector('button').onclick = () => { gradientState.showDrawing = false; overlay.remove(); };
+    document.querySelector('.canvas').appendChild(overlay);
+  }
+  function editGradientPair() {
+    const track = activeGradientTrack(), pair = selectedGradientPair();
+    const from = track.points.find(point => point.id === pair.from.id), to = track.points.find(point => point.id === pair.to.id);
+    const dialog = showDialog('Gradient Properties',`<p>${track.name} · ${from.id} → ${to.id}</p><p>Use Level or a signed ratio such as +1:100. Leave blank to test missing data.</p><form id="gradient-edit-form"><label>${from.id} right<input name="right" value="${ve(from.right)}"></label><label>${to.id} left<input name="left" value="${ve(to.left)}"></label><button class="layer-action">Save Values</button><p>Changes affect this illustrative track only. Recheck Track refreshes its comparisons.</p></form>`);
+    dialog.querySelector('form').onsubmit = event => { event.preventDefault(); const fields = new FormData(event.target); from.right = fields.get('right').trim(); to.left = fields.get('left').trim(); track.dirty = true; drawingChanged([track.id]); dialog.close(); renderGradient(); drawGradientComparison(); };
+  }
+  gradientView.addEventListener('click',event => { const track = event.target.closest('[data-gradient-track]'), pair = event.target.closest('[data-gradient-pair]'); if (track) chooseGradientTrack(track.dataset.gradientTrack); if (pair) { gradientState.pairId = pair.dataset.gradientPair; gradientState.showDrawing = true; renderGradient(); drawGradientComparison(); } });
+  const changeView = document.createElement('div');
+  changeView.id = 'change-view'; changeView.className = 'change-view'; changeView.hidden = true;
+  changeView.setAttribute('role','tabpanel'); changeView.setAttribute('aria-labelledby','validation-tab-changes');
+  changeView.innerHTML = `<div class="change-settings"><label>Compare with <select id="change-baseline"><option value="approved">Approved version · V0.1</option><option value="validation" disabled>Last validation run</option></select></label><label>Current <span>Draft · V0.2</span></label><div class="change-actions"><button class="layer-action" id="detect-changes">Detect Changes</button><button class="layer-action" id="show-all-changes">Show on Drawing</button><button class="layer-action" id="reset-change-view">Fit All Changes</button></div><small>Illustrative drawing snapshots · Green: added · Amber: modified · Red dashed: removed</small></div><div class="change-counts" id="change-counts"></div><div class="change-list" id="change-list"></div>`;
+  body.appendChild(changeView);
+  const approvedAssets = structuredClone(fixtureAssets.filter(asset => asset.id !== 'TRK-04'));
+  approvedAssets.find(asset => asset.id === 'TRK-01').x = 90;
+  approvedAssets.find(asset => asset.id === 'STR-01').name = 'Station office';
+  approvedAssets.push({id:'LC-01',name:'Old LC gate',x:700,y:180,width:35,height:35});
+  let validationAssets = null;
+  const changes = {items:[],filter:'all',selected:null,detected:false,shown:false,zoom:false};
+  function calculateChanges(before, after) {
+    const oldById = new Map(before.map(asset => [asset.id,asset]));
+    const newById = new Map(after.map(asset => [asset.id,asset]));
+    const items = [];
+    for (const [id,asset] of newById) {
+      const old = oldById.get(id);
+      if (!old) { items.push({id,status:'added',before:null,after:asset,fields:[]}); continue; }
+      const fields = [...new Set([...Object.keys(old),...Object.keys(asset)])].filter(key => key !== 'id' && JSON.stringify(old[key]) !== JSON.stringify(asset[key])).map(key => ({key,before:old[key],after:asset[key]}));
+      if (fields.length) items.push({id,status:'modified',before:old,after:asset,fields});
+    }
+    for (const [id,asset] of oldById) if (!newById.has(id)) items.push({id,status:'removed',before:asset,after:null,fields:[]});
+    return structuredClone(items);
+  }
+  function detectChanges() {
+    const baseline = vf('change-baseline').value === 'validation' ? validationAssets : approvedAssets;
+    changes.items = calculateChanges(baseline || approvedAssets,v.assets); changes.detected = true; changes.selected = null; changes.zoom = false;
+    renderChanges(); if (changes.shown) drawChanges();
+  }
+  function renderChanges() {
+    vf('change-counts').innerHTML = [['all','All','#456751'],['added','Added','#219560'],['modified','Modified','#ba7b21'],['removed','Removed','#ba4b4d']].map(([status,label,colour]) => `<button data-change-filter="${status}" aria-pressed="${changes.filter === status}" style="color:${colour}"><strong>${changes.detected ? changes.items.filter(item => status === 'all' || item.status === status).length : '—'}</strong>${label}</button>`).join('');
+    vf('change-list').innerHTML = changes.items.filter(item => changes.filter === 'all' || item.status === changes.filter).map(item => `<button class="change-card ${item.status} ${changes.selected === item.id ? 'selected' : ''}" data-change-id="${item.id}"><span>${item.status.toUpperCase()} · ${ve(item.id)}</span><strong>${ve((item.after || item.before).name)}</strong>${item.status === 'removed' ? 'Previous geometry retained as a ghost outline.' : item.status === 'added' ? 'New asset in the current drawing.' : `${item.fields.length} changed ${item.fields.length === 1 ? 'property' : 'properties'}`}<div class="change-fields">${item.fields.map(field => `${ve(field.key)}: ${ve(JSON.stringify(field.before) ?? '—')} → ${ve(JSON.stringify(field.after) ?? '—')}`).join('<br>')}</div></button>`).join('') || `<div class="sod-empty">${changes.detected ? 'No changes match this comparison and filter.' : 'Select a baseline and click Detect Changes.'}</div>`;
+    vf('change-baseline').querySelector('[value="validation"]').disabled = !validationAssets;
+  }
+  function drawChanges() {
+    document.querySelector('.change-drawing-overlay')?.remove();
+    if (!changes.shown || v.resultType !== 'changes') return;
+    document.querySelector('.validation-focus-overlay')?.remove();
+    const selected = changes.items.find(item => item.id === changes.selected);
+    const bounds = selected && changes.zoom ? [selected.before,selected.after].filter(Boolean) : null;
+    const box = bounds ? (() => { const x = Math.min(...bounds.map(asset => asset.x)) - 80, y = Math.min(...bounds.map(asset => asset.y)) - 80; return `${x} ${y} ${Math.max(250,Math.max(...bounds.map(asset => asset.x + asset.width)) - x + 80)} ${Math.max(170,Math.max(...bounds.map(asset => asset.y + asset.height)) - y + 80)}`; })() : '0 0 1000 600';
+    const rect = (asset, colour, dashed, id, previous) => `<g data-drawing-change="${id}" style="cursor:pointer"><rect x="${asset.x}" y="${asset.y}" width="${asset.width}" height="${asset.height}" fill="${colour}" fill-opacity="${previous ? '.03' : '.13'}" stroke="${colour}" stroke-width="${changes.selected === id ? 4 : 2}" ${dashed ? 'stroke-dasharray="7 4"' : ''}/><text x="${asset.x}" y="${asset.y - 8}" fill="${colour}" font-family="Segoe UI,Arial" font-size="12">${ve(asset.name)} · ${ve(id)}${previous ? ' (before)' : ''}</text></g>`;
+    const items = changes.items.filter(item => changes.filter === 'all' || item.status === changes.filter);
+    const unchanged = v.assets.filter(asset => !changes.items.some(item => item.id === asset.id));
+    const overlay = document.createElement('div'); overlay.className = 'change-drawing-overlay';
+    overlay.innerHTML = `<div class="legend"><span style="color:#219560">■ Added</span><span style="color:#ba7b21">■ Modified</span><span style="color:#ba4b4d">▧ Removed</span><br><small>Illustrative comparison · Dashed outline = previous geometry</small></div><button class="close-change-drawing" aria-label="Hide drawing changes">×</button><svg viewBox="${box}" aria-label="Drawing change highlights">${unchanged.map(asset => `<rect x="${asset.x}" y="${asset.y}" width="${asset.width}" height="${asset.height}" fill="#e9eeeb" stroke="#ccd6d0"/>`).join('')}${items.map(item => item.status === 'added' ? rect(item.after,'#219560',false,item.id,false) : item.status === 'removed' ? rect(item.before,'#ba4b4d',true,item.id,true) : rect(item.before,'#b89762',true,item.id,true) + rect(item.after,'#ba7b21',false,item.id,false)).join('')}</svg>`;
+    overlay.querySelector('.close-change-drawing').onclick = () => { changes.shown = false; overlay.remove(); };
+    overlay.addEventListener('click',event => { const asset = event.target.closest('[data-drawing-change]'); if (asset) { changes.selected = asset.dataset.drawingChange; changes.zoom = false; renderChanges(); drawChanges(); vf('change-list').querySelector('.selected')?.scrollIntoView({block:'nearest'}); } });
+    document.querySelector('.canvas').appendChild(overlay);
+  }
+  vf('detect-changes').onclick = detectChanges;
+  vf('show-all-changes').onclick = () => { if (!changes.detected) detectChanges(); changes.shown = true; changes.zoom = false; drawChanges(); };
+  vf('reset-change-view').onclick = () => { changes.shown = true; changes.zoom = false; drawChanges(); };
+  vf('change-baseline').onchange = () => { changes.detected = false; changes.items = []; changes.selected = null; renderChanges(); if (changes.shown) detectChanges(); };
+  vf('change-counts').onclick = event => { const button = event.target.closest('[data-change-filter]'); if (button) { changes.filter = button.dataset.changeFilter; renderChanges(); drawChanges(); } };
+  vf('change-list').onclick = event => { const card = event.target.closest('[data-change-id]'); if (card) { changes.selected = card.dataset.changeId; changes.shown = true; changes.zoom = true; renderChanges(); drawChanges(); document.querySelector('.command-line > span:not(.hint)').textContent = `Change focus: ${changes.selected} · ${changes.items.find(item => item.id === changes.selected).status}`; } };
+  window.addEventListener('validation-completed',() => { validationAssets = structuredClone(v.assets); renderChanges(); });
+  renderChanges();
+  const propertiesTab = panel.querySelector('.switch span:first-child');
+  const validationTab = panel.querySelector('.switch span:last-child');
+  [propertiesTab, validationTab].forEach((tab, index) => {
+    tab.setAttribute('role','button'); tab.setAttribute('tabindex','0');
+    const activate = () => { body.hidden = index === 0; propertiesTab.classList.toggle('active',index === 0); validationTab.classList.toggle('active',index === 1); };
+    tab.addEventListener('click',activate); tab.addEventListener('keydown',event => { if (['Enter',' '].includes(event.key)) { event.preventDefault(); activate(); } });
+  });
+  function openValidationPanel() { const keepPeek = ribbonPeek; if (workspace.classList.contains('right-closed')) document.querySelector('.panel-toggle[data-panel="right"]').click(); validationTab.click(); ribbonPeek = keepPeek; syncWorkspace(); }
+  const statusLabel = {passed:'Passed',warning:'Warning',violation:'Violation',condonation:'Condonation Required',not_applicable:'Not Applicable'};
+  function isOutdated(run = v.run) { return !!run && run.revision !== v.revision; }
+  function renderRibbon() {
+    const group = (content, caption) => `<div class="home-group">${content}<div class="group-caption">${caption}</div></div>`;
+    const allowed = applicableTypes();
+    const typeSelect = `<div class="sod-config"><label><select id="validation-type" aria-label="Validation Type"><option value="all">All Applicable</option>${[['sod','SOD Rules'],['esp','ESP Checklist'],['sip','SIP Checklist']].map(([id,label]) => `<option value="${id}" ${allowed.includes(id) ? '' : `disabled title="Available in ${id === 'sip' ? 'SIP' : 'ESP'} Editor."`}>${label}</option>`).join('')}</select></label><small>${allowed.map(type => typeNames[type]).join(' + ')}</small><small>${v.editor.toUpperCase()} document · Applicable rule categories</small></div>`;
+    const scope = `<div class="sod-config"><label><select id="validation-scope" aria-label="Validation Scope"><option value="entire">Entire Drawing</option><option value="selected">Selected Assets</option><option value="changed">Changed Assets Only</option></select></label><small>${v.selectedAssets.length} selected · ${v.changedAssets.length} changed</small><button class="home-tool" id="validation-change-detection">Change Detection</button></div>`;
+    const ruleProfile = `<div class="sod-config"><span class="validation-profile-text">${activeTypes().includes('sod') ? profile.standard : profile.checklist}<br>${profile.zone} · Rule Version ${profile.ruleVersion}</span><button class="home-tool" id="validation-view-profile">View Profile</button></div>`;
+    ribbon.innerHTML = group(typeSelect,'Validation Type') + group(scope,'Scope') + group(ruleProfile,'Rule Profile') +
+      group(`<div class="sod-config"><button class="home-tool" id="validation-choose-categories">Choose Categories…</button><small>${v.checked.size} of ${activeCategories().length} categories selected</small><div style="display:flex"><button class="home-tool" id="validation-select-all">Select All</button><button class="home-tool" id="validation-clear-all">Clear All</button></div></div>`,'Rule Categories') +
+      group('<div class="sod-config"><button class="run-validation" id="validation-run"><svg><use href="#i-check"/></svg><span>Run Validation</span></button><button class="home-tool" id="validation-changes">Validate Changes</button></div>','Validation Actions') +
+      group('<div class="sod-config"><button class="home-tool" id="validation-view-results">View Results</button><button class="home-tool" id="validation-history">Validation History</button><button class="home-tool" id="validation-export">Export Report</button></div>','Results &amp; Reports');
+    vf('validation-type').value = v.type; vf('validation-scope').value = v.scope;
+    vf('validation-type').addEventListener('change', event => { v.type = event.target.value; if (v.type !== 'all') v.resultType = v.type; resetCategories(); v.selectedResult = null; v.notice = ''; renderRibbon(); renderResults(); });
+    vf('validation-scope').addEventListener('change', event => { v.scope = event.target.value; v.notice = ''; renderResults(); });
+    vf('validation-choose-categories').onclick = () => {
+      const dialog = showDialog('Validation Categories',`${activeTypes().map(type => `<fieldset style="border:1px solid #dbe4de;border-radius:4px;margin:0 0 12px;padding:10px"><legend>${typeNames[type]}</legend><div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">${activeCategories().filter(category => category.type === type).map(category => `<label style="display:flex;align-items:center;gap:6px;font-size:11px"><input type="checkbox" data-validation-category="${category.id}" ${v.checked.has(category.id) ? 'checked' : ''}>${category.label}</label>`).join('')}</div></fieldset>`).join('')}<div style="display:flex;gap:6px"><button class="layer-action" id="category-select-all">Select All</button><button class="layer-action" id="category-clear-all">Clear All</button><button class="layer-action" id="category-done" style="margin-left:auto">Done</button></div>`);
+      dialog.querySelectorAll('[data-validation-category]').forEach(input => input.onchange = () => { input.checked ? v.checked.add(input.dataset.validationCategory) : v.checked.delete(input.dataset.validationCategory); updateControls(); });
+      vf('category-select-all').onclick = () => { resetCategories(); dialog.querySelectorAll('input').forEach(input => input.checked = true); updateControls(); };
+      vf('category-clear-all').onclick = () => { v.checked.clear(); dialog.querySelectorAll('input').forEach(input => input.checked = false); updateControls(); };
+      vf('category-done').onclick = () => dialog.close();
+      dialog.addEventListener('close',renderRibbon);
+    };
+    vf('validation-select-all').onclick = () => { resetCategories(); renderRibbon(); };
+    vf('validation-clear-all').onclick = () => { v.checked.clear(); renderRibbon(); };
+    vf('validation-run').onclick = () => runValidation();
+    vf('validation-changes').onclick = () => runValidation('changed');
+    vf('validation-change-detection').onclick = () => { vf('validation-tab-changes').click(); openValidationPanel(); detectChanges(); changes.shown = true; drawChanges(); };
+    vf('validation-view-results').onclick = openValidationPanel;
+    vf('validation-view-profile').onclick = () => showDialog('Rule Profile', `<dl class="validation-profile-details">${Object.entries(profile).map(([key,value]) => `<dt>${ve(key)}</dt><dd>${ve(value)}</dd>`).join('')}<dt>Editor</dt><dd>${v.editor.toUpperCase()}</dd></dl><p>Profile values are illustrative. No live rule catalogue is connected.</p>`);
+    vf('validation-history').onclick = showHistory;
+    vf('validation-export').onclick = exportReport;
+    updateControls();
+  }
+  function updateControls() {
+    ribbon.querySelectorAll('input,select,button').forEach(control => { control.disabled = v.running; });
+    vf('validation-run').disabled = v.running || !v.checked.size;
+    vf('validation-run').innerHTML = `<svg><use href="#i-check"/></svg><span>${v.running ? `Validating… ${v.progress}%` : 'Run Validation'}</span>`;
+    vf('validation-run').title = `Run ${activeTypes().map(type => typeNames[type]).join(' + ')}`;
+    vf('validation-changes').disabled = v.running || !v.checked.size || !v.changedAssets.length;
+    vf('validation-export').disabled = v.running || v.state === 'failed' || !v.run || v.run.status !== 'completed';
+  }
+  function resultsForType() { return (v.run?.results || []).filter(result => result.type === v.resultType && (v.resultType !== 'sip' || !sipBrowser.ruleId || result.ruleId === sipBrowser.ruleId)); }
+  function renderResults() {
+    const showChanges = v.resultType === 'changes';
+    const selectedSipRule = sipRuleRegistry.find(rule => rule.id === sipBrowser.ruleId);
+    const showCatalogue = v.resultType === 'sip' && !selectedSipRule;
+    const showGradient = v.resultType === 'sip' && selectedSipRule?.view === 'track-sequence';
+    vf('validation-tab-sip').setAttribute('aria-controls',showGradient ? 'gradient-review-panel' : showCatalogue ? 'sip-checklist-panel' : 'validation-result-tabpanel');
+    gradientState.open = !!showGradient;
+    gradientView.hidden = !showGradient;
+    sipCatalogue.hidden = !showCatalogue;
+    sipRuleNavigation.hidden = v.resultType !== 'sip' || !selectedSipRule;
+    if (!sipRuleNavigation.hidden) {
+      sipRuleNavigation.innerHTML = `<button id="sip-back-checklist">← SIP Checklist</button><strong>${ve(selectedSipRule.id)}</strong><span class="sip-rule-description">${ve(selectedSipRule.name)}</span><small>${ve(selectedSipRule.description)}</small>${selectedSipRule.zone ? `<small>Zone: ${ve(selectedSipRule.zone)}</small>` : ''}<div class="rule-view-kind">${selectedSipRule.view === 'track-sequence' ? 'Review by track → comparison → drawing' : 'Review affected assets and checklist requirements'}</div>`;
+      vf('sip-back-checklist').onclick = backToSipChecklist;
+    }
+    if (showCatalogue) renderSipCatalogue();
+    if (showGradient) renderGradient(); drawGradientComparison();
+    changeView.hidden = !showChanges;
+    vf('validation-result-tabpanel').hidden = showChanges || showGradient || showCatalogue;
+    body.querySelector('.validation-finalization').hidden = showChanges || showGradient || showCatalogue;
+    if (showChanges) renderChanges();
+    drawChanges();
+    const results = resultsForType();
+    const outdated = isOutdated();
+    const violations = results.filter(result => result.status === 'violation').length;
+    const warnings = results.filter(result => result.status === 'warning').length;
+    const exceptions = results.filter(result => result.status === 'condonation').length;
+    const message = v.running ? 'Validation is in progress…' : outdated ? 'The drawing changed after the last validation. Run validation again.' : v.state === 'failed' ? 'Validation could not be completed. Please try again.' : !v.run ? 'Select the validation type, scope and categories, then run validation.' : violations || warnings || exceptions ? `Validation completed with ${violations} violations and ${warnings} warnings.${exceptions ? ` ${exceptions} require condonation.` : ''}` : results.length ? 'All selected checks passed.' : 'No applicable checks were found for this scope and validation type.';
+    // Completed counts live in the summary cards; show a notice only when action is needed.
+    vf('validation-status').hidden = showChanges || showGradient || (!v.notice && !v.running && !outdated && v.state !== 'failed');
+    vf('validation-status').textContent = v.notice || message;
+    body.querySelectorAll('[data-result-type]').forEach(tab => { const selected = tab.dataset.resultType === v.resultType; tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1; });
+    vf('validation-result-tabpanel').setAttribute('aria-labelledby', `validation-tab-${v.resultType}`);
+    const summary = [['Checks',results.length,'all',''],['Passed',results.filter(result => result.status === 'passed').length,'passed','passed'],['Violations',violations,'violation','violations'],['Warnings',warnings,'warning','na'],['Condonation Required',exceptions,'condonation','condonation']];
+    vf('validation-summary').innerHTML = summary.map(([label,total,status,style]) => `<button class="metric ${style}" data-summary-status="${status}" aria-pressed="${vf('validation-status-filter').value === status}"><strong>${v.run ? total : '—'}</strong><span>${label}</span></button>`).join('');
+    const previousCategory = vf('validation-category-filter').value;
+    const usedCategories = [...new Set(results.map(result => result.category))];
+    vf('validation-category-filter').innerHTML = '<option value="all">All categories</option>' + usedCategories.map(id => `<option value="${id}">${ve(results.find(result => result.category === id)?.categoryLabel || id)}</option>`).join('');
+    vf('validation-category-filter').value = usedCategories.includes(previousCategory) ? previousCategory : 'all';
+    const search = vf('validation-search').value.toLowerCase();
+    const status = vf('validation-status-filter').value, category = vf('validation-category-filter').value, severity = vf('validation-severity-filter').value;
+    const filtered = results.filter(result => (status === 'all' || result.status === status) && (category === 'all' || result.category === category) && (severity === 'all' || result.severity === severity) && `${result.ruleId} ${result.name} ${result.assetName} ${result.assetId}`.toLowerCase().includes(search));
+    vf('validation-results').innerHTML = filtered.map(result => {
+      const decision = v.run.condonations?.[result.id];
+      return `<article class="sod-card ${result.status === 'violation' ? 'failed' : result.status} ${v.selectedResult === result.id ? 'selected' : ''}" data-result-id="${result.id}" tabindex="0">
+        <span class="result-status">${statusLabel[result.status]} · ${result.severity}${outdated ? ' · Outdated' : ''}</span><strong>${ve(result.name)}</strong>
+        <div class="validation-result-meta">${ve(result.ruleId)} · ${ve(result.categoryLabel)}<br>${ve(result.assetName)} (${ve(result.assetId)})</div>
+        <dl class="validation-result-values"><dt>Expected</dt><dd>${ve(result.expected)}</dd><dt>Actual</dt><dd>${ve(result.actual)}</dd><dt>Reference</dt><dd>${ve(result.reference)}</dd></dl>
+        <p>${ve(result.message)}</p>${decision ? `<small>Condonation ${ve(decision.decision)} · ${ve(decision.requester)}${decision.approver ? ` → ${ve(decision.approver)}` : ''}</small>` : ''}
+        <div class="validation-result-actions"><button class="layer-action" data-result-action="drawing">View on Drawing</button><button class="layer-action" data-result-action="rule">View Rule</button><button class="layer-action" data-result-action="revalidate" ${v.running ? 'disabled' : ''}>Revalidate</button>${result.condonable && result.status !== 'passed' && result.status !== 'not_applicable' ? `<button class="layer-action" data-result-action="condonation" ${v.running || outdated ? 'disabled' : ''}>Request Condonation</button>` : ''}</div></article>`;
+    }).join('') || `<div class="sod-empty">${v.running ? 'Validation is in progress…' : selectedSipRule && !results.length ? `${ve(selectedSipRule.description)}<br><br>No findings have been evaluated for this rule in the current run.<br>Run SIP Checklist to evaluate it.` : !v.run ? 'No results yet. Configure and run validation.' : 'No results match the current filters.'}</div>`;
+    const blocking = (v.run?.results || []).some(result => result.status === 'violation' && result.severity === 'critical' && v.run.condonations?.[result.id]?.decision !== 'approved');
+    vf('validation-submit').disabled = v.running || v.state === 'failed' || !v.run || outdated || blocking || v.run.request.scope !== 'entire' || !applicableTypes().every(type => v.run.request.types.includes(type) && categoriesByType[type].every(([id]) => v.run.request.categories.includes(`${type}:${id}`)));
+    vf('validation-finalization-note').textContent = blocking ? 'Critical unresolved violations block final submission.' : outdated ? 'Run validation again before final submission.' : vf('validation-submit').disabled ? 'Complete all applicable checks for the entire drawing before final submission.' : 'Ready for mock final submission.';
+    updateControls();
+  }
+  function makeFixtureResults(request) {
+    const results = fixtureRules.filter(([type,category,,,,,assetId]) => request.types.includes(type) && request.categories.includes(`${type}:${category}`) && request.assetIds.includes(assetId)).map(([type,category,ruleId,name,status,severity,assetId,expected,actual,condonable]) => {
+      const asset = v.assets.find(item => item.id === assetId);
+      return {id:`${type}:${ruleId}:${assetId}`,type,category:`${type}:${category}`,categoryLabel:categoriesByType[type].find(([id]) => id === category)[1],ruleId,name,status,severity,assetId,assetName:asset?.name || assetId,expected,actual,condonable,reference:`${type === 'sod' ? profile.standard : profile.checklist} · ${ruleId}`,message:status === 'passed' ? 'Illustrative check meets the configured requirement.' : status === 'not_applicable' ? 'This item is not applicable to the example asset.' : 'Illustrative finding: verify source data and correct the affected asset.'};
+    });
+    if (request.types.includes('sip') && request.categories.includes('sip:track_gradient')) {
+      gradientTracks.filter(track => request.assetIds.includes(track.id)).forEach(track => {
+        evaluateGradientTrack(track);
+        const mismatchCount = track.comparisons.filter(pair => pair.status === 'mismatch').length, missingCount = track.comparisons.filter(pair => pair.status === 'missing').length;
+        results.push({id:`sip:GEN-GRAD-001:${track.id}`,type:'sip',category:'sip:track_gradient',categoryLabel:'Track & Gradients',ruleId:'GEN-GRAD-001',name:'Gradient Continuity',status:mismatchCount ? 'violation' : missingCount ? 'warning' : 'passed',severity:mismatchCount ? 'major' : missingCount ? 'minor' : 'info',assetId:track.id,assetName:track.name,expected:'Each right gradient equals the next point’s left gradient',actual:`${track.comparisons.length} comparisons; ${mismatchCount} mismatches; ${missingCount} missing values`,condonable:false,reference:'Project SIP checklist · GEN-GRAD-001',message:'Track-level summary. Open this rule in SIP Checklist to review individual comparisons.'});
+      });
+    }
+    return results;
+  }
+  async function runValidation(scopeOverride, resultId) {
+    if (v.running) return;
+    const scope = scopeOverride || v.scope;
+    const categories = [...v.checked];
+    const assetIds = resultId ? [v.run.results.find(result => result.id === resultId).assetId] : scope === 'selected' ? v.selectedAssets : scope === 'changed' ? v.changedAssets : v.assets.map(asset => asset.id);
+    if (!categories.length) { v.notice = 'Select at least one validation category.'; openValidationPanel(); renderResults(); return; }
+    if (scope === 'selected' && !assetIds.length) { v.notice = 'Select at least one asset to run validation.'; openValidationPanel(); renderResults(); return; }
+    if (scope === 'changed' && !assetIds.length) { v.notice = 'No assets have changed since the previous approved version or validation run.'; openValidationPanel(); renderResults(); return; }
+    const request = {documentId:v.documentId,editor:v.editor,revision:v.revision,type:v.type,types:activeTypes(),scope:resultId ? 'selected' : scope,categories:resultId ? [v.run.results.find(result => result.id === resultId).category] : categories,assetIds:[...assetIds],profile:{...profile},baseline:v.run?.revision ?? v.approvedRevision};
+    v.running = true; v.progress = 0; v.notice = ''; v.state = 'running'; openValidationPanel(); renderResults();
+    try {
+      for (const progress of [15,45,75]) { await new Promise(resolve => setTimeout(resolve,130)); v.progress = progress; updateControls(); }
+      const results = await (window.validationAdapter?.run ? window.validationAdapter.run(request) : makeFixtureResults(request));
+      if (!Array.isArray(results) || results.some(result => !statusLabel[result.status] || !result.id || !result.category || !result.type)) throw new Error('Invalid result payload');
+      const run = {id:`V-${Date.now()}-${v.history.length + 1}`,documentId:v.documentId,revision:request.revision,time:new Date().toISOString(),status:'completed',request,results,condonations:{},illustrative:!window.validationAdapter?.run};
+      v.run = run; v.history.unshift(run); v.state = 'completed'; v.selectedResult = null;
+      // A partial run cannot clear unrelated changed assets.
+      if (request.revision === v.revision) v.changedAssets = v.changedAssets.filter(id => !request.assetIds.includes(id));
+      persistHistory(); window.dispatchEvent(new CustomEvent('validation-completed',{detail:run}));
+    } catch (error) { v.state = 'failed'; v.notice = 'Validation could not be completed. Please try again.'; }
+    finally { v.running = false; v.progress = 100; renderRibbon(); renderResults(); }
+  }
+  function showDialog(title, content) {
+    document.querySelector('#validation-dialog')?.remove();
+    const dialog = document.createElement('dialog'); dialog.id = 'validation-dialog'; dialog.className = 'validation-dialog';
+    dialog.innerHTML = `<header><strong>${ve(title)}</strong><button class="panel-close" aria-label="Close dialog">×</button></header><div>${content}</div>`;
+    document.body.appendChild(dialog); dialog.querySelector('.panel-close').onclick = () => dialog.close(); dialog.addEventListener('close',() => dialog.remove()); dialog.showModal(); return dialog;
+  }
+  function showHistory() {
+    const dialog = showDialog('Validation History',v.history.length ? v.history.map(run => `<button class="validation-history-row" data-history-id="${run.id}"><strong>${ve(typeNames[run.request.type])} · ${run.results.length} checks</strong><span>${ve(run.time)} · ${ve(run.request.scope)} · Revision ${run.revision}${isOutdated(run) ? ' · Outdated' : ''}</span></button>`).join('') : '<p>No completed runs yet. Completed validations are retained here.</p>');
+    dialog.querySelectorAll('[data-history-id]').forEach(button => button.onclick = () => { v.run = v.history.find(run => run.id === button.dataset.historyId); v.state = 'completed'; v.type = v.run.request.type; v.resultType = v.run.request.types[0]; resetCategories(); v.notice = 'Viewing retained validation history.'; dialog.close(); renderRibbon(); renderResults(); openValidationPanel(); });
+  }
+  function exportReport() {
+    if (!v.run || v.running) return;
+    const fields = ['Rule ID','Item','Status','Category','Asset','Asset ID','Expected','Actual','Severity','Reference','Message','Condonation decision','Justification','Requester','Approver'];
+    const rows = v.run.results.map(result => { const decision = v.run.condonations[result.id] || {}; return [result.ruleId,result.name,statusLabel[result.status],result.categoryLabel,result.assetName,result.assetId,result.expected,result.actual,result.severity,result.reference,result.message,decision.decision || '',decision.justification || '',decision.requester || '',decision.approver || '']; });
+    const csvCell = value => { let cell = String(value ?? ''); if (/^[=+@-]/.test(cell)) cell = `'${cell}`; return `"${cell.replace(/"/g,'""')}"`; };
+    const csv = [`HTML MOCKUP - ILLUSTRATIVE DATA - ${isOutdated() ? 'OUTDATED' : 'COMPLETED'}`,`Run ${v.run.id} | ${v.run.time} | Scope ${v.run.request.scope}`,fields.join(','),...rows.map(row => row.map(csvCell).join(','))].join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); const link = document.createElement('a'); link.href = url; link.download = `validation-${v.run.id}.csv`; link.click(); setTimeout(() => URL.revokeObjectURL(url),1000);
+  }
+  function requestCondonation(result) {
+    if (!result.condonable || isOutdated() || v.running) return;
+    const existing = v.run.condonations[result.id] || {};
+    const dialog = showDialog('Request Condonation',`<p>${ve(result.ruleId)} · ${ve(result.name)}</p><p>Mock review record only; this does not authorize a real railway exception.</p><form id="validation-condonation-form"><label>Justification<textarea name="justification" required>${ve(existing.justification || '')}</textarea></label><label>Requester<input name="requester" required value="${ve(existing.requester || '')}"></label><label>Approver<input name="approver" value="${ve(existing.approver || '')}"></label><label>Decision<select name="decision"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></label><button class="layer-action">Record Review</button><p id="condonation-error" role="status"></p></form>`);
+    const form = dialog.querySelector('form'); form.elements.decision.value = existing.decision || 'pending';
+    form.onsubmit = event => { event.preventDefault(); const record = Object.fromEntries(new FormData(form)); Object.keys(record).forEach(key => record[key] = record[key].trim()); if (!record.justification || !record.requester || (record.decision !== 'pending' && (!record.approver || record.approver.toLowerCase() === record.requester.toLowerCase()))) { vf('condonation-error').textContent = 'Provide justification, requester and an independent approver for a decision.'; return; } record.time = new Date().toISOString(); record.audit = [...(existing.audit || []),{...record,audit:undefined}]; v.run.condonations[result.id] = record; persistHistory(); dialog.close(); renderResults(); };
+  }
+  vf('validation-results').addEventListener('click',event => {
+    const card = event.target.closest('[data-result-id]'); if (!card) return;
+    const result = v.run.results.find(item => item.id === card.dataset.resultId); v.selectedResult = result.id;
+    const action = event.target.closest('[data-result-action]')?.dataset.resultAction;
+    if (action === 'rule') showDialog('Rule / Checklist Reference',`<h3>${ve(result.ruleId)} · ${ve(result.name)}</h3><p>${ve(result.reference)}</p><p>Expected: ${ve(result.expected)}</p><p>${ve(result.message)}</p><p>Consult the configured rule catalogue; this mockup does not reproduce the standard.</p>`);
+    if (action === 'condonation') requestCondonation(result);
+    if (action === 'revalidate') runValidation(undefined,result.id);
+    if (action === 'drawing') {
+      const asset = v.assets.find(item => item.id === result.assetId);
+      if (window.validationAdapter?.focusAsset) window.validationAdapter.focusAsset(result.assetId);
+      else if (asset) {
+        // Temporary validation overlay; the underlying drawing canvas is unchanged.
+        document.querySelector('.validation-focus-overlay')?.remove();
+        const overlay = document.createElement('div'); overlay.className = 'validation-focus-overlay'; overlay.dataset.assetId = asset.id;
+        overlay.innerHTML = `<div class="validation-focus-label">${ve(asset.name)} · ${ve(asset.id)}<br>Illustrative asset focus · Zoom to selection</div><div class="validation-focus-shape" style="width:${Math.min(280,asset.width * 1.5)}px;height:${Math.max(30,asset.height * 1.5)}px"></div><button aria-label="Close validation highlight">×</button>`;
+        overlay.querySelector('button').onclick = () => overlay.remove(); document.querySelector('.canvas').appendChild(overlay);
+      }
+      window.dispatchEvent(new CustomEvent('validation-focus-asset',{detail:{assetId:result.assetId,bounds:asset,resultId:result.id}}));
+      document.querySelector('.command-line > span:not(.hint)').textContent = `Validation focus: ${result.assetName} (${result.assetId})`;
+    }
+    renderResults();
+  });
+  function selectResultTab(tab) { v.resultType = tab.dataset.resultType; if (v.resultType === 'sip') { sipBrowser.ruleId = null; gradientState.open = false; } v.selectedResult = null; vf('validation-search').value = ''; ['validation-status-filter','validation-category-filter','validation-severity-filter'].forEach(id => vf(id).value = 'all'); renderResults(); }
+  body.querySelectorAll('[data-result-type]').forEach(tab => {
+    tab.onclick = () => selectResultTab(tab);
+    tab.onkeydown = event => { if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return; event.preventDefault(); const tabs = [...body.querySelectorAll('[data-result-type]')].filter(item => !item.disabled); const index = tabs.indexOf(tab); const target = event.key === 'Home' ? tabs[0] : event.key === 'End' ? tabs[tabs.length - 1] : tabs[(index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length]; selectResultTab(target); target.focus(); };
+  });
+  vf('validation-summary').onclick = event => { const card = event.target.closest('[data-summary-status]'); if (card) { vf('validation-status-filter').value = card.dataset.summaryStatus; renderResults(); } };
+  ['validation-search','validation-status-filter','validation-category-filter','validation-severity-filter'].forEach(id => vf(id).addEventListener(id === 'validation-search' ? 'input' : 'change',renderResults));
+  vf('validation-clear-filters').onclick = () => { vf('validation-search').value = ''; ['validation-status-filter','validation-category-filter','validation-severity-filter'].forEach(id => vf(id).value = 'all'); renderResults(); };
+  vf('validation-save-draft').onclick = () => { v.notice = 'Draft saved in the mockup, including unresolved issues.'; try { localStorage.setItem(`${historyKey}:draft`,JSON.stringify({revision:v.revision,runId:v.run?.id,time:new Date().toISOString()})); } catch {} renderResults(); };
+  vf('validation-submit').onclick = () => { if (vf('validation-submit').disabled) return; v.notice = 'Mock final submission recorded. No drawing was submitted externally.'; renderResults(); };
+  function drawingChanged(ids) { v.revision += 1; v.changedAssets = [...new Set([...v.changedAssets,...ids])]; v.notice = ''; if (changes.detected) detectChanges(); renderRibbon(); renderResults(); }
+  window.addEventListener('validation-drawing-changed',event => drawingChanged(event.detail?.assetIds || v.assets.map(asset => asset.id)));
+  window.addEventListener('validation-asset-selection',event => { v.selectedAssets = (event.detail?.assetIds || []).filter(id => v.assets.some(asset => asset.id === id)); renderRibbon(); renderResults(); });
+  window.validationMockup = {
+    selectAssets: ids => window.dispatchEvent(new CustomEvent('validation-asset-selection',{detail:{assetIds:ids}})),
+    drawingChanged: ids => window.dispatchEvent(new CustomEvent('validation-drawing-changed',{detail:{assetIds:ids}})),
+    getState: () => structuredClone({...v,checked:[...v.checked]}),
+    getChanges: () => structuredClone(changes.items),
+    updateAssets: assets => { const changedIds = calculateChanges(v.assets,assets).map(item => item.id); v.assets = structuredClone(assets); drawingChanged(changedIds); },
+    // The live app can supply run(request) and focusAsset(id) without changing this UI.
+    setAdapter: adapter => { window.validationAdapter = adapter; }
+  };
+  document.querySelector('[data-ribbon="validation"]').addEventListener('click',openValidationPanel);
+  const homeSod = Array.from(document.querySelectorAll('#home-ribbon [data-command]')).find(button => button.dataset.command === 'Check SOD');
+  homeSod?.addEventListener('click',() => { v.type = 'sod'; v.resultType = 'sod'; resetCategories(); renderRibbon(); renderResults(); document.querySelector('[data-ribbon="validation"]').click(); });
+  renderRibbon(); renderResults(); activateRibbon(workspaceState.activeRibbon, false);
+
+</script>
+</body>
+</html>
+
+
+
+

@@ -21,8 +21,8 @@ const AMBER = '#f59e0b'; // V1 (major)
 const isGradient = (v: SODViolation) => v.ruleId === 'gradient';
 
 const SODCanvasOverlay: React.FC = () => {
-  const { viewport, objects, selectObject } = useEditor();
-  const { checkResult, activeViolationId, setActiveViolation } = useSODStore();
+  const { viewport, objects, selectObjects } = useEditor();
+  const { checkResult, activeViolationId, setActiveViolation, setSelectedValidation, setPanelOpen } = useSODStore();
   const [hoverId, setHoverId] = useState<string | null>(null);
 
   if (!checkResult || checkResult.violations.length === 0) return null;
@@ -32,9 +32,10 @@ const SODCanvasOverlay: React.FC = () => {
   const toY = (wy: number) => wy * zoom + panY;
 
   const handleSelect = (v: SODViolation) => {
-    setActiveViolation(activeViolationId === v.id ? null : v.id);
+    if (activeViolationId === v.id) { setActiveViolation(null); setSelectedValidation(null); selectObjects([]); return; }
+    setActiveViolation(v.id); setPanelOpen(true);
     const asset = v.assetId ? objects.find(o => o.id === v.assetId) : null;
-    selectObject(asset?.visible ? asset.id : null);
+    selectObjects(asset ? [asset.id] : []);
   };
 
   return (

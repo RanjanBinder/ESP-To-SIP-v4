@@ -7,9 +7,14 @@
  */
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import type { ValidationResult } from '../lib/validation/validationModel';
 import type { SODCheckResult } from '../lib/validation/sodValidator';
 
 export interface SODStore {
+  additionalResults: ValidationResult[];
+  setAdditionalResults: (results: ValidationResult[]) => void;
+  selectedValidation: ValidationResult | null;
+  setSelectedValidation: (result: ValidationResult | null) => void;
   /** Latest check result, or null if a check has never been run. */
   checkResult: SODCheckResult | null;
   setCheckResult: (result: SODCheckResult | null) => void;
@@ -32,6 +37,8 @@ export interface SODStore {
 const SODContext = createContext<SODStore | null>(null);
 
 export const SODProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [additionalResults, setAdditionalResults] = useState<ValidationResult[]>([]);
+  const [selectedValidation, setSelectedValidation] = useState<ValidationResult | null>(null);
   const [checkResult, setCheckResultState] = useState<SODCheckResult | null>(null);
   const [panelOpen, setPanelOpenState] = useState(false);
   const [stationCode, setStationCode] = useState<string | null>(null);
@@ -41,6 +48,7 @@ export const SODProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const setCheckResult = useCallback((result: SODCheckResult | null) => {
     setCheckResultState(result);
+    if (!result) { setAdditionalResults([]); setSelectedValidation(null); }
     setActiveViolationState(null);
   }, []);
 
@@ -62,6 +70,7 @@ export const SODProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, []);
 
   const store: SODStore = {
+    additionalResults, setAdditionalResults, selectedValidation, setSelectedValidation,
     checkResult, setCheckResult, panelOpen, setPanelOpen,
     stationCode, stationName, setStation,
     activeViolationId, setActiveViolation,

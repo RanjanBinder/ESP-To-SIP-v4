@@ -25,6 +25,11 @@ export interface Vec2 {
    Dimensions validator (lib/validation/sodValidator.ts) can grade it. Optional:
    only assets extracted from an ESP drawing carry it — hand-drawn shapes don't.
    All measurements are in millimetres unless noted. */
+export interface GradientValue {
+  direction: 'rising' | 'falling' | 'level';
+  denominator?: number;
+}
+
 export interface SodAssetMeta {
   /** High-level asset class the SOD rules dispatch on. */
   assetKind: 'Track' | 'Platform' | 'Structure' | 'Gradient';
@@ -46,6 +51,14 @@ export interface SodAssetMeta {
   heightAboveRailLevel?: number;
   /** Gradient denominator — 400 means 1:400. */
   gradientDenominator?: number;
+  trackId?: string;
+  trackName?: string;
+  /** Metres, increasing along the associated track. */
+  chainage?: number;
+  leftGradient?: GradientValue;
+  rightGradient?: GradientValue;
+  /** Explicit topology when a track branches or merges. */
+  nextGradientPointIds?: string[];
 }
 
 /* ── Object kinds ────────────────────────────────────────────────── */

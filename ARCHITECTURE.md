@@ -400,3 +400,17 @@ freshly created or pasted object is shown as selected while Delete still acts on
 the previous multi-selection. This is pre-existing and affects every object
 type, not just tracks; fixing it means aligning the two selection fields in the
 store.
+
+## Validation Center
+
+The existing 320px right sidebar exposes Properties and Validation at all times. `ValidationPanel` remains mounted when Properties is selected, preserving category, filters, expanded groups, list scroll position, selected issue, and session review notes. Narrow panels use a Back action for issue details; container queries support a split view if an integration supplies a wider panel. Groups render a maximum of 50 cards per page.
+
+`lib/validation/validationModel.ts` defines the shared result/status/severity model, category configuration, semantic status styles, and the legacy SOD adapter. Existing SOD stores, PDF validation entry points, and canvas focus requests remain available. SOD engineering evaluations now include individually identified passes; stable asset/rule IDs retain selection after a failed check becomes passed. Old results with only aggregate pass counts display an explicitly labelled legacy summary. Track-finish merges preserve existing SOD evaluations.
+
+`validationSources.ts` registers supplementary validators. Track Geometry and Asset Completeness reuse the existing `validateTrack` rules. SIP Checklist is an available category for connected results, but has no rule runner in this repository; no checklist results are fabricated. Register additional runners and categories to extend the center.
+
+Gradient change points use `SodAssetMeta.trackId`, optional `trackName`, metre-based `chainage`, and `leftGradient`/`rightGradient` values (`direction: rising | falling | level`, optional positive `denominator`). Left/right follow increasing chainage. Optional `nextGradientPointIds` carries explicit branch topology. Validation sorts points within each track, compares signed slopes, and returns review results for incomplete data, duplicate chainages, and ambiguous topology. A final point has no applicable outgoing continuity comparison. Older gradient segment denominators cannot supply direction or point adjacency and therefore require review. New gradient-post symbols can receive these fields through the existing Properties panel. SOD measurement edits use the same undoable object update API.
+
+`ValidationCanvasOverlay` draws temporary outlines and, for continuity pairs, their connecting comparison segment. Selection and zoom reuse editor selection and SOD focus APIs. Hidden source anchors remain hidden and receive labelled temporary outlines; deleted assets are reported. Locked/PDF anchors require corrections in the source drawing. Drawing colors and visibility are never changed by validation highlights.
+
+Run Validation refreshes all registered sources and preserves previous results while running. Selected-rule refresh reevaluates its category; selected-assets refresh includes neighboring continuity comparisons. SOD refreshes its complete legacy source snapshot to keep existing markers and callers consistent. Review marks and comments are session annotations and never turn a failed result into a passed result. There is no existing authorization/persistence workflow for accepted exceptions, so waiver actions are not exposed.

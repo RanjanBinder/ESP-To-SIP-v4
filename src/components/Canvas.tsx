@@ -23,6 +23,7 @@ import CanvasAxis from './CanvasAxis';
 import CanvasViewport from './CanvasViewport';
 import CanvasOverlay from './CanvasOverlay';
 import CommentThreadCard from './CommentThreadCard';
+import ValidationCanvasOverlay from './ValidationCanvasOverlay';
 import SODCanvasOverlay from './SODCanvasOverlay';
 import DiffHighlightLayer from './DiffHighlightLayer';
 import TrackView from './track/TrackView';
@@ -1370,6 +1371,7 @@ const Canvas: React.FC = () => {
 
       {/* SOD violation markers (halo, dot, callout, tooltip, gradient band) */}
       <SODCanvasOverlay />
+      <ValidationCanvasOverlay />
 
       {/* Version-compare highlights (added / removed / moved / modified) */}
       <DiffHighlightLayer />
